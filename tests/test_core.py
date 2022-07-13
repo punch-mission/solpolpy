@@ -1,4 +1,4 @@
-"""Docstring for the test.py module.
+"""Docstring for the test_core.py module.
 
 Created by Bryce M. Walbridge on 6/23/2022.
 

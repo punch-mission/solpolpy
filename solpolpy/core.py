@@ -1,5 +1,4 @@
-"""Docstring for the math_equations.py module.
-
+"""
 Created by Bryce M. Walbridge on 6/02/2022.
 
 The module explored definitions of math equation illistrated by the article, 
@@ -9,10 +8,9 @@ Matthew J. West. The overall goal is to convert values from three polarized
 images (B, pB pB') or Stokes (I, Q, U) representations of linear
 polarization from polarizer triplet data. This based on the formulae proposed
 in this article.
-
 """
-import numpy as np
 
+import numpy as np
 
 #Equation 1
 def radial_radiance(B, pB):
@@ -726,9 +724,7 @@ def alpha_func(array_length):
     ------
     
     '''
-    x = np.arange(-array_length//2,array_length//2)
-    y = np.arange(-array_length//2,array_length//2)
+    x = np.arange(-array_length//2, array_length//2)
+    y = np.arange(-array_length//2, array_length//2)
     xx, yy = np.meshgrid(x, y)
-    alpha = np.rot90(np.arctan2(yy,xx), k = 1)
-    alpha=np.fliplr(alpha)
-    return alpha
+    return np.fliplr(np.rot90(np.arctan2(yy, xx), k=1))

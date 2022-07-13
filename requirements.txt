@@ -1,5 +1,0 @@
-sunpy
-astropy
-numpy
-matplotlib
-pytest

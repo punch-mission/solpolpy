@@ -1,4 +1,3 @@
-
 """Docstring for the math_equations.py module.
 
 Created by Bryce M. Walbridge on 6/02/2022.

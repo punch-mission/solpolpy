@@ -1,0 +1,32 @@
+[project]
+name = "solpolpy"
+version = "0.0.1"
+authors = [
+    { name="Bryce M. Walbridge", email="bmw39@calvin.edu" },
+    { name="J. Marcus Hughes", email="mhughes@boulder.swri.edu"},
+    { name="Matthew J. West", email="mwest@boulder.swri.edu"}
+]
+description = "Solar polarization resolver for any instrument"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "sunpy",
+    "astropy",
+    "numpy",
+    "matplotlib"
+]
+
+[project.optional-dependencies]
+tests = [
+  'pytest'
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

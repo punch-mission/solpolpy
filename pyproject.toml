@@ -25,7 +25,8 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     'pytest',
-    'coverage'
+    'coverage',
+    'pytest-cov'
 ]
 
 [build-system]

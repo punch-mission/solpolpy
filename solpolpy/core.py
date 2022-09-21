@@ -120,7 +120,7 @@ class Depolarize:
         
         return f"Depolarize( {s} )"
 
-    def apply(self, out_polarize_state, separation=None):
+    def apply(self, out_polarize_state, separation=None, alpha=None, Error=False):
        
         '''
         Apply - apply a depolarization transform to a set of input

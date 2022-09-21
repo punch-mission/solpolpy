@@ -1,8 +1,8 @@
-class Depolarizer:
-    '''Depolarizer - Transforms between different Polarization states
+class Depolarize:
+    '''Depolarize - Transforms between different Polarization states
     
-    The Depolarizer module defines a Depolarization object that represents an 
-    transformation between different Polarization states.  Depolarizer objects 
+    The Depolarize module defines a depolarize object that represents an 
+    transformation between different polarization states.  Depolarizer objects 
     can be used to transform between different polarization states.  The base 
     package is supplied with subclasses that implement several general-purpose 
     polarization transformations; additional subpackages supply suites of 
@@ -39,7 +39,7 @@ class Depolarizer:
     Examples
     --------
         import depolarizer as d                          # Load the package
-        PolarizationObject = d.depolarize(dictionary)       # Generate a depolarization object
+        PolarizationObject = d.depolarize(dictionary)    # Generate a depolarization object
         newData = PolarizationObject.apply(BpB)          # Apply the scaling to the object
 
     
@@ -233,3 +233,9 @@ class Depolarizer:
             dimensionality of the vectors); additional input dimensions, if 
             present, are still appended to the output vectors in all any case.
         '''
+        # Start by making sure we have a dictionary
+        #if( not isinstance(data, np.ndarray) ):
+        #    data = np.array(data)
+        data = self.apply(data)
+            
+        return data

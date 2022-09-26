@@ -70,10 +70,10 @@ class Depolarize:
           
         
     '''
-    def __init__(self):
-       raise AssertionError(\
-           "generic depolarizations must be subclassed (e.g. Depolarize.identity)"\
-               )
+    #def __init__(self):
+    #   raise AssertionError(\
+    #       "generic depolarizations must be subclassed (e.g. Depolarize.identity)"\
+    #           )
 
     def __str__(self):
 
@@ -120,7 +120,7 @@ class Depolarize:
         
         return f"Depolarize( {s} )"
 
-    def apply(self, out_polarize_state, separation=None, alpha=None, Error=False):
+    def resolve(self, out_polarize_state, separation=None, alpha=None, Error=False):
        
         '''
         Apply - apply a depolarization transform to a set of input
@@ -186,6 +186,7 @@ class Depolarize:
             dimensionality of the vectors); additional input dimensions, if 
             present, are still appended to the output vectors in all any case. 
         '''
+
 
     def depolarize(self, data):
         '''

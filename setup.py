@@ -7,7 +7,8 @@
 import io
 import os
 import sys
-from numpy import get_include as np_get_include
+#from numpy import get_include as np_get_include
+#import numpy
 from shutil import rmtree
 
 from setuptools import find_packages, setup, Command

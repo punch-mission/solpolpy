@@ -5,10 +5,11 @@ Solpolpy subclasses for basic coordinate transforms
 """
 
 from astropy.io import fits
+import numpy
 
 #TODO: so this should take:
 
-#Instead of dict to feed in, we create data object which gets passed into the depolariser object
+#Instead of dict to feed in, we create data object whiych gets passed into the depolariser object
 
 #Counts number of arrays. And decides if IQUV or IQU
 #Stokes  data cube
@@ -125,7 +126,10 @@ def data_type(*datain):
             if isinstance(sep_datain, fits.hdu.hdulist.HDUList):
                 print("got fits", count)
         count=count+1
+
+        pass
     
+
 
     dataout=datain
 

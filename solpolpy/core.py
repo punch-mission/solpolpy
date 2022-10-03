@@ -103,7 +103,11 @@ def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=F
         input_data = convert_image_list_to_dict(input_data)
     input_kind = determine_input_kind(input_data)
     equation = get_transform_equation(input_kind, out_polarize_state)
-    result = equation(input_data)
+    uses_alpha = get_alpha_usage(input_kind, out_polarize_state)
+    if uses_alpha:
+        result = equation(input_data, alpha)
+    else:
+        result = equation(input_data)
     return result
 
 
@@ -125,4 +129,8 @@ def convert_image_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
     #             assert hdul[0].header['INSTRUME'] == 'SECCHI', 'requires FITS to be SECCHI COR data files'
     #             data_out[hdul[0].header['POLAR']]=hdul[0].data
     #             image_hdr = hdul[0].header
+    pass
+
+
+def get_alpha_usage(input_kind: str, output_kind: str) -> bool:
     pass

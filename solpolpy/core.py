@@ -1,5 +1,7 @@
+from typing import Callable, Dict, List
+
 from astropy.io import fits
-import numpy
+import numpy as np
 
 
 def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=False):
@@ -10,7 +12,7 @@ def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=F
     Parameters
     ----------
     input_data : Dict[str, np.ndarray]
-        Dictionary formated as follows:
+        Dictionary formatted as follows:
 
         - Stokes dictionary
         "I":np.array - Should be included as a triplet of I,Q,U, and optionally V
@@ -86,7 +88,7 @@ def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=F
     ------
     AssertionError
       This gets raised if the data cannot be converted or polarization
-      transformation cannot calculated due to a discontinuity or infinity.
+      transformation cannot be calculated due to a discontinuity or infinity.
 
     Returns
     -------
@@ -97,22 +99,24 @@ def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=F
         dimensionality of the vectors); additional input dimensions, if
         present, are still appended to the output vectors in all any case.
     """
+    if isinstance(input_data, list):
+        input_data = convert_image_list_to_dict(input_data)
+    input_kind = determine_input_kind(input_data)
+    equation = get_transform_equation(input_kind, out_polarize_state)
+    result = equation(input_data)
+    return result
+
+
+def determine_input_kind(input_data: Dict[str, np.ndarray]) -> str:
     pass
 
-    # # create output dictionary
-    # #data_out={}
-    #
-    #
-    # # check if go a dictionary
-    # print(type(data_in))
-    # if isinstance(data_in, dict):
-    #     data_out=data_in
-    #     print('got dict')
-    #
-    #
-    # # check if got a list
-    # if isinstance(data_in, list):
-    #     data_out={}
+
+def get_transform_equation(input_kind: str, output_kind: str) -> Callable:
+    pass
+
+
+def convert_image_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
+    # data_out={}
     #     list_len=len(data_in)
     #     assert list_len >= 2, 'requires at least 2 FITS files'
     #
@@ -121,7 +125,4 @@ def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=F
     #             assert hdul[0].header['INSTRUME'] == 'SECCHI', 'requires FITS to be SECCHI COR data files'
     #             data_out[hdul[0].header['POLAR']]=hdul[0].data
     #             image_hdr = hdul[0].header
-    #     print('got list')
-    #
-    #
-    # return data_out
+    pass

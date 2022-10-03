@@ -1,2 +1,1 @@
-from solpolpy.core import *
-from solpolpy.error import *
+from solpolpy.core import resolve

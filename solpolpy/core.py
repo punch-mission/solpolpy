@@ -131,6 +131,7 @@ def _convert_STEREO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]
     #             image_hdr = hdul[0].header
     pass
 
+
 def _convert_LASCO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
     # data_out={}
     #     list_len=len(data_in)
@@ -143,6 +144,7 @@ def _convert_LASCO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
     #             image_hdr = hdul[0].header
     pass
 
+
 def convert_image_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
     # data_out={}
     #     list_len=len(data_in)
@@ -153,12 +155,14 @@ def convert_image_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
     #             assert hdul[0].header['INSTRUME'] == 'SECCHI', 'requires FITS to be SECCHI COR data files'
     #             data_out[hdul[0].header['POLAR']]=hdul[0].data
     #             image_hdr = hdul[0].header
-    if input_data is a STEREO:
-        out = _convert_STEREO_list_to_dict(input_data)
-    elif input_data is LASCO: 
-        out = _convert_LASCO_list_to_dict(input_data)
-    else:
-        raise Exception("Don't recognize this FITS type. Use dictionary input.")
+    # if input_data is a STEREO:
+    #     out = _convert_STEREO_list_to_dict(input_data)
+    # elif input_data is LASCO:
+    #     out = _convert_LASCO_list_to_dict(input_data)
+    # else:
+    #     raise Exception("Don't recognize this FITS type. Use dictionary input.")
+    pass
+
 
 def get_alpha_usage(input_kind: str, output_kind: str) -> bool:
     pass

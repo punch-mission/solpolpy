@@ -124,8 +124,8 @@ def determine_input_kind(input_data: Dict[str, np.ndarray]) -> str:
         for param_option in param_list:
             if input_keys == param_option:
                 return valid_kind
-    input_value_kinds = Counter([type(v) for v in input_data.values()])
-    if input_value_kinds[np.ndarray] >= 3:
+    input_key_kinds = Counter([type(v) for v in input_keys])
+    if input_key_kinds[np.float64] >= 3:
         return "MZP"
     raise ValueError("Invalid Keys")  # TODO: improve this message
 

@@ -5,19 +5,21 @@ pytest test suite for the polarizers module of solpolpy
 
 import numpy as np
 import pytest
+from pytest import fixture
 
 from solpolpy.core import determine_input_kind, resolve
 from solpolpy.polarizers import mzp_to_bpb, bpb_to_btbr
 
 
-def test_true():
-    assert True
-
-
-def test_determine_input_kind_mzp():
+@fixture
+def example_mzp():
     d = {np.deg2rad(-60): np.array([2]), np.deg2rad(0): np.array([1]), np.deg2rad(60): np.array([1.5]),
          "alpha": np.array([np.deg2rad(5)])}
-    assert determine_input_kind(d), "MZP"
+    return d
+
+
+def test_determine_input_kind_mzp(example_mzp):
+    assert determine_input_kind(example_mzp), "MZP"
 
 
 def test_determine_input_kind():
@@ -38,8 +40,6 @@ def test_bpb_to_btbr():
     assert isinstance(result, dict)
 
 
-def test_mzp_to_btbr():
-    d = {np.deg2rad(-60): np.array([2]), np.deg2rad(0): np.array([1]), np.deg2rad(60): np.array([1.5]),
-         "alpha": np.array([np.deg2rad(5)])}
-    result = resolve(d, "BtBr")
+def test_mzp_to_btbr(example_mzp):
+    result = resolve(example_mzp, "BtBr")
     assert isinstance(result, dict)

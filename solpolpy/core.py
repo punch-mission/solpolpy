@@ -134,7 +134,7 @@ def get_transform_equation(input_kind: str, output_kind: str) -> Callable:
     try:
         path = nx.shortest_path(transform_graph, input_kind, output_kind)
     except nx.exception.NetworkXNoPath:
-        raise RuntimeError(f"Not possible to convert {input_kind} to {output_kind}")
+        raise RuntimeError(f"Not possible to convert {input_kind} to {output_kind}") # TODO: make this a custom error
 
     current_function = identity
     for i, step_start in enumerate(path):

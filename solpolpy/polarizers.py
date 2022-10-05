@@ -12,8 +12,19 @@ def mzp_to_bpb(input_dict):
     Notes
     ------
     Equation 7 and 9 in Deforest et al. 2022.
+
     """""
+    # TODO: need to check if 3 angles are input.
+    # TODO: need to check if separated appropriately if not create quality warning.
+
     alpha = input_dict['alpha']
+
+    if "alpha" not in input_dict:
+        raise ValueError("missing alpha")
+
+    
+
+
     B = (2 / 3) * (np.sum([ith_polarizer_brightness
                            for ith_angle, ith_polarizer_brightness
                            in input_dict.items() if ith_angle != "alpha"], axis=0))

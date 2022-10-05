@@ -7,83 +7,54 @@ Basic coordinate transforms
 import numpy as np
 
 
-def mzp_to_bpb(input_dict, alpha):
+def mzp_to_bpb(input_dict):
     """
     Notes
     ------
-    Equation 7 in Deforest et al. 2022.
+    Equation 7 and 9 in Deforest et al. 2022.
     """""
+    alpha = input_dict['alpha']
     B = (2 / 3) * (np.sum([ith_polarizer_brightness
-                           for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0))
+                           for ith_angle, ith_polarizer_brightness
+                           in input_dict.items() if ith_angle != "alpha"], axis=0))
 
     pB = (-4 / 3) * (np.sum([ith_polarizer_brightness
                              * np.cos(2 * (ith_angle - alpha))
-                             for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0))
+                             for ith_angle, ith_polarizer_brightness
+                             in input_dict.items() if ith_angle != "alpha"], axis=0))
 
-    return {"B": B, "pB": pB}
+    return {"B": B, "pB": pB, "alpha": alpha}
 
 
-def bpb_to_mzp(input_dict, alpha):
+def bpb_to_mzp(input_dict):
     """
     Notes
     ------
     Equation 4 in Deforest et al. 2022.
     """
+    alpha = input_dict['alpha']
     B, pB = input_dict['B'], input_dict['pB']
-    return {name: (1 / 2) * (B - pB * (np.cos(2 * (theta - alpha))))
-            for name, theta in zip(["M", "Z", "P"], [-60, 0, 60])}
-
-######################################################################################################################
-######################################################################################################################
-######################################################################################################################
+    result = {theta: (1 / 2) * (B - pB * (np.cos(2 * (theta - alpha)))) for theta in np.deg2rad([-60, 0, 60])}
+    result['alpha'] = alpha
+    return result
 
 
-def radial_radiance(B, pB):
-    """Converts unpolarized brightness,`B`, and Coronal polarized brightness,
-     `pB`, into radial radiance.
-    
-    This function takes in two vars of `B`, Unpolarized brightness, and 
-    `pB`,Coronal polarized brightness. 
-    
-    Parameters
-    ----------
-    B : np.ndarray 
-    pB : np.ndarray
-    
-    Returns
-    -------
-    float
-        The float that is returned is defined to be var `B_radial`.
-
+def bpb_to_btbr(input_dict):
+    """
     Notes
     ------
-    Equation 1 in Deforest et al. 2022.
+    Equation 1 and 2 in Deforest et al. 2022.
     """
-    return (B - pB) / 2
+    B, pB = input_dict['B'], input_dict['pB']
+    Br = (B - pB) / 2
+    Bt = (B + pB) / 2
+    return {'Br': Br, "Bt": Bt}
 
 
-def tangential_radiance(B, pB):
-    """Converts unpolarized brightness,`B`, and Coronal polarized brightness,
-     `pB`, into tangential radiance.
-    
-    This function takes in two vars of `B`, Unpolarized brightness, and 
-    `pB`,Coronal polarized brightness. 
-    
-    Parameters
-    ----------
-    B : np.ndarrary
-    pB : np.ndarrary
-    
-    Returns
-    -------
-     float
-        The float that is returned is defined to be var `B_tangential`.
+######################################################################################################################
+######################################################################################################################
+######################################################################################################################
 
-    Notes
-    ------
-    Equation 2 in Deforest et al. 2022.
-    """
-    return (B + pB)/2
 
 
 def inverse_of_radial_tangental_radiance(B_tangential, B_radial):

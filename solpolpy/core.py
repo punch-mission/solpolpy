@@ -1,7 +1,13 @@
 from typing import Callable, Dict, List
+import functools
+from collections import Counter
 
 from astropy.io import fits
 import numpy as np
+import networkx as nx
+
+from solpolpy.constants import VALID_KINDS
+from solpolpy.graph import transform_graph
 
 
 def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=False):
@@ -103,20 +109,41 @@ def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=F
         input_data = convert_image_list_to_dict(input_data)
     input_kind = determine_input_kind(input_data)
     equation = get_transform_equation(input_kind, out_polarize_state)
-    uses_alpha = get_alpha_usage(input_kind, out_polarize_state)
-    if uses_alpha:
-        result = equation(input_data, alpha)
-    else:
-        result = equation(input_data)
+    result = equation(input_data)
+    # uses_alpha = get_alpha_usage(input_kind, out_polarize_state)
+    # if uses_alpha:
+    #     result = equation(input_data, alpha)
+    # else:
+    #     result = equation(input_data)
     return result
 
 
 def determine_input_kind(input_data: Dict[str, np.ndarray]) -> str:
-    pass
+    input_keys = list(input_data.keys())
+    for valid_kind, param_list in VALID_KINDS.items():
+        for param_option in param_list:
+            if input_keys == param_option:
+                return valid_kind
+    input_value_kinds = Counter([type(v) for v in input_data.values()])
+    if input_value_kinds[np.ndarray] >= 3:
+        return "MZP"
+    raise ValueError("Invalid Keys")  # TODO: improve this message
 
 
 def get_transform_equation(input_kind: str, output_kind: str) -> Callable:
-    pass
+    try:
+        path = nx.shortest_path(transform_graph, input_kind, output_kind)
+    except nx.exception.NetworkXNoPath:
+        raise RuntimeError(f"Not possible to convert {input_kind} to {output_kind}")
+
+    current_function = identity
+    for i, step_start in enumerate(path):
+        if i+1 < len(path):
+            step_end = path[i+1]
+            current_function = _compose2(transform_graph.get_edge_data(step_start, step_end)['func'],
+                                         current_function)
+
+    return current_function
 
 
 def _convert_STEREO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
@@ -166,3 +193,11 @@ def convert_image_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
 
 def get_alpha_usage(input_kind: str, output_kind: str) -> bool:
     pass
+
+
+def _compose2(f, g):
+    return lambda *a, **kw: f(g(*a, **kw))
+
+
+def identity(x):
+    return x

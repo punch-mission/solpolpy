@@ -1,10 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Solpolpy subclasses for basic coordinate transforms
+Basic coordinate transforms
 """
 
 import numpy as np
+
+
+def mzp_to_bpb(input_dict, alpha):
+    """
+    Notes
+    ------
+    Equation 7 in Deforest et al. 2022.
+    """""
+    B = (2 / 3) * (np.sum([ith_polarizer_brightness
+                           for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0))
+
+    pB = (-4 / 3) * (np.sum([ith_polarizer_brightness
+                             * np.cos(2 * (ith_angle - alpha))
+                             for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0))
+
+    return {"B": B, "pB": pB}
+
+
+def bpb_to_mzp(input_dict, alpha):
+    """
+    Notes
+    ------
+    Equation 4 in Deforest et al. 2022.
+    """
+    B, pB = input_dict['B'], input_dict['pB']
+    return {name: (1 / 2) * (B - pB * (np.cos(2 * (theta - alpha))))
+            for name, theta in zip(["M", "Z", "P"], [-60, 0, 60])}
+
+######################################################################################################################
+######################################################################################################################
+######################################################################################################################
 
 
 def radial_radiance(B, pB):
@@ -104,31 +135,6 @@ def B_theta(B_radial, B_tangential, theta, alpha):
     return  B_tangential*(np.sin(theta - alpha))**2 + B_radial*(np.cos(theta - alpha))**2
 
 
-def B_theta_double_angle_formula_substitution(B, pB, theta, alpha):
-    """Converts unpolarized brightness, `B`, Coronal polarized brightness, `pB`, Polarizer angle,`theta`,
-    and solar position angle of an image point, `alpha`, into Radiance through a polarizer at angle theta, `B_theta`. 
-    
-    This function takes in four vars of `B`, `pB`, `theta`, and `alpha`.
-    
-    Parameters
-    ----------
-    B : np.ndarray
-    pB : np.ndarray
-    theta : np.ndarray
-    alpha : np.ndarray
-
-    Returns
-    -------
-     float
-        The float that is returned is defined to be var, `B_theta`.
-
-    Notes
-    ------
-    Equation 4 in Deforest et al. 2022.
-    """
-    return (1/2)*(B - pB*(np.cos(2*(theta - alpha))))
-
-
 def pB(B, B_theta, theta, alpha):
     """Converts unpolarized brightness,`B`, Radiance through a polarizer at angle theta,`B_theta`,
     Polarizer angle,`theta`, and Solar position angle of an image point, `alpha` into Coronal 
@@ -193,31 +199,7 @@ def pB_through_sum(B, Bi, alpha):
 
     return numerator / denominator
 
-def pB_MZP_sum(Bi, alpha):
-    """Converts Solar position angle of an image point,`alpha`, into Coronal 
-    polarized brightness, `pB`. Uses summation as another way to calculate cornal polarized brightness.
-    
-    This function takes in the var of `alpha`.
-    
-    Parameters
-    ----------
-    alpha : np.ndarray
-    
-    Returns
-    -------
-     float
-        The float that is returned is defined to be var, `pB`.
-        
-    Notes
-    ------
-    Equation 7 in Deforest et al. 2022.
-    """""
-    pB = (-4/3)*(np.sum([ith_polarizer_brightness 
-                         * np.cos(2*(ith_angle - alpha)) 
-                        for ith_angle, 
-                         ith_polarizer_brightness in Bi.items()], axis=0))
-    
-    return pB
+
 
 
 def polarized_B(pB, B_theta, theta, alpha):
@@ -244,33 +226,6 @@ def polarized_B(pB, B_theta, theta, alpha):
     Equation 8 in Deforest et al. 2022.
     """
     return 2*B_theta + (np.cos(2*(theta - alpha)))*pB
-
-
-def B_MZP_sum(Bi):
-    """Converts unpolarized brightness,`B`, into an average unpolarized brightness.
-    Uses summation averaging over the three polarizer positions M,Z, and P.
-    
-    This function takes in a var of, `Bi`, which is a dictionary of these different polarizer positions.
-    
-    Parameters
-    ----------
-    Bi : dict
-
-    Returns
-    -------
-     float
-        The float that is returned is defined to be var, `pB`.
-
-    Notes
-    ------
-    Equation 9 in Deforest et al. 2022.
-    """
-    
-    B = (2/3)*(np.sum([ith_polarizer_brightness  
-                        for ith_angle, 
-                         ith_polarizer_brightness in Bi.items()], axis=0))
-    
-    return B
 
 
 def pB_prime(Bi, alpha):

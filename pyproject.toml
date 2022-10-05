@@ -19,7 +19,8 @@ dependencies = [
     "sunpy",
     "astropy",
     "numpy",
-    "matplotlib"
+    "matplotlib",
+    "networkx"
 ]
 
 [project.optional-dependencies]

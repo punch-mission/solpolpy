@@ -119,6 +119,7 @@ def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=F
 
 
 def determine_input_kind(input_data: Dict[str, np.ndarray]) -> str:
+    #TODO: add usability to add inputs in any order.
     input_keys = list(input_data.keys())
     for valid_kind, param_list in VALID_KINDS.items():
         for param_option in param_list:

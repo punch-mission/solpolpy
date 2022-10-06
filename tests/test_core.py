@@ -17,7 +17,6 @@ def example_mzp():
          "alpha": np.array([np.deg2rad(5)])}
     return d
 
-
 def test_determine_input_kind_mzp(example_mzp):
     assert determine_input_kind(example_mzp), "MZP"
 

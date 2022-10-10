@@ -146,7 +146,7 @@ def get_transform_equation(input_kind: str, output_kind: str) -> Callable:
                                          current_function)
     return current_function
 
-def _add_alpha(input_data: Dict[str, np.ndarray, kind) -> Dict[str, np.ndarray]:
+def _add_alpha(input_data: Dict[str, np.ndarray], kind) -> Dict[str, np.ndarray]:
     #test if alpha exists. if not check if alpha keyword added. if not create default alpha with warning.
 
     # data_out={}

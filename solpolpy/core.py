@@ -108,6 +108,7 @@ def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=F
     if isinstance(input_data, list):
         input_data = convert_image_list_to_dict(input_data)
     input_kind = determine_input_kind(input_data)
+    # input_data = _add_alpha(input_data, alpha)
     equation = get_transform_equation(input_kind, out_polarize_state)
     result = equation(input_data)
     # uses_alpha = get_alpha_usage(input_kind, out_polarize_state)
@@ -143,8 +144,21 @@ def get_transform_equation(input_kind: str, output_kind: str) -> Callable:
             step_end = path[i+1]
             current_function = _compose2(transform_graph.get_edge_data(step_start, step_end)['func'],
                                          current_function)
-
     return current_function
+
+def _add_alpha(input_data: Dict[str, np.ndarray, kind) -> Dict[str, np.ndarray]:
+    #test if alpha exists. if not check if alpha keyword added. if not create default alpha with warning.
+
+    # data_out={}
+    #     list_len=len(data_in)
+    #     assert list_len >= 2, 'requires at least 2 FITS files'
+    #
+    #     for xlist_item in data_in:
+    #         with fits.open(xlist_item) as hdul:
+    #             assert hdul[0].header['INSTRUME'] == 'SECCHI', 'requires FITS to be SECCHI COR data files'
+    #             data_out[hdul[0].header['POLAR']]=hdul[0].data
+    #             image_hdr = hdul[0].header
+    pass
 
 
 def _convert_STEREO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:

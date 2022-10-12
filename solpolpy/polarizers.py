@@ -362,24 +362,3 @@ def polarization_fraction(B, pB, pB_prime):
     Equation 16 in Deforest et al. 2022.
     """
     return np.sqrt((pB**2 + pB_prime**2)) / B
-
- 
-def alpha_func(array_length):
-    """Makes an array of alpha values on a mesh grid. This function take in the parameter of
-    arrary_length to properly parameterize the created meshgrid.
-    
-    This function takes in a var of `array_length`.
-    
-    Parameters
-    ----------
-    array_length : int
-    
-    Returns
-    -------
-     np.array
-        The np.array that is returned is defined to be var, `alpha`.
-    """
-    x = np.arange(-array_length//2, array_length//2)
-    y = np.arange(-array_length//2, array_length//2)
-    xx, yy = np.meshgrid(x, y)
-    return np.fliplr(np.rot90(np.arctan2(yy, xx), k=1))

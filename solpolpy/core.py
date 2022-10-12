@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Tuple
 import functools
 from collections import Counter
 
@@ -8,6 +8,7 @@ import networkx as nx
 
 from solpolpy.constants import VALID_KINDS
 from solpolpy.graph import transform_graph
+from solpolpy.alpha import ALPHA_FUNCTIONS
 
 
 def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=False):
@@ -108,6 +109,7 @@ def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=F
     if isinstance(input_data, list):
         input_data = convert_image_list_to_dict(input_data)
     input_kind = determine_input_kind(input_data)
+    input_data = _add_alpha(input_data, alpha)
     equation = get_transform_equation(input_kind, out_polarize_state)
     result = equation(input_data)
     # uses_alpha = get_alpha_usage(input_kind, out_polarize_state)
@@ -119,11 +121,10 @@ def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=F
 
 
 def determine_input_kind(input_data: Dict[str, np.ndarray]) -> str:
-    #TODO: add usability to add inputs in any order.
     input_keys = list(input_data.keys())
     for valid_kind, param_list in VALID_KINDS.items():
         for param_option in param_list:
-            if input_keys == param_option:
+            if set(input_keys) == set(param_option):
                 return valid_kind
     input_key_kinds = Counter([type(v) for v in input_keys])
     if input_key_kinds[np.float64] >= 3:
@@ -143,8 +144,26 @@ def get_transform_equation(input_kind: str, output_kind: str) -> Callable:
             step_end = path[i+1]
             current_function = _compose2(transform_graph.get_edge_data(step_start, step_end)['func'],
                                          current_function)
-
     return current_function
+
+
+def _determine_image_shape(input_dict: Dict[str, np.ndarray]) -> Tuple[int, int]:
+    keys = list(input_dict.keys())
+    shape = input_dict[keys[0]].shape
+    return shape
+
+
+def _add_alpha(input_data: Dict[str, np.ndarray], kind) -> Dict[str, np.ndarray]:
+    # test if alpha exists. if not check if alpha keyword added. if not create default alpha with warning.
+
+    img_shape = _determine_image_shape(input_data)
+    if len(img_shape) == 2:  # it's an image and not just an array
+        kind = "radial" if kind is None else kind
+        if "alpha" not in input_data:
+            if kind not in ALPHA_FUNCTIONS:
+                raise ValueError(f"Requested a {kind} alpha type. This is not valid. Must be in {ALPHA_FUNCTIONS.keys()}")
+            input_data['alpha'] = ALPHA_FUNCTIONS[kind](img_shape)
+    return input_data
 
 
 def _convert_STEREO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:

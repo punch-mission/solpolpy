@@ -22,9 +22,6 @@ def mzp_to_bpb(input_dict):
     if "alpha" not in input_dict:
         raise ValueError("missing alpha")
 
-    
-
-
     B = (2 / 3) * (np.sum([ith_polarizer_brightness
                            for ith_angle, ith_polarizer_brightness
                            in input_dict.items() if ith_angle != "alpha"], axis=0))

@@ -7,14 +7,16 @@ import numpy as np
 import pytest
 from pytest import fixture
 
+import astropy.units as u
+
 from solpolpy.core import determine_input_kind, resolve
 from solpolpy.polarizers import mzp_to_bpb, bpb_to_btbr
 
 
 @fixture
 def example_mzp():
-    d = {np.deg2rad(-60): np.array([2]), np.deg2rad(0): np.array([1]), np.deg2rad(60): np.array([1.5]),
-         "alpha": np.array([np.deg2rad(5)])}
+    d = {-60*u.degree: np.array([2]), 0*u.degree: np.array([1]), 60*u.degree: np.array([1.5]),
+         "alpha": np.array([5])*u.degree}
     return d
 
 

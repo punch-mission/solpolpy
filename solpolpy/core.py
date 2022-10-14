@@ -1,8 +1,11 @@
 from typing import Callable, Dict, List, Tuple
 import functools
 from collections import Counter
+import numbers
 
 from astropy.io import fits
+import astropy.units as u
+from astropy.units.quantity import Quantity
 import numpy as np
 import networkx as nx
 
@@ -11,7 +14,7 @@ from solpolpy.graph import transform_graph
 from solpolpy.alpha import ALPHA_FUNCTIONS
 
 
-def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=False):
+def resolve(input_data, out_polarize_state, alpha=None):
     """
     Apply - apply a depolarization transform to a set of input
     dataframes.
@@ -108,16 +111,86 @@ def resolve(input_data, out_polarize_state, separation=None, alpha=None, Error=F
     """
     if isinstance(input_data, list):
         input_data = convert_image_list_to_dict(input_data)
+    input_data, input_has_radians = sanitize_data_dict(input_data, u.radian)
     input_kind = determine_input_kind(input_data)
-    input_data = _add_alpha(input_data, alpha)
-    equation = get_transform_equation(input_kind, out_polarize_state)
+
+    transform_path = get_transform_path(input_kind, out_polarize_state)
+    equation = get_transform_equation(transform_path)
+    requires_alpha = check_alpha_requirement(transform_path)
+    if requires_alpha:
+        input_data = add_alpha(input_data, alpha)
+
     result = equation(input_data)
-    # uses_alpha = get_alpha_usage(input_kind, out_polarize_state)
-    # if uses_alpha:
-    #     result = equation(input_data, alpha)
-    # else:
-    #     result = equation(input_data)
+    if not input_has_radians:
+        result, _ = sanitize_data_dict(result, u.degree)
     return result
+
+
+def sanitize_data_dict(input_data, output_type):
+    if output_type not in [u.radian, u.degree]:
+        raise RuntimeError(f"Keys must be converted to degrees or radians. Found ouput_type={output_type}")
+
+    # Set up necessary conversions and
+    deg2rad = (np.pi * u.radian) / (180 * u.degree)
+    rad2deg = (180 * u.degree) / (np.pi * u.radian)
+
+    # Sanitize all the keys
+    found_radians = False
+    output_dict = dict()
+    for key, value in input_data.items():
+        if isinstance(key, numbers.Real):
+            if output_type == u.degree:
+                output_dict[key * u.degree] = value
+            else:
+                output_dict[np.deg2rad(key) * u.radian] = value
+        elif isinstance(key, Quantity):
+            if key.unit not in [u.radian, u.degree]:
+                raise RuntimeError(f"Unsupported key type of {u.key} found. Must be radians or degrees.")
+            if key.unit == u.radian:
+                found_radians = True
+                if output_type == u.degree:
+                    output_dict[key*rad2deg] = value
+                else:
+                    output_dict[key] = value
+            elif key.unit == u.degree:
+                if output_type == u.radian:
+                    output_dict[key*deg2rad] = value
+                else:
+                    output_dict[key] = value
+        else:
+            output_dict[key] = value
+
+    # Sanitize alpha map
+    if "alpha" in input_data:
+        if isinstance(input_data['alpha'], Quantity):
+            if input_data['alpha'].unit == u.radian:
+                if output_type == u.degree:
+                    output_dict["alpha"] = input_data['alpha'] * rad2deg
+                else:
+                    output_dict["alpha"] = input_data["alpha"]
+            elif input_data['alpha'].unit == u.degree:
+                if output_type == u.degree:
+                    output_dict["alpha"] = input_data["alpha"]
+                else:
+                    output_dict["alpha"] = input_data["alpha"] * deg2rad
+            else:
+                raise RuntimeError(f"Alpha must be in degrees or radians. Found {input_data['alpha'].unit} unit.")
+        elif isinstance(input_data['alpha'], numbers.Real) or isinstance(input_data['alpha'], np.ndarray):
+            if output_type == u.degree:
+                output_dict['alpha'] = input_data['alpha'] * u.degree
+            else:
+                output_dict["alpha"] = np.deg2rad(input_data['alpha']) * u.radian
+        else:
+            raise RuntimeError("Alpha must be numeric with or without a unit.")
+    return output_dict, found_radians
+
+
+def check_alpha_requirement(path: List[str]):
+    requires_alpha = False
+    for i, step_start in enumerate(path[:-1]):
+        step_end = path[i + 1]
+        requires_alpha = transform_graph.get_edge_data(step_start, step_end)['requires_alpha'] or requires_alpha
+    return requires_alpha
 
 
 def determine_input_kind(input_data: Dict[str, np.ndarray]) -> str:
@@ -126,24 +199,26 @@ def determine_input_kind(input_data: Dict[str, np.ndarray]) -> str:
         for param_option in param_list:
             if set(input_keys) == set(param_option):
                 return valid_kind
-    input_key_kinds = Counter([type(v) for v in input_keys])
-    if input_key_kinds[np.float64] >= 3:
+    numeric_key_count = sum([isinstance(key, Quantity) for key in input_data])
+    if numeric_key_count == 3:
         return "MZP"
     raise ValueError("Invalid Keys")  # TODO: improve this message
 
 
-def get_transform_equation(input_kind: str, output_kind: str) -> Callable:
+def get_transform_path(input_kind: str, output_kind: str) -> List[str]:
     try:
         path = nx.shortest_path(transform_graph, input_kind, output_kind)
     except nx.exception.NetworkXNoPath:
-        raise RuntimeError(f"Not possible to convert {input_kind} to {output_kind}") # TODO: make this a custom error
+        raise RuntimeError(f"Not possible to convert {input_kind} to {output_kind}")  # TODO: make this a custom error
+    return path
 
+
+def get_transform_equation(path: List[str]) -> Callable:
     current_function = identity
-    for i, step_start in enumerate(path):
-        if i+1 < len(path):
-            step_end = path[i+1]
-            current_function = _compose2(transform_graph.get_edge_data(step_start, step_end)['func'],
-                                         current_function)
+    for i, step_start in enumerate(path[:-1]):
+        step_end = path[i+1]
+        current_function = _compose2(transform_graph.get_edge_data(step_start, step_end)['func'],
+                                     current_function)
     return current_function
 
 
@@ -153,16 +228,17 @@ def _determine_image_shape(input_dict: Dict[str, np.ndarray]) -> Tuple[int, int]
     return shape
 
 
-def _add_alpha(input_data: Dict[str, np.ndarray], kind) -> Dict[str, np.ndarray]:
+def add_alpha(input_data: Dict[str, np.ndarray], alpha_choice) -> Dict[str, np.ndarray]:
     # test if alpha exists. if not check if alpha keyword added. if not create default alpha with warning.
 
     img_shape = _determine_image_shape(input_data)
     if len(img_shape) == 2:  # it's an image and not just an array
-        kind = "radial" if kind is None else kind
+        alpha_choice = "radial" if alpha_choice is None else alpha_choice
         if "alpha" not in input_data:
-            if kind not in ALPHA_FUNCTIONS:
-                raise ValueError(f"Requested a {kind} alpha type. This is not valid. Must be in {ALPHA_FUNCTIONS.keys()}")
-            input_data['alpha'] = ALPHA_FUNCTIONS[kind](img_shape)
+            if alpha_choice not in ALPHA_FUNCTIONS:
+                raise ValueError(f"Requested a {alpha_choice} alpha type. "
+                                 f"This is not valid. Must be in {ALPHA_FUNCTIONS.keys()}")
+            input_data['alpha'] = ALPHA_FUNCTIONS[alpha_choice](img_shape)
     return input_data
 
 
@@ -208,10 +284,6 @@ def convert_image_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
     #     out = _convert_LASCO_list_to_dict(input_data)
     # else:
     #     raise Exception("Don't recognize this FITS type. Use dictionary input.")
-    pass
-
-
-def get_alpha_usage(input_kind: str, output_kind: str) -> bool:
     pass
 
 

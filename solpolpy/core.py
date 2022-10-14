@@ -121,6 +121,7 @@ def resolve(input_data, out_polarize_state, alpha=None):
         input_data = add_alpha(input_data, alpha)
 
     result = equation(input_data)
+
     if not input_has_radians:
         result, _ = sanitize_data_dict(result, u.degree)
     return result
@@ -128,9 +129,9 @@ def resolve(input_data, out_polarize_state, alpha=None):
 
 def sanitize_data_dict(data_dict, output_angle_unit):
     if output_angle_unit not in [u.radian, u.degree]:
-        raise RuntimeError(f"Keys must be converted to degrees or radians. Found ouput_type={output_angle_unit}")
+        raise RuntimeError(f"Keys must be converted to degrees or radians. Found output_angle_unit={output_angle_unit}")
 
-    # Set up necessary conversions and
+    # Set up necessary conversions
     deg2rad = (np.pi * u.radian) / (180 * u.degree)
     rad2deg = (180 * u.degree) / (np.pi * u.radian)
 

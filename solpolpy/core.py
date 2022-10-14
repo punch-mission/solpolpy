@@ -126,20 +126,20 @@ def resolve(input_data, out_polarize_state, alpha=None):
     return result
 
 
-def sanitize_data_dict(input_data, output_type):
-    if output_type not in [u.radian, u.degree]:
-        raise RuntimeError(f"Keys must be converted to degrees or radians. Found ouput_type={output_type}")
+def sanitize_data_dict(data_dict, output_angle_unit):
+    if output_angle_unit not in [u.radian, u.degree]:
+        raise RuntimeError(f"Keys must be converted to degrees or radians. Found ouput_type={output_angle_unit}")
 
     # Set up necessary conversions and
     deg2rad = (np.pi * u.radian) / (180 * u.degree)
     rad2deg = (180 * u.degree) / (np.pi * u.radian)
 
     # Sanitize all the keys
-    found_radians = False
+    found_radians_key = False
     output_dict = dict()
-    for key, value in input_data.items():
+    for key, value in data_dict.items():
         if isinstance(key, numbers.Real):
-            if output_type == u.degree:
+            if output_angle_unit == u.degree:
                 output_dict[key * u.degree] = value
             else:
                 output_dict[np.deg2rad(key) * u.radian] = value
@@ -147,42 +147,42 @@ def sanitize_data_dict(input_data, output_type):
             if key.unit not in [u.radian, u.degree]:
                 raise RuntimeError(f"Unsupported key type of {u.key} found. Must be radians or degrees.")
             if key.unit == u.radian:
-                found_radians = True
-                if output_type == u.degree:
+                found_radians_key = True
+                if output_angle_unit == u.degree:
                     output_dict[key*rad2deg] = value
                 else:
                     output_dict[key] = value
             elif key.unit == u.degree:
-                if output_type == u.radian:
+                if output_angle_unit == u.radian:
                     output_dict[key*deg2rad] = value
                 else:
                     output_dict[key] = value
-        else:
+        else:  # case for all the string keys
             output_dict[key] = value
 
     # Sanitize alpha map
-    if "alpha" in input_data:
-        if isinstance(input_data['alpha'], Quantity):
-            if input_data['alpha'].unit == u.radian:
-                if output_type == u.degree:
-                    output_dict["alpha"] = input_data['alpha'] * rad2deg
+    if "alpha" in data_dict:
+        if isinstance(data_dict['alpha'], Quantity):
+            if data_dict['alpha'].unit == u.radian:
+                if output_angle_unit == u.degree:
+                    output_dict["alpha"] = data_dict['alpha'] * rad2deg
                 else:
-                    output_dict["alpha"] = input_data["alpha"]
-            elif input_data['alpha'].unit == u.degree:
-                if output_type == u.degree:
-                    output_dict["alpha"] = input_data["alpha"]
+                    output_dict["alpha"] = data_dict["alpha"]
+            elif data_dict['alpha'].unit == u.degree:
+                if output_angle_unit == u.degree:
+                    output_dict["alpha"] = data_dict["alpha"]
                 else:
-                    output_dict["alpha"] = input_data["alpha"] * deg2rad
+                    output_dict["alpha"] = data_dict["alpha"] * deg2rad
             else:
-                raise RuntimeError(f"Alpha must be in degrees or radians. Found {input_data['alpha'].unit} unit.")
-        elif isinstance(input_data['alpha'], numbers.Real) or isinstance(input_data['alpha'], np.ndarray):
-            if output_type == u.degree:
-                output_dict['alpha'] = input_data['alpha'] * u.degree
+                raise RuntimeError(f"Alpha must be in degrees or radians. Found {data_dict['alpha'].unit} unit.")
+        elif isinstance(data_dict['alpha'], numbers.Real) or isinstance(data_dict['alpha'], np.ndarray):
+            if output_angle_unit == u.degree:
+                output_dict['alpha'] = data_dict['alpha'] * u.degree
             else:
-                output_dict["alpha"] = np.deg2rad(input_data['alpha']) * u.radian
+                output_dict["alpha"] = np.deg2rad(data_dict['alpha']) * u.radian
         else:
             raise RuntimeError("Alpha must be numeric with or without a unit.")
-    return output_dict, found_radians
+    return output_dict, found_radians_key
 
 
 def check_alpha_requirement(path: List[str]):

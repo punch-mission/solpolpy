@@ -146,7 +146,7 @@ def sanitize_data_dict(data_dict, output_angle_unit):
                 output_dict[np.deg2rad(key) * u.radian] = value
         elif isinstance(key, Quantity):
             if key.unit not in [u.radian, u.degree]:
-                raise RuntimeError(f"Unsupported key type of {u.key} found. Must be radians or degrees.")
+                raise RuntimeError(f"Unsupported key type of {key.unit} found. Must be radians or degrees.")
             if key.unit == u.radian:
                 found_radians_key = True
                 if output_angle_unit == u.degree:
@@ -165,6 +165,7 @@ def sanitize_data_dict(data_dict, output_angle_unit):
     if "alpha" in data_dict:
         if isinstance(data_dict['alpha'], Quantity):
             if data_dict['alpha'].unit == u.radian:
+                found_radians_key = True
                 if output_angle_unit == u.degree:
                     output_dict["alpha"] = data_dict['alpha'] * rad2deg
                 else:
@@ -176,7 +177,8 @@ def sanitize_data_dict(data_dict, output_angle_unit):
                     output_dict["alpha"] = data_dict["alpha"] * deg2rad
             else:
                 raise RuntimeError(f"Alpha must be in degrees or radians. Found {data_dict['alpha'].unit} unit.")
-        elif isinstance(data_dict['alpha'], numbers.Real) or isinstance(data_dict['alpha'], np.ndarray):
+        elif isinstance(data_dict['alpha'], numbers.Real) or \
+                (isinstance(data_dict['alpha'], np.ndarray) and np.issubdtype(data_dict['alpha'].dtype, np.number)):
             if output_angle_unit == u.degree:
                 output_dict['alpha'] = data_dict['alpha'] * u.degree
             else:

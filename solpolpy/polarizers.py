@@ -58,6 +58,10 @@ def bpb_to_btbr(input_dict):
     return {'Br': Br, "Bt": Bt}
 
 
+
+
+
+
 ######################################################################################################################
 ######################################################################################################################
 ######################################################################################################################
@@ -113,36 +117,7 @@ def bpb_to_btbr(input_dict):
 #     return  B_tangential*(np.sin(theta - alpha))**2 + B_radial*(np.cos(theta - alpha))**2
 #
 #
-# def pB(B, B_theta, theta, alpha):
-#     """Converts unpolarized brightness,`B`, Radiance through a polarizer at angle theta,`B_theta`,
-#     Polarizer angle,`theta`, and Solar position angle of an image point, `alpha` into Coronal
-#     polarized brightness, `pB`.
-#
-#     This function takes in four vars of `B`, `B_theta`, `theta`,and `alpha`.
-#
-#     Parameters
-#     ----------
-#     B : np.ndarray
-#     B_theta : np.ndarray
-#     theta : np.ndarray
-#     alpha : np.ndarray
-#
-#     Returns
-#     -------
-#      float
-#         The float that is returned is defined to be var, `pB`.
-#
-#     Notes
-#     ------
-#     Equation 5 in Deforest et al. 2022.
-#
-#     Sets values to nan when denominator <= 1E-6
-#     """
-#     #anywhere where the denom is less than 1e-6 make it a nan
-#     pB_denom = np.abs(np.cos(2*(theta - alpha)))
-#     pB = (B-(2*B_theta))/ np.cos(2*(theta - alpha))
-#     pB[pB_denom < 1e-6] = np.nan
-#     return pB
+
 #
 #
 # def pB_through_sum(B, Bi, alpha):

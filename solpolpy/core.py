@@ -2,6 +2,7 @@ from typing import Callable, Dict, List, Tuple
 import functools
 from collections import Counter
 import numbers
+from xml.dom.minidom import parseString
 
 from astropy.io import fits
 import astropy.units as u
@@ -111,6 +112,8 @@ def resolve(input_data, out_polarize_state, alpha=None):
     """
     if isinstance(input_data, list):
         input_data = convert_image_list_to_dict(input_data)
+
+
     input_data, input_has_radians = sanitize_data_dict(input_data, u.radian)
     input_kind = determine_input_kind(input_data)
 
@@ -246,48 +249,93 @@ def add_alpha(input_data: Dict[str, np.ndarray], alpha_choice) -> Dict[str, np.n
 
 
 def _convert_STEREO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
-    # data_out={}
-    #     list_len=len(data_in)
-    #     assert list_len >= 2, 'requires at least 2 FITS files'
-    #
-    #     for xlist_item in data_in:
-    #         with fits.open(xlist_item) as hdul:
-    #             assert hdul[0].header['INSTRUME'] == 'SECCHI', 'requires FITS to be SECCHI COR data files'
-    #             data_out[hdul[0].header['POLAR']]=hdul[0].data
-    #             image_hdr = hdul[0].header
-    pass
+    data_out={}
+
+    for xlist_item in input_data:
+        with fits.open(xlist_item) as hdul:
+            data_out[hdul[0].header['POLAR']]=hdul[0].data
+
+    return data_out
 
 
 def _convert_LASCO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
-    # data_out={}
-    #     list_len=len(data_in)
-    #     assert list_len >= 2, 'requires at least 2 FITS files'
-    #
-    #     for xlist_item in data_in:
-    #         with fits.open(xlist_item) as hdul:
-    #             assert hdul[0].header['INSTRUME'] == 'SECCHI', 'requires FITS to be SECCHI COR data files'
-    #             data_out[hdul[0].header['POLAR']]=hdul[0].data
-    #             image_hdr = hdul[0].header
-    pass
+    data_out={}
 
+    for xlist_item in input_data:
+        with fits.open(xlist_item) as hdul:
+            if hdul[0].header['POLAR'] =='+60 Deg':
+                key_value='60'
+            if hdul[0].header['POLAR'] =='0 Deg':
+                key_value='0'
+            if hdul[0].header['POLAR'] =='-60 Deg':
+                key_value='-60'
+            if hdul[0].header['POLAR'] =='Clear':
+                key_value='Clear'
+
+            data_out[key_value]=hdul[0].data
+
+    return data_out
 
 def convert_image_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
-    # data_out={}
-    #     list_len=len(data_in)
-    #     assert list_len >= 2, 'requires at least 2 FITS files'
-    #
-    #     for xlist_item in data_in:
-    #         with fits.open(xlist_item) as hdul:
-    #             assert hdul[0].header['INSTRUME'] == 'SECCHI', 'requires FITS to be SECCHI COR data files'
-    #             data_out[hdul[0].header['POLAR']]=hdul[0].data
-    #             image_hdr = hdul[0].header
-    # if input_data is a STEREO:
-    #     out = _convert_STEREO_list_to_dict(input_data)
-    # elif input_data is LASCO:
-    #     out = _convert_LASCO_list_to_dict(input_data)
-    # else:
-    #     raise Exception("Don't recognize this FITS type. Use dictionary input.")
-    pass
+    # create output dictionary
+    data_out={}
+    
+    # create list of FITS
+    fits_type=[]
+
+    # get length of list to determine how many files to process.
+    list_len=len(input_data)
+    assert list_len >= 2, 'requires at least 2 FITS files'
+
+    for xlist_item in input_data:
+        with fits.open(xlist_item) as hdul:
+            fits_type.append(hdul[0].header['DETECTOR'])
+
+    if len(set(fits_type)) != 1:
+        raise Exception("Input FITS are of different types")
+
+    if fits_type[0] == 'COR1' or fits_type[0] == 'COR2':
+        data_out = _convert_STEREO_list_to_dict(input_data)
+    
+    elif fits_type[0] == 'C2' or fits_type[0] == 'C3':
+        data_out = _convert_LASCO_list_to_dict(input_data)
+    else:
+        raise Exception("the input FITS type is not supported. Use dictionary input.")
+
+    # check if all polarized data entries, or if a B, pB pair
+    if list_len==2:
+
+        print(data_out.keys())
+        
+        for key_value in data_out.keys():
+            print(key_value)
+        #if data_out.keys(0) == 'Clear':
+        #    print('zero is clear')
+        
+        #if data_out.keys(1) == 'Clear':
+        #    print('one is clear')
+
+    # check angles of keys - create warning if not appropriate angles.
+    elif list_len>2:
+        key_total=0
+        for key_value in data_out.keys():
+            if key_value=='Clear':
+                raise Warning("More than 3 files received. At least one input file was not polarized. Include a B, pB pair, or at least 3 complimentary polarized data frames." )
+            
+            # turn polarization keys to floats
+            float_key_value=float(key_value)
+
+            # check if polarization data is separated by complimentary angles
+            if float_key_value < 0:
+                float_key_value = float_key_value + 180
+            
+            key_total=key_total+float_key_value
+
+        if key_total != 360:
+            if key_total != 180:
+                raise Warning("Input angles are not complimentary (total=360 or 180), processing but may not be accruate" )
+
+    return data_out
 
 
 def _compose2(f, g):

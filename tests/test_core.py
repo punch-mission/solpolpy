@@ -162,3 +162,10 @@ def test_bpb_to_btbr():
 def test_mzp_to_btbr(example_mzp):
     result = resolve(example_mzp, "BtBr")
     assert isinstance(result, dict)
+
+
+def test_STEREO_FITS():
+    """ingest STEREO data nd test does something"""
+    file_list=["./stereo1.fts","./stereo2.fts","./stereo3.fts"]
+    result = resolve(file_list, "BtBr")
+    assert isinstance(result, dict)

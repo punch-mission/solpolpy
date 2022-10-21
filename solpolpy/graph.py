@@ -13,11 +13,3 @@ transform_graph.add_edge("BpB", "MZP",
 transform_graph.add_edge("BpB", "BtBr",
                          func=bpb_to_btbr,
                          requires_alpha=False)
-
-
-if __name__ == "__main__":
-    print(transform_graph)
-    print(nx.shortest_path(transform_graph, "MZP", "BtBr"))
-    # print(nx.shortest_path(transform_graph, "BtBr", "MZP"))
-    print(transform_graph.get_edge_data("MZP", "BpB"))
-

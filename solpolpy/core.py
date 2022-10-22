@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Tuple
+from typing import Callable, Dict, List, Tuple, TypeAlias
 import functools
 from collections import Counter
 import numbers
@@ -13,6 +13,9 @@ import networkx as nx
 from solpolpy.constants import VALID_KINDS
 from solpolpy.graph import transform_graph
 from solpolpy.alpha import ALPHA_FUNCTIONS
+
+PolarizedDataDict: TypeAlias = dict[str | Quantity["angle"],
+                                    np.ndarray | Quantity["angle"]]
 
 
 def resolve(input_data, out_polarize_state, alpha=None):

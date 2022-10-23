@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Tuple, TypeAlias
+from typing import Callable, Dict, List, Tuple
 import functools
 from collections import Counter
 import numbers

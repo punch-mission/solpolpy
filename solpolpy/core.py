@@ -14,9 +14,6 @@ from solpolpy.constants import VALID_KINDS
 from solpolpy.graph import transform_graph
 from solpolpy.alpha import ALPHA_FUNCTIONS
 
-PolarizedDataDict: TypeAlias = dict[str | Quantity["angle"],
-                                    np.ndarray | Quantity["angle"]]
-
 
 def resolve(input_data, out_polarize_state, alpha=None):
     """

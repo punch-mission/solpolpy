@@ -262,7 +262,6 @@ def _convert_STEREO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]
                 key_value=hdul[0].header['POLAR']*u.degree
             else:
                 raise Exception("Didn't recognise the POLAR keyword")
-
             data_out[key_value]=hdul[0].data
 
     return data_out
@@ -282,8 +281,10 @@ def _convert_LASCO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
             elif hdul[0].header['POLAR'] =='0 Deg':
                 key_value=0*u.degree
             elif hdul[0].header['POLAR'] =='-60 Deg':
-                #key_value=-60*u.degree
-                key_value=120*u.degree
+                key_value=-60*u.degree
+                #key_value=120*u.degree
+                #key_value=30*u.degree
+                #key_value=300*u.degree
             elif hdul[0].header['POLAR'] =='Clear':
                 key_value='Clear'
             else:
@@ -313,10 +314,11 @@ def convert_image_list_to_dict(input_data: List[str], alpha=None) -> Dict[str, n
 
     if fits_type[0] == 'COR1' or fits_type[0] == 'COR2':
         data_out = _convert_STEREO_list_to_dict(input_data)
+        alpha='radial90'
     
     elif fits_type[0] == 'C2' or fits_type[0] == 'C3':
         data_out = _convert_LASCO_list_to_dict(input_data)
-    
+        alpha='radial'
     else:
         raise Exception("the input FITS type is not supported. Use dictionary input.")
 
@@ -344,7 +346,7 @@ def convert_image_list_to_dict(input_data: List[str], alpha=None) -> Dict[str, n
     # check angles of keys - create warning if not appropriate angles.
     elif list_len>2:
 
-        # check that thekey angles are complimentary
+        # check that the key angles are complimentary
         key_total=0*u.degree
         for key in data_out.keys():
             if key=='Clear':

@@ -9,6 +9,7 @@ import astropy.units as u
 from astropy.units.quantity import Quantity
 import numpy as np
 import networkx as nx
+import warnings
 
 from solpolpy.constants import VALID_KINDS
 from solpolpy.graph import transform_graph
@@ -281,7 +282,8 @@ def _convert_LASCO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
             elif hdul[0].header['POLAR'] =='0 Deg':
                 key_value=0*u.degree
             elif hdul[0].header['POLAR'] =='-60 Deg':
-                key_value=300*u.degree
+                #key_value=-60*u.degree
+                key_value=120*u.degree
             elif hdul[0].header['POLAR'] =='Clear':
                 key_value='Clear'
             else:
@@ -335,7 +337,9 @@ def convert_image_list_to_dict(input_data: List[str], alpha=None) -> Dict[str, n
         data_out = add_alpha(data_out, alpha)
 
         # resolve pB in terms of the radiance through a single arbitrary polarizer
-        data_out = {'pB': pB_from_single_angle(data_out['Clear'], data_out[angle], angle, data_out['alpha']), 'B': data_out['Clear'], 'alpha': data_out['alpha']}
+        data_out = {'pB': pB_from_single_angle(data_out['Clear'], data_out[angle], angle, data_out['alpha']), 
+                     'B': data_out['Clear'], 
+                     'alpha': data_out['alpha']}
 
     # check angles of keys - create warning if not appropriate angles.
     elif list_len>2:
@@ -349,7 +353,7 @@ def convert_image_list_to_dict(input_data: List[str], alpha=None) -> Dict[str, n
             key_total=key_total+key
 
         if key_total != 360*u.degree:
-            raise Warning("Input angles are not complimentary (total=360), processing but may not be accruate" )
+            warnings.warn("Input angles are not complimentary (total=360), processing but may not be accruate", Warning )
 
     return data_out
 

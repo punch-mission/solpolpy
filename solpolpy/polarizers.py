@@ -5,7 +5,7 @@ Basic coordinate transforms
 """
 
 import numpy as np
-
+import astropy.units as u
 
 def mzp_to_bpb(input_dict):
     """
@@ -33,7 +33,7 @@ def mzp_to_bpb(input_dict):
     return {"B": B, "pB": pB, "alpha": alpha}
 
 
-def bpb_to_mzp(input_dict):
+def bpb_to_mzp(input_dict, output_angles=(-60*u.degree, 0*u.degree, 60*u.degree)):
     """
     Notes
     ------
@@ -41,7 +41,7 @@ def bpb_to_mzp(input_dict):
     """
     alpha = input_dict['alpha']
     B, pB = input_dict['B'], input_dict['pB']
-    result = {theta: (1 / 2) * (B - pB * (np.cos(2 * (theta - alpha)))) for theta in np.deg2rad([-60, 0, 60])}
+    result = {theta: (1 / 2) * (B - pB * (np.cos(2 * (theta - alpha)))) for theta in output_angles}
     result['alpha'] = alpha
     return result
 

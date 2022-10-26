@@ -24,7 +24,11 @@ def radial(shape):
     xx, yy = np.meshgrid(x, y)
     return np.fliplr(np.arctan2(yy, xx))*u.radian
 
+def zeros(shape):
+    return np.zeros(shape)
 
 
 ALPHA_FUNCTIONS = {'radial': radial,
-                   'radial90': radial90}
+                   'radial90': radial90,
+                   'zeros': zeros}
+

@@ -173,14 +173,15 @@ def test_STEREO_triplet():
     """ingest STEREO data nd test does something"""
     TESTDATA_DIR = os.path.dirname(__file__)
     path_to_test_files=TESTDATA_DIR+'/test_support_files/'
-    file_list=[path_to_test_files+"stereo1.fts",
-               path_to_test_files+"stereo2.fts",
-               path_to_test_files+"stereo3.fts"]
+    file_list=[path_to_test_files+"stereo_0.fts",
+               path_to_test_files+"stereo_120.fts",
+               path_to_test_files+"stereo_240.fts"]
     result = convert_image_list_to_dict(file_list)
     assert isinstance(result, dict)
     assert 0*u.degree in result
     assert 120*u.degree in result
     assert 240*u.degree in result
+
 
 def test_LASCO_triplet():
     """ingest STEREO data nd test does something"""
@@ -192,8 +193,9 @@ def test_LASCO_triplet():
     result = convert_image_list_to_dict(file_list)
     assert isinstance(result, dict)
     assert 0*u.degree in result
-    assert 120*u.degree in result
-    assert 240*u.degree in result
+    assert -60*u.degree in result
+    assert 60*u.degree in result
+
 
 def test_LASCO_BpB():
     """ingest STEREO data nd test does something"""

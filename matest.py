@@ -33,9 +33,9 @@ def plot_BpB_lasco():
 
 
 def plot_BpB_stereo():
-    file_list=[path_to_test_files+"stereo1.fts",
-           path_to_test_files+"stereo2.fts",
-           path_to_test_files+"stereo3.fts"]
+    file_list=[path_to_test_files+"stereo_0.fts",
+           path_to_test_files+"stereo_120.fts",
+           path_to_test_files+"stereo_240.fts"]
 
 
     output=sp.resolve(file_list, 'BpB')

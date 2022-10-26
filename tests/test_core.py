@@ -6,10 +6,15 @@ pytest test suite for the polarizers module of solpolpy
 import numpy as np
 import pytest
 from pytest import fixture
+import os
 
 import astropy.units as u
 
-from solpolpy.core import determine_input_kind, resolve, sanitize_data_dict
+from solpolpy.core import (determine_input_kind, 
+                          resolve, 
+                          sanitize_data_dict, 
+                          convert_image_list_to_dict, 
+                          pB_from_single_angle)
 from solpolpy.polarizers import mzp_to_bpb, bpb_to_btbr
 
 
@@ -162,3 +167,58 @@ def test_bpb_to_btbr():
 def test_mzp_to_btbr(example_mzp):
     result = resolve(example_mzp, "BtBr")
     assert isinstance(result, dict)
+
+
+def test_STEREO_triplet():
+    """ingest STEREO data nd test does something"""
+    TESTDATA_DIR = os.path.dirname(__file__)
+    path_to_test_files=TESTDATA_DIR+'/test_support_files/'
+    file_list=[path_to_test_files+"stereo_0.fts",
+               path_to_test_files+"stereo_120.fts",
+               path_to_test_files+"stereo_240.fts"]
+    result = convert_image_list_to_dict(file_list)
+    assert isinstance(result, dict)
+    assert 0*u.degree in result
+    assert 120*u.degree in result
+    assert 240*u.degree in result
+
+
+def test_LASCO_triplet():
+    """ingest STEREO data nd test does something"""
+    TESTDATA_DIR = os.path.dirname(__file__)
+    path_to_test_files=TESTDATA_DIR+'/test_support_files/'
+    file_list=[path_to_test_files+"lasco_-60.fts",
+               path_to_test_files+"lasco_+60.fts",
+               path_to_test_files+"lasco_0.fts"]
+    result = convert_image_list_to_dict(file_list)
+    assert isinstance(result, dict)
+    assert 0*u.degree in result
+    assert -60*u.degree in result
+    assert 60*u.degree in result
+
+
+def test_LASCO_BpB():
+    """ingest STEREO data nd test does something"""
+    TESTDATA_DIR = os.path.dirname(__file__)
+    path_to_test_files=TESTDATA_DIR+'/test_support_files/'
+    file_list=[path_to_test_files+"lasco_-60.fts",
+               path_to_test_files+"lasco_clear.fts"]
+    result = convert_image_list_to_dict(file_list)
+    assert isinstance(result, dict)
+    assert 'pB' in result
+    assert 'B' in result
+    assert 'alpha' in result
+
+
+@pytest.mark.parametrize("B, B_theta, theta, alpha, expected",
+                            [(0, 0.5, 0*u.degree, 0*u.degree, -1),
+                            (0, 0.5, 0*u.radian, 0*u.radian, -1),
+                            (0, 0.5, 0*u.radian, 0*u.degree, -1),
+                            (0, 0.5, 1*u.degree, 1*u.degree, -1),
+                            (0, 0.5, 1*u.degree, 2*u.degree, -1.00061)])
+
+def test_pB_from_single_angle_function(B, B_theta, theta, alpha, expected):
+    """test pB from single angle fn in core"""
+
+    output=pB_from_single_angle(B, B_theta, theta, alpha)
+    np.testing.assert_allclose(output, expected, rtol=1e-05)

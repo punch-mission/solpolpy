@@ -2,12 +2,14 @@ from typing import Callable, Dict, List, Tuple
 import functools
 from collections import Counter
 import numbers
+from xml.dom.minidom import parseString
 
 from astropy.io import fits
 import astropy.units as u
 from astropy.units.quantity import Quantity
 import numpy as np
 import networkx as nx
+import warnings
 
 from solpolpy.constants import VALID_KINDS
 from solpolpy.graph import transform_graph
@@ -110,13 +112,16 @@ def resolve(input_data, out_polarize_state, alpha=None):
         present, are still appended to the output vectors in all any case.
     """
     if isinstance(input_data, list):
-        input_data = convert_image_list_to_dict(input_data)
+        input_data = convert_image_list_to_dict(input_data, alpha=alpha)
+
+
     input_data, input_has_radians = sanitize_data_dict(input_data, u.radian)
     input_kind = determine_input_kind(input_data)
 
     transform_path = get_transform_path(input_kind, out_polarize_state)
     equation = get_transform_equation(transform_path)
     requires_alpha = check_alpha_requirement(transform_path)
+
     if requires_alpha:
         input_data = add_alpha(input_data, alpha)
 
@@ -242,52 +247,118 @@ def add_alpha(input_data: Dict[str, np.ndarray], alpha_choice) -> Dict[str, np.n
                 raise ValueError(f"Requested a {alpha_choice} alpha type. "
                                  f"This is not valid. Must be in {ALPHA_FUNCTIONS.keys()}")
             input_data['alpha'] = ALPHA_FUNCTIONS[alpha_choice](img_shape)
+
     return input_data
 
 
 def _convert_STEREO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
-    # data_out={}
-    #     list_len=len(data_in)
-    #     assert list_len >= 2, 'requires at least 2 FITS files'
-    #
-    #     for xlist_item in data_in:
-    #         with fits.open(xlist_item) as hdul:
-    #             assert hdul[0].header['INSTRUME'] == 'SECCHI', 'requires FITS to be SECCHI COR data files'
-    #             data_out[hdul[0].header['POLAR']]=hdul[0].data
-    #             image_hdr = hdul[0].header
-    pass
+    data_out={}
+
+    for xlist_item in input_data:
+        with fits.open(xlist_item) as hdul:
+            if hdul[0].header['POLAR']== 'Clear':
+                key_value='Clear'
+            elif isinstance(hdul[0].header['POLAR'], numbers.Real):
+                key_value=hdul[0].header['POLAR']*u.degree
+            else:
+                raise Exception("Didn't recognise the POLAR keyword")
+            data_out[key_value]=hdul[0].data
+
+    return data_out
 
 
 def _convert_LASCO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
-    # data_out={}
-    #     list_len=len(data_in)
-    #     assert list_len >= 2, 'requires at least 2 FITS files'
-    #
-    #     for xlist_item in data_in:
-    #         with fits.open(xlist_item) as hdul:
-    #             assert hdul[0].header['INSTRUME'] == 'SECCHI', 'requires FITS to be SECCHI COR data files'
-    #             data_out[hdul[0].header['POLAR']]=hdul[0].data
-    #             image_hdr = hdul[0].header
-    pass
+    # TODO: check that by converting the polar angle to 0->360 degree form doesn't require a modification to the dataframe (possible direction)
+    # TODO: verify it's correct to add 360 degrees to -ve angles
+    # TODO: verify if you reverese the angle (-60-> 120 & 60->240) the brightness is -ve.
+    data_out={}
 
 
-def convert_image_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
-    # data_out={}
-    #     list_len=len(data_in)
-    #     assert list_len >= 2, 'requires at least 2 FITS files'
-    #
-    #     for xlist_item in data_in:
-    #         with fits.open(xlist_item) as hdul:
-    #             assert hdul[0].header['INSTRUME'] == 'SECCHI', 'requires FITS to be SECCHI COR data files'
-    #             data_out[hdul[0].header['POLAR']]=hdul[0].data
-    #             image_hdr = hdul[0].header
-    # if input_data is a STEREO:
-    #     out = _convert_STEREO_list_to_dict(input_data)
-    # elif input_data is LASCO:
-    #     out = _convert_LASCO_list_to_dict(input_data)
-    # else:
-    #     raise Exception("Don't recognize this FITS type. Use dictionary input.")
-    pass
+    for xlist_item in input_data:
+        with fits.open(xlist_item) as hdul:
+            if hdul[0].header['POLAR'] =='+60 Deg':
+                key_value=60*u.degree 
+            elif hdul[0].header['POLAR'] =='0 Deg':
+                key_value=0*u.degree
+            elif hdul[0].header['POLAR'] =='-60 Deg':
+                key_value=-60*u.degree
+                #key_value=120*u.degree
+                #key_value=30*u.degree
+                #key_value=300*u.degree
+            elif hdul[0].header['POLAR'] =='Clear':
+                key_value='Clear'
+            else:
+                raise Exception("Didn't recognise the POLAR keyword")
+
+            data_out[key_value]=hdul[0].data
+
+    return data_out
+
+def convert_image_list_to_dict(input_data: List[str], alpha=None) -> Dict[str, np.ndarray]:
+    # create output dictionary
+    data_out={}
+    
+    # create list of FITS
+    fits_type=[]
+
+    # get length of list to determine how many files to process.
+    list_len=len(input_data)
+    assert list_len >= 2, 'requires at least 2 FITS files'
+
+    for xlist_item in input_data:
+        with fits.open(xlist_item) as hdul:
+            fits_type.append(hdul[0].header['DETECTOR'])
+
+    if len(set(fits_type)) != 1:
+        raise Exception("Input FITS are of different types")
+
+    if fits_type[0] == 'COR1' or fits_type[0] == 'COR2':
+        data_out = _convert_STEREO_list_to_dict(input_data)
+        alpha='radial90'
+        # TODO: change alpha only if None, and also make a warning
+    elif fits_type[0] == 'C2' or fits_type[0] == 'C3':
+        data_out = _convert_LASCO_list_to_dict(input_data)
+        alpha='radial'
+        # TODO: change alpha only if None, and also make a warning
+    else:
+        raise Exception("the input FITS type is not supported. Use dictionary input.")
+
+    # check if all polarized data entries, or if a B, pB pair
+    if list_len==2:
+
+        assert "Clear" in data_out, "expected a Clear (total brightness) data frame in the input polarization data pair"
+
+        # checking that there is a polarized data frame, and what the value of the angle is.
+        angle=None
+        for key in data_out.keys():
+            if isinstance(key, Quantity): 
+                angle=key
+        
+        assert angle is not None, "the input polarization angle key is None, expected a numeric value"
+
+        # to make BpB we need to add an alpha
+        data_out = add_alpha(data_out, alpha)
+
+        # resolve pB in terms of the radiance through a single arbitrary polarizer
+        data_out = {'pB': pB_from_single_angle(data_out['Clear'], data_out[angle], angle, data_out['alpha']),
+                     'B': data_out['Clear'], 
+                     'alpha': data_out['alpha']}
+
+    # check angles of keys - create warning if not appropriate angles.
+    elif list_len>2:
+
+        # check that the key angles are complimentary
+        key_total=0*u.degree
+        for key in data_out.keys():
+            if key=='Clear':
+                raise Exception("More than 3 files received. At least one input file was not polarized. Include a B, pB pair, or at least 3 complimentary polarized data frames." )
+                
+            key_total=key_total+key
+
+        if key_total != 360*u.degree:
+            warnings.warn("Input angles are not complimentary (total=360), processing but may not be accruate", Warning )
+
+    return data_out
 
 
 def _compose2(f, g):
@@ -296,3 +367,47 @@ def _compose2(f, g):
 
 def identity(x):
     return x
+
+
+def pB_from_single_angle(B, B_theta, theta, alpha, tol=1e-6):
+    """
+    Converts unpolarized brightness,`B`, Radiance through a polarizer at angle theta,`B_theta`,
+    Polarizer angle,`theta`, and Solar position angle of an image point, `alpha` into Coronal
+    polarized brightness, `pB`.
+    
+    This function takes in four vars of `B`, `B_theta`, `theta`,and `alpha`.
+
+    Parameters
+    ----------
+    B : np.ndarray
+      'Clear' or total brightness data frame  
+    B_theta : np.ndarray
+      polarized data at angle theta
+    theta : Quantity (astropy)
+      angle of polarized data frame
+    alpha : Quantity (astropy)
+      alpha array to accompany STEREO or LASCO dataframes
+    tol : float
+      tolerence at which the denominator is converted to a nan (see Notes)
+
+    Returns
+    -------
+    polarized brightness in terms of the radiance through a single arbitrary polarizer
+
+    Notes
+    ------
+    see Equation 5 in Deforest et al. 2022.
+    if this equation is used for single values, alpha will need to be a Quantity
+
+    Equation (5) is problematic, because the denominator is small when theta-alpha 
+    is near pm pi/4. Therefore, a nan is inserted when < tol
+
+    Due to the cosine in the denominator, with an alpha varying from 0 to 360 degrees pB should vary from positive to
+    negative twice crossing zero four times (pB will go to infinity at this point).
+    """
+    
+    pB_denominator = np.cos( 2*(theta - alpha) )
+    pB_denominator[np.abs(pB_denominator) < tol] = np.nan
+
+    return ( B-( 2*B_theta ) ) / pB_denominator
+

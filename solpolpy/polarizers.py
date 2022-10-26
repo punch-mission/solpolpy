@@ -5,7 +5,7 @@ Basic coordinate transforms
 """
 
 import numpy as np
-
+import astropy.units as u
 
 def mzp_to_bpb(input_dict):
     """
@@ -33,7 +33,7 @@ def mzp_to_bpb(input_dict):
     return {"B": B, "pB": pB, "alpha": alpha}
 
 
-def bpb_to_mzp(input_dict):
+def bpb_to_mzp(input_dict, output_angles=(-60*u.degree, 0*u.degree, 60*u.degree)):
     """
     Notes
     ------
@@ -41,7 +41,7 @@ def bpb_to_mzp(input_dict):
     """
     alpha = input_dict['alpha']
     B, pB = input_dict['B'], input_dict['pB']
-    result = {theta: (1 / 2) * (B - pB * (np.cos(2 * (theta - alpha)))) for theta in np.deg2rad([-60, 0, 60])}
+    result = {theta: (1 / 2) * (B - pB * (np.cos(2 * (theta - alpha)))) for theta in output_angles}
     result['alpha'] = alpha
     return result
 
@@ -56,6 +56,10 @@ def bpb_to_btbr(input_dict):
     Br = (B - pB) / 2
     Bt = (B + pB) / 2
     return {'Br': Br, "Bt": Bt}
+
+
+
+
 
 
 ######################################################################################################################
@@ -113,36 +117,7 @@ def bpb_to_btbr(input_dict):
 #     return  B_tangential*(np.sin(theta - alpha))**2 + B_radial*(np.cos(theta - alpha))**2
 #
 #
-# def pB(B, B_theta, theta, alpha):
-#     """Converts unpolarized brightness,`B`, Radiance through a polarizer at angle theta,`B_theta`,
-#     Polarizer angle,`theta`, and Solar position angle of an image point, `alpha` into Coronal
-#     polarized brightness, `pB`.
-#
-#     This function takes in four vars of `B`, `B_theta`, `theta`,and `alpha`.
-#
-#     Parameters
-#     ----------
-#     B : np.ndarray
-#     B_theta : np.ndarray
-#     theta : np.ndarray
-#     alpha : np.ndarray
-#
-#     Returns
-#     -------
-#      float
-#         The float that is returned is defined to be var, `pB`.
-#
-#     Notes
-#     ------
-#     Equation 5 in Deforest et al. 2022.
-#
-#     Sets values to nan when denominator <= 1E-6
-#     """
-#     #anywhere where the denom is less than 1e-6 make it a nan
-#     pB_denom = np.abs(np.cos(2*(theta - alpha)))
-#     pB = (B-(2*B_theta))/ np.cos(2*(theta - alpha))
-#     pB[pB_denom < 1e-6] = np.nan
-#     return pB
+
 #
 #
 # def pB_through_sum(B, Bi, alpha):

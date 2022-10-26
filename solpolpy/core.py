@@ -315,10 +315,11 @@ def convert_image_list_to_dict(input_data: List[str], alpha=None) -> Dict[str, n
     if fits_type[0] == 'COR1' or fits_type[0] == 'COR2':
         data_out = _convert_STEREO_list_to_dict(input_data)
         alpha='radial90'
-    
+        # TODO: change alpha only if None, and also make a warning
     elif fits_type[0] == 'C2' or fits_type[0] == 'C3':
         data_out = _convert_LASCO_list_to_dict(input_data)
         alpha='radial'
+        # TODO: change alpha only if None, and also make a warning
     else:
         raise Exception("the input FITS type is not supported. Use dictionary input.")
 
@@ -339,7 +340,7 @@ def convert_image_list_to_dict(input_data: List[str], alpha=None) -> Dict[str, n
         data_out = add_alpha(data_out, alpha)
 
         # resolve pB in terms of the radiance through a single arbitrary polarizer
-        data_out = {'pB': pB_from_single_angle(data_out['Clear'], data_out[angle], angle, data_out['alpha']), 
+        data_out = {'pB': pB_from_single_angle(data_out['Clear'], data_out[angle], angle, data_out['alpha']),
                      'B': data_out['Clear'], 
                      'alpha': data_out['alpha']}
 
@@ -400,9 +401,13 @@ def pB_from_single_angle(B, B_theta, theta, alpha, tol=1e-6):
 
     Equation (5) is problematic, because the denominator is small when theta-alpha 
     is near pm pi/4. Therefore, a nan is inserted when < tol
+
+    Due to the cosine in the denominator, with an alpha varying from 0 to 360 degrees pB should vary from positive to
+    negative twice crossing zero four times (pB will go to infinity at this point).
     """
     
     pB_denominator = np.cos( 2*(theta - alpha) )
     pB_denominator[np.abs(pB_denominator) < tol] = np.nan
 
     return ( B-( 2*B_theta ) ) / pB_denominator
+

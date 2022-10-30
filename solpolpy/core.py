@@ -1,8 +1,5 @@
 from typing import Callable, Dict, List, Tuple
-import functools
-from collections import Counter
 import numbers
-from xml.dom.minidom import parseString
 
 from astropy.io import fits
 import astropy.units as u
@@ -14,6 +11,7 @@ import warnings
 from solpolpy.constants import VALID_KINDS
 from solpolpy.graph import transform_graph
 from solpolpy.alpha import ALPHA_FUNCTIONS
+from solpolpy.instruments import _convert_LASCO_list_to_dict, _convert_STEREO_list_to_dict
 
 
 def resolve(input_data, out_polarize_state, alpha=None):
@@ -250,49 +248,6 @@ def add_alpha(input_data: Dict[str, np.ndarray], alpha_choice) -> Dict[str, np.n
 
     return input_data
 
-
-def _convert_STEREO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
-    data_out={}
-
-    for xlist_item in input_data:
-        with fits.open(xlist_item) as hdul:
-            if hdul[0].header['POLAR']== 'Clear':
-                key_value='Clear'
-            elif isinstance(hdul[0].header['POLAR'], numbers.Real):
-                key_value=hdul[0].header['POLAR']*u.degree
-            else:
-                raise Exception("Didn't recognise the POLAR keyword")
-            data_out[key_value]=hdul[0].data
-
-    return data_out
-
-
-def _convert_LASCO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
-    # TODO: check that by converting the polar angle to 0->360 degree form doesn't require a modification to the dataframe (possible direction)
-    # TODO: verify it's correct to add 360 degrees to -ve angles
-    # TODO: verify if you reverese the angle (-60-> 120 & 60->240) the brightness is -ve.
-    data_out={}
-
-
-    for xlist_item in input_data:
-        with fits.open(xlist_item) as hdul:
-            if hdul[0].header['POLAR'] =='+60 Deg':
-                key_value=60*u.degree 
-            elif hdul[0].header['POLAR'] =='0 Deg':
-                key_value=0*u.degree
-            elif hdul[0].header['POLAR'] =='-60 Deg':
-                key_value=-60*u.degree
-                #key_value=120*u.degree
-                #key_value=30*u.degree
-                #key_value=300*u.degree
-            elif hdul[0].header['POLAR'] =='Clear':
-                key_value='Clear'
-            else:
-                raise Exception("Didn't recognise the POLAR keyword")
-
-            data_out[key_value]=hdul[0].data
-
-    return data_out
 
 def convert_image_list_to_dict(input_data: List[str], alpha=None) -> Dict[str, np.ndarray]:
     # create output dictionary

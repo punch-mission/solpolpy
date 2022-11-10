@@ -38,7 +38,7 @@ def _convert_STEREO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]
             if hdul[0].header['POLAR'] == 'Clear':
                 key_value = 'Clear'
             elif isinstance(hdul[0].header['POLAR'], numbers.Real):
-                key_value = hdul[0].header['POLAR']*u.degree
+                key_value = hdul[0].header['POLAR']*u.degree  # TODO: make sure it is -60, 0, 60 from now on
             else:
                 raise Exception("Didn't recognise the POLAR keyword")
             data_out[key_value] = hdul[0].data

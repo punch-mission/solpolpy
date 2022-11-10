@@ -2,6 +2,9 @@ import numpy as np
 import astropy.units as u
 
 
+# TODO: make sure these have up/solar north as the reference of 0 degrees
+
+
 def radial90(shape):
     '''
     assumes solar north is to the left - useful for STEREO

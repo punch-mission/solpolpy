@@ -2,8 +2,12 @@ import numbers
 from typing import List, Dict
 
 import numpy as np
+from ndcube import NDCube, NDCollection
 from astropy import units as u
 from astropy.io import fits
+from astropy.wcs import WCS
+
+
 
 
 def _convert_LASCO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]:
@@ -43,3 +47,13 @@ def _convert_STEREO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]
                 raise Exception("Didn't recognise the POLAR keyword")
             data_out[key_value] = hdul[0].data
     return data_out
+
+def load_STEREO(path_list: List[str]) -> NDCollection:
+    data_out = {}
+
+    for data_path in path_list:
+        with fits.open(data_path) as hdul:
+            wcs = WCS(hdul[0].header)
+            data_out["STEREO_"+str(hdul[0].header['POLAR'])] = NDCube(hdul[0].data, wcs=wcs, meta=hdul[0].header)
+
+    return NDCollection(data_out, meta={})

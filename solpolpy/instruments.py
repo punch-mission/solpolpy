@@ -50,10 +50,18 @@ def _convert_STEREO_list_to_dict(input_data: List[str]) -> Dict[str, np.ndarray]
 
 def load_STEREO(path_list: List[str]) -> NDCollection:
     data_out = {}
-
     for data_path in path_list:
         with fits.open(data_path) as hdul:
             wcs = WCS(hdul[0].header)
             data_out["STEREO_"+str(hdul[0].header['POLAR'])] = NDCube(hdul[0].data, wcs=wcs, meta=hdul[0].header)
+
+    return NDCollection(data_out, meta={})
+
+def load_LASCO(path_list: List[str]) -> NDCollection:
+    data_out = {}
+    for data_path in path_list:
+        with fits.open(data_path) as hdul:
+            wcs = WCS(hdul[0].header)
+            data_out["LASCO_"+str(hdul[0].header['POLAR'])] = NDCube(hdul[0].data, wcs=wcs, meta=hdul[0].header)
 
     return NDCollection(data_out, meta={})

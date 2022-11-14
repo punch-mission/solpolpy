@@ -1,6 +1,6 @@
 import os
 from ndcube import NDCube, NDCollection
-from solpolpy.instruments import load_STEREO
+from solpolpy.instruments import load_STEREO, load_LASCO
 
 def test_load_stereo():
     TESTDATA_DIR = os.path.dirname(__file__)
@@ -8,5 +8,14 @@ def test_load_stereo():
     file_list=[path_to_test_files+"stereo_0.fts",
                path_to_test_files+"stereo_120.fts",
                path_to_test_files+"stereo_240.fts"]
+    out = load_STEREO(file_list)
+    assert isinstance(out, NDCollection)
+
+def test_load_lasco():
+    TESTDATA_DIR = os.path.dirname(__file__)
+    path_to_test_files = TESTDATA_DIR + '/test_support_files/'
+    file_list = [path_to_test_files + "lasco_0.fts",
+                 path_to_test_files + "lasco_-60.fts",
+                 path_to_test_files + "lasco_+60.fts"]
     out = load_STEREO(file_list)
     assert isinstance(out, NDCollection)

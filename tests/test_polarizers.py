@@ -28,6 +28,17 @@ def test_mzp_to_bpb_zeros(mzp_zeros):
     for k, v in expected.items():
         assert np.allclose(actual[k], expected[k])
 
+@fixture
+def mzp_zeros():
+    return {np.pi/3 * u.radian: np.array([0]),
+            0*u.radian: np.array([0]),
+            -np.pi/3 * u.radian: np.array([0])}
+def test_any_to_mzp_zeros(mzp_zeros):
+    actual = pol.any_to_mzp(mzp_zeros)
+    expected = {"Bm": np.zeros(1), "Bz": np.zeros(1), "Bp": np.zeros(1)}
+    for k, v in expected.items():
+        assert np.allclose(actual[k], expected[k])
+
 
 @fixture
 def mzp_ones():
@@ -40,6 +51,32 @@ def mzp_ones():
 def test_mzp_to_bpb_ones(mzp_ones):
     actual = pol.mzp_to_bpb(mzp_ones)
     expected = {"B": np.array([2]), "pB": np.zeros(1), "alpha": mzp_ones['alpha']}
+    for k, v in expected.items():
+        assert np.allclose(actual[k], expected[k])
+
+
+@fixture
+def mzp_ones():
+    return {np.pi / 3 * u.radian: np.array([1]),
+            0 * u.radian: np.array([1]),
+            -np.pi / 3 * u.radian: np.array([1])}
+
+def test_any_to_mzp_ones(mzp_ones):
+    actual = pol.any_to_mzp(mzp_ones)
+    expected = {"Bm": np.ones(1), "Bz": np.ones(1), "Bp": np.ones(1)}
+    for k, v in expected.items():
+        assert np.allclose(actual[k], expected[k])
+
+@fixture
+def mzp_fourp():
+    return {0*u.radian: np.array([1]),
+            np.pi/4*u.radian: np.array([1]),
+            np.pi/2*u.radian: np.array([1]),
+            3*np.pi/4*u.radian: np.array([1]),}
+
+def test_any_to_mzp_fourp(mzp_fourp):
+    actual = pol.any_to_mzp(mzp_fourp)
+    expected = {"Bm": np.array([4/3]), "Bz": np.array([4/3]), "Bp": np.array([4/3])}
     for k, v in expected.items():
         assert np.allclose(actual[k], expected[k])
 

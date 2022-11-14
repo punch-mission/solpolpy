@@ -7,6 +7,31 @@ Basic coordinate transforms
 import numpy as np
 import astropy.units as u
 
+def any_to_mzp(input_dict):
+    """
+    Notes
+    ------
+    Equation 44 in Deforest et al. 2022.
+
+    """""
+    conv_fact = (np.pi * u.radian) / (180 * u.degree)
+    Bm = (1 / 3) * np.sum([ith_polarizer_brightness
+                           * (1 + 2 * np.cos(2 * (-60*u.degree*conv_fact - ith_angle)))
+                           for ith_angle, ith_polarizer_brightness
+                           in input_dict.items()], axis=0)
+    Bz = (1 / 3) * np.sum([ith_polarizer_brightness
+                           * (1 + 2 * np.cos(2 * (0*u.degree*conv_fact - ith_angle)))
+                           for ith_angle, ith_polarizer_brightness
+                           in input_dict.items()], axis=0)
+    Bp = (1 / 3) * np.sum([ith_polarizer_brightness
+                           * (1 + 2 * np.cos(2 * (+60*u.degree*conv_fact - ith_angle)))
+                           for ith_angle, ith_polarizer_brightness
+                           in input_dict.items()], axis=0)
+    return {"Bm": Bm,
+            "Bz": Bz,
+            "Bp": Bp}
+
+
 def mzp_to_bpb(input_dict):
     """
     Notes

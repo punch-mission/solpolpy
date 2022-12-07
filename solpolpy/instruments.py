@@ -1,11 +1,9 @@
-import numbers
-from typing import List, Dict
 
-import numpy as np
+from typing import List
 from ndcube import NDCube, NDCollection
-from astropy import units as u
 from astropy.io import fits
 from astropy.wcs import WCS
+
 
 def load_data(path_list: List[str]) -> NDCollection:
     """
@@ -24,10 +22,10 @@ def load_data(path_list: List[str]) -> NDCollection:
     """
 
     # create list of FITS
-    fits_type=[]
+    fits_type = []
 
     # get length of list to determine how many files to process.
-    list_len=len(path_list)
+    list_len = len(path_list)
     assert list_len >= 2, 'requires at least 2 FITS files'
 
     for xlist_item in path_list:
@@ -39,7 +37,6 @@ def load_data(path_list: List[str]) -> NDCollection:
 
     data_out = []
     i = 0
-    deg2rad = (np.pi * u.radian) / (180 * u.degree)
 
     for data_path in path_list:
         with fits.open(data_path) as hdul:

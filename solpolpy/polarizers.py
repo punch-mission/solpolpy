@@ -1,14 +1,11 @@
 import numpy as np
-import solpolpy as sp
 import copy
 import astropy.units as u
 from ndcube import NDCube, NDCollection
-from astropy.wcs import WCS
 
 
 def conv_polar_from_head(input_cube):
     return int(float(str(input_cube.meta['POLAR']).strip(" Deg")))
-
 
 # def alpha1(shape):
 #     '''
@@ -21,6 +18,7 @@ def conv_polar_from_head(input_cube):
 #     xx, yy = np.meshgrid(x, y)
 #     # return np.rot90(np.fliplr(np.arctan2(yy, xx)+np.pi), k=1)*u.radian
 #     return np.fliplr(np.arctan2(yy, xx)+np.pi)*u.radian
+
 
 def npol_to_mzp(input_cube):
     """
@@ -78,7 +76,7 @@ def mzp_to_bpb(input_cube):
     #     raise ValueError("missing alpha")
 
     alpha = input_cube[
-                'alpha'].data * u.radian  # alpha1([input_cube['Bm'].meta['NAXIS1'], input_cube['Bm'].meta['NAXIS2']]) #input_cube['alpha'].data*u.radian
+                'alpha'].data * u.radian
     B = (2 / 3) * (np.sum([ith_polarizer_brightness
                            for ith_angle, ith_polarizer_brightness
                            in input_dict.items() if ith_angle != "alpha"], axis=0))
@@ -311,8 +309,6 @@ def bp3_to_mzp(input_cube):
     ------
     Equation 11 in Deforest et al. 2022.
     """""
-    input_dict = {}
-    in_list = list(input_cube)
     conv_fact = (np.pi * u.radian) / (180 * u.degree)
 
     if "alpha" not in input_cube:
@@ -343,8 +339,6 @@ def btbr_to_mzp(input_cube):
     ------
     Equation 3 in Deforest et al. 2022.
     """
-    input_dict = {}
-
     if "alpha" not in input_cube:
         raise ValueError("missing alpha")
 
@@ -372,17 +366,13 @@ def bp3_to_bthp(input_cube):
     ------
     Equations 9, 15, 16 in Deforest et al. 2022.
     """""
-    input_dict = {}
-    in_list = list(input_cube)
-    conv_fact = (np.pi * u.radian) / (180 * u.degree)
-
     if "alpha" not in input_cube:
         raise ValueError("missing alpha")
 
     B, pB, pBp = input_cube['B'].data, input_cube['pB'].data, input_cube['pBp'].data
     alpha = input_cube['alpha'].data * u.radian
 
-    theta_mx = theta_mx = (1 / 2) * np.arctan2(pBp, pB) * u.radian + np.pi / 2 * u.radian + alpha
+    theta_mx = (1 / 2) * np.arctan2(pBp, pB) * u.radian + np.pi / 2 * u.radian + alpha
     p = np.sqrt(pB ** 2 + pBp ** 2) / B
 
     metaTh, metaP = copy.copy(input_cube["B"].meta), copy.copy(input_cube["pB"].meta)
@@ -402,8 +392,6 @@ def btbr_to_npol(input_cube, angles):
     ------
     Equation 3 in Deforest et al. 2022.
     """
-    input_dict = {}
-
     if "alpha" not in input_cube:
         raise ValueError("missing alpha")
 

@@ -16,7 +16,6 @@ from solpolpy.constants import VALID_KINDS
 from solpolpy.graph import transform_graph
 from solpolpy.alpha import radial_north, radial_west
 from solpolpy.instruments import load_data
-from solpolpy import polarizers_v2
 
 
 def resolve(input_data_files, out_polarize_state):

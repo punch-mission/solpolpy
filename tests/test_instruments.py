@@ -17,5 +17,5 @@ def test_load_lasco():
     file_list = [path_to_test_files + "lasco_0.fts",
                  path_to_test_files + "lasco_-60.fts",
                  path_to_test_files + "lasco_+60.fts"]
-    out = load_STEREO(file_list)
+    out = load_LASCO(file_list)
     assert isinstance(out, NDCollection)

@@ -61,8 +61,8 @@ def mzp_ones():
             0 * u.radian: np.array([1]),
             -np.pi / 3 * u.radian: np.array([1])}
 
-def test_any_to_mzp_ones(mzp_ones):
-    actual = pol.any_to_mzp(mzp_ones)
+def test_npol_to_mzp_ones(mzp_ones):
+    actual = pol.npol_to_mzp(mzp_ones)
     expected = {"Bm": np.ones(1), "Bz": np.ones(1), "Bp": np.ones(1)}
     for k, v in expected.items():
         assert np.allclose(actual[k], expected[k])
@@ -74,8 +74,8 @@ def mzp_fourp():
             np.pi/2*u.radian: np.array([1]),
             3*np.pi/4*u.radian: np.array([1]),}
 
-def test_any_to_mzp_fourp(mzp_fourp):
-    actual = pol.any_to_mzp(mzp_fourp)
+def test_npol_to_mzp_fourp(mzp_fourp):
+    actual = pol.npol_to_mzp(mzp_fourp)
     expected = {"Bm": np.array([4/3]), "Bz": np.array([4/3]), "Bp": np.array([4/3])}
     for k, v in expected.items():
         assert np.allclose(actual[k], expected[k])
@@ -91,6 +91,25 @@ def test_mzp_to_bpb_missing_alpha_fails(mzp_no_alpha):
     """ This conversion without alpha should fail"""
     with pytest.raises(ValueError):
         pol.mzp_to_bpb(mzp_no_alpha)
+
+@fixture
+def mzp_ones():
+    return {np.pi/3 * u.radian: np.array([1]),
+            0*u.radian: np.array([1]),
+            -np.pi/3 * u.radian: np.array([1]),
+            "alpha": np.array([30])*u.degree}
+
+def test_mzp_to_bp3(mzp_ones):
+    actual = pol.mzp_to_bp3(mzp_ones)
+    expected = {"B": np.array([2]), "pB": np.array([0]), "pBp": np.array([0])}
+    for k, v in expected.items():
+        assert np.allclose(actual[k], expected[k])
+
+def test_mzp_to_stokes(mzp_ones):
+    actual = pol.mzp_to_stokes(mzp_ones)
+    expected = {"Bi": np.array([2]), "Bq": np.array([0]), "Bu": np.array([0])}
+    for k, v in expected.items():
+        assert np.allclose(actual[k], expected[k])
 
 # #Calculate B_theta using BR, BT
 # @pytest.mark.parametrize("BT, BR, alpha, theta, expected",

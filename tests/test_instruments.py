@@ -1,5 +1,5 @@
 import os
-from ndcube import NDCube, NDCollection
+from ndcube import NDCollection
 from solpolpy.instruments import load_data
 
 def test_load_data():

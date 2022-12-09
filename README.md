@@ -9,7 +9,7 @@ It converts between various polarization formats, e.g. from the native three tri
 (also known as the MZP convention) to polarization brightness (pB) and total polarization (B). 
 
 ## Quickstart
-As this package is not currently released, you must clone the repo and install with `pip install .`. 
+As this package is not currently released, you must clone the repo and install with `pip install .`. Then follow [the documentation](https://punch-mission.github.io/solpolpy/quickstart.html).
 
 ## Getting Help
 Please contact Marcus Hughes at [marcus.hughes@swri.org](mailto:marcus.hughes@swri.org). 

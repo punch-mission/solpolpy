@@ -34,6 +34,7 @@ def npol_to_mzp(input_cube):
     for p_angle in in_list:
         if p_angle == "alpha":
             break
+        # input_dict[(conv_polar_from_head(input_cube[p_angle])) * u.degree * conv_fact] = input_cube[p_angle].data
         input_dict[(conv_polar_from_head(input_cube[p_angle])) * u.degree * conv_fact] = input_cube[p_angle].data
 
     mzp_ang = [-60, 0, 60]
@@ -43,9 +44,8 @@ def npol_to_mzp(input_cube):
          for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0)
 
     # todo: update header properly; time info?
-    metaM, metaZ, metaP = copy.copy(input_cube["angle_1"].meta), copy.copy(input_cube["angle_2"].meta), copy.copy(
-        input_cube["angle_3"].meta)
-    metaM.update(Polar=-60), metaZ.update(Polar=0), metaP.update(Polar=60)
+    metaM, metaZ, metaP = copy.copy(input_cube["angle_1"].meta), copy.copy(input_cube["angle_2"].meta), copy.copy(input_cube["angle_3"].meta)
+    metaM.update(POLAR=-60), metaZ.update(POLAR=0), metaP.update(POLAR=60)
     Bmzp_cube = []
     Bmzp_cube.append(("Bm", NDCube(Bmzp[-60 * u.degree], wcs=input_cube["angle_1"].wcs, meta=metaM)))
     Bmzp_cube.append(("Bz", NDCube(Bmzp[0 * u.degree], wcs=input_cube["angle_1"].wcs, meta=metaZ)))
@@ -70,7 +70,7 @@ def mzp_to_bpb(input_cube):
     for p_angle in in_list:
         if p_angle == "alpha":
             break
-        input_dict[(input_cube[p_angle].meta['Polar']) * u.degree * conv_fact] = input_cube[p_angle].data
+        input_dict[(input_cube[p_angle].meta['POLAR']) * u.degree * conv_fact] = input_cube[p_angle].data
 
     # if "alpha" not in input_cube:
     #     raise ValueError("missing alpha")
@@ -110,13 +110,13 @@ def bpb_to_mzp(input_cube):
     if "alpha" not in input_cube:
         raise ValueError("missing alpha")
 
-    for p_angle in in_list:
-        if p_angle == "alpha":
-            break
-        input_dict[(input_cube[p_angle].meta['Polar'])] = input_cube[p_angle].data
+    # for p_angle in in_list:
+    #     if p_angle == "alpha":
+    #         break
+    #     input_dict[(input_cube[p_angle].meta['POLAR'])] = input_cube[p_angle].data
 
     alpha = input_cube['alpha'].data * u.radian
-    B, pB = input_dict['B'], input_dict['pB']
+    B, pB = input_cube["B"].data, input_cube["pB"].data
     mzp_ang = [-60, 0, 60]
     Bmzp = {}
     for ang in mzp_ang: Bmzp[ang * u.degree] = (1 / 2) * (B - pB * (np.cos(2 * (ang * u.degree - alpha))))
@@ -148,7 +148,7 @@ def bpb_to_btbr(input_cube):
     for p_angle in in_list:
         if p_angle == "alpha":
             break
-        input_dict[(input_cube[p_angle].meta['Polar'])] = input_cube[p_angle].data
+        input_dict[(input_cube[p_angle].meta['POLAR'])] = input_cube[p_angle].data
 
     alpha = input_cube['alpha'].data * u.radian
     B, pB = input_dict['B'], input_dict['pB']
@@ -182,7 +182,7 @@ def btbr_to_bpb(input_cube):
     for p_angle in in_list:
         if p_angle == "alpha":
             break
-        input_dict[(input_cube[p_angle].meta['Polar'])] = input_cube[p_angle].data
+        input_dict[(input_cube[p_angle].meta['POLAR'])] = input_cube[p_angle].data
 
     alpha = input_cube['alpha'].data * u.radian
     Bt, Br = input_dict['Bt'], input_dict['Br']
@@ -269,7 +269,7 @@ def mzp_to_bp3(input_cube):
     for p_angle in in_list:
         if p_angle == "alpha":
             break
-        input_dict[(input_cube[p_angle].meta['Polar'] * u.degree * conv_fact)] = input_cube[p_angle].data
+        input_dict[(input_cube[p_angle].meta['POLAR'] * u.degree * conv_fact)] = input_cube[p_angle].data
 
         # alpha = alpha1([input_cube['Bm'].meta['NAXIS1'], input_cube['Bm'].meta['NAXIS2']]) #input_dict['alpha']
 
@@ -328,7 +328,7 @@ def bp3_to_mzp(input_cube):
     Bmzp_cube = []
     Bmzp_cube.append(("Bm", NDCube(Bmzp[-60 * u.degree], wcs=input_cube["B"].wcs, meta=metaM)))
     Bmzp_cube.append(("Bz", NDCube(Bmzp[0 * u.degree], wcs=input_cube["B"].wcs, meta=metaZ)))
-    Bmzp_cube.append("Bp", NDCube(Bmzp[60 * u.degree], wcs=input_cube["B"].wcs, meta=metaP))
+    Bmzp_cube.append(("Bp", NDCube(Bmzp[60 * u.degree], wcs=input_cube["B"].wcs, meta=metaP)))
 
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
@@ -391,6 +391,7 @@ def btbr_to_npol(input_cube, angles):
     Notes
     ------
     Equation 3 in Deforest et al. 2022.
+    angles: list of input angles in degree
     """
     if "alpha" not in input_cube:
         raise ValueError("missing alpha")
@@ -406,5 +407,6 @@ def btbr_to_npol(input_cube, angles):
         meta_tmp = copy.copy(input_cube["Bt"].meta)
         meta_tmp.update(Polar=(ang))
         Bnpol_cube.append(('B' + str(ang), NDCube(Bnpol[ang], wcs=input_cube["Bt"].wcs, meta=meta_tmp)))
+    Bnpol_cube.append(("alpha", NDCube(alpha, wcs=input_cube["Bt"].wcs)))
 
     return NDCollection(Bnpol_cube, meta={}, aligned_axes="all")

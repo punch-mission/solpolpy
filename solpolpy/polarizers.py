@@ -411,3 +411,47 @@ def btbr_to_npol(input_cube, angles):
     Bnpol_cube.append(("alpha", NDCube(alpha, wcs=input_cube["Bt"].wcs)))
 
     return NDCollection(Bnpol_cube, meta={}, aligned_axes="all")
+
+
+# TODO: decide if we keep
+# def pB_from_single_angle(B, B_theta, theta, alpha, tol=1e-6):
+#     """
+#     Converts unpolarized brightness,`B`, Radiance through a polarizer at angle theta,`B_theta`,
+#     Polarizer angle,`theta`, and Solar position angle of an image point, `alpha` into Coronal
+#     polarized brightness, `pB`.
+#
+#     This function takes in four vars of `B`, `B_theta`, `theta`,and `alpha`.
+#
+#     Parameters
+#     ----------
+#     B : np.ndarray
+#       'Clear' or total brightness data frame
+#     B_theta : np.ndarray
+#       polarized data at angle theta
+#     theta : Quantity (astropy)
+#       angle of polarized data frame
+#     alpha : Quantity (astropy)
+#       alpha array to accompany STEREO or LASCO dataframes
+#     tol : float
+#       tolerence at which the denominator is converted to a nan (see Notes)
+#
+#     Returns
+#     -------
+#     polarized brightness in terms of the radiance through a single arbitrary polarizer
+#
+#     Notes
+#     ------
+#     see Equation 5 in Deforest et al. 2022.
+#     if this equation is used for single values, alpha will need to be a Quantity
+#
+#     Equation (5) is problematic, because the denominator is small when theta-alpha
+#     is near pm pi/4. Therefore, a nan is inserted when < tol
+#
+#     Due to the cosine in the denominator, with an alpha varying from 0 to 360 degrees pB should vary from positive to
+#     negative twice crossing zero four times (pB will go to infinity at this point).
+#     """
+#
+#     pB_denominator = np.cos(2 * (theta - alpha))
+#     pB_denominator[np.abs(pB_denominator) < tol] = np.nan
+#
+#     return (B - (2 * B_theta)) / pB_denominator

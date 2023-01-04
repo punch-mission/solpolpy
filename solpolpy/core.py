@@ -1,4 +1,4 @@
-from typing import Callable, List, Tuple
+from typing import Callable, List, Tuple, Union
 import numbers
 
 from astropy.io import fits
@@ -18,7 +18,7 @@ from solpolpy.alpha import radial_north, radial_west
 from solpolpy.instruments import load_data
 
 
-def resolve(input_data_files, out_polarize_state):
+def resolve(input_data: Union[List[str], NDCollection], out_polarize_state: str) -> NDCollection:
     """
     Apply - apply a polarization transformation to a set of input
     dataframes.
@@ -113,9 +113,8 @@ def resolve(input_data_files, out_polarize_state):
         dimensionality of the vectors); additional input dimensions, if
         present, are still appended to the output vectors in all any case.
     """
-
-    if isinstance(input_data_files, list):
-        input_data = load_data(input_data_files)
+    if isinstance(input_data, list):
+        input_data = load_data(input_data)
 
 #   Convert a set of inputs given at different polarizing angles to a common base of MZP.
     input_data_mzp = sp.polarizers.npol_to_mzp(input_data)
@@ -125,12 +124,9 @@ def resolve(input_data_files, out_polarize_state):
     transform_path = get_transform_path(input_kind, out_polarize_state)
     equation = get_transform_equation(transform_path)
     requires_alpha = check_alpha_requirement(transform_path)
-    if requires_alpha:
-        for in_key in input_key:
-            if in_key.lower() == "alpha":
-                break
-            else:
-                input_data_mzp = add_alpha(input_data_mzp)
+
+    if requires_alpha and "alpha" not in input_key:
+        input_data_mzp = add_alpha(input_data_mzp)
     result = equation(input_data_mzp)
 
     return result
@@ -176,6 +172,8 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
     wcs = input_data[keys[0]].wcs
     metad = input_data[keys[0]].meta
     deg2rad = (np.pi * u.radian) / (180 * u.degree)
+
+    # TODO: don't use inputs inside
     if len(img_shape) == 2:  # it's an image and not just an array
         inp = input("Do you wish to provide an alpha array?").lower()
         if inp.startswith('n'):
@@ -190,6 +188,8 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
             print("Provide the alpha matrix in FITS format")
             alpha_path = input("Provide the path of alpha FITS file:")
             hdu = fits.open(alpha_path)
+
+            # TODO: make the FITS file use a header keyword to specify the units of alpha
             if np.max(hdu[0].data) > 2 * np.pi + 1:
                 alph = hdu[0].data * deg2rad
             else:
@@ -199,231 +199,9 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
     return input_data
 
 
-
-def sanitize_data_dict(data_dict, output_angle_unit):
-    if output_angle_unit not in [u.radian, u.degree]:
-        raise RuntimeError(f"Keys must be converted to degrees or radians. Found output_angle_unit={output_angle_unit}")
-
-    # Set up necessary conversions
-    deg2rad = (np.pi * u.radian) / (180 * u.degree)
-    rad2deg = (180 * u.degree) / (np.pi * u.radian)
-
-    # Sanitize all the keys
-    found_radians_key = False
-    output_dict = dict()
-    for key, value in data_dict.items():
-        if isinstance(key, numbers.Real):
-            if output_angle_unit == u.degree:
-                output_dict[key * u.degree] = value
-            else:
-                output_dict[np.deg2rad(key) * u.radian] = value
-        elif isinstance(key, Quantity):
-            if key.unit not in [u.radian, u.degree]:
-                raise RuntimeError(f"Unsupported key type of {key.unit} found. Must be radians or degrees.")
-            if key.unit == u.radian:
-                found_radians_key = True
-                if output_angle_unit == u.degree:
-                    output_dict[key * rad2deg] = value
-                else:
-                    output_dict[key] = value
-            elif key.unit == u.degree:
-                if output_angle_unit == u.radian:
-                    output_dict[key * deg2rad] = value
-                else:
-                    output_dict[key] = value
-        else:  # case for all the string keys
-            output_dict[key] = value
-
-    # Sanitize alpha map
-    if "alpha" in data_dict:
-        if isinstance(data_dict['alpha'], Quantity):
-            if data_dict['alpha'].unit == u.radian:
-                found_radians_key = True
-                if output_angle_unit == u.degree:
-                    output_dict["alpha"] = data_dict['alpha'] * rad2deg
-                else:
-                    output_dict["alpha"] = data_dict["alpha"]
-            elif data_dict['alpha'].unit == u.degree:
-                if output_angle_unit == u.degree:
-                    output_dict["alpha"] = data_dict["alpha"]
-                else:
-                    output_dict["alpha"] = data_dict["alpha"] * deg2rad
-            else:
-                raise RuntimeError(f"Alpha must be in degrees or radians. Found {data_dict['alpha'].unit} unit.")
-        elif isinstance(data_dict['alpha'], numbers.Real) or \
-                (isinstance(data_dict['alpha'], np.ndarray) and np.issubdtype(data_dict['alpha'].dtype, np.number)):
-            if output_angle_unit == u.degree:
-                output_dict['alpha'] = data_dict['alpha'] * u.degree
-            else:
-                output_dict["alpha"] = np.deg2rad(data_dict['alpha']) * u.radian
-        else:
-            raise RuntimeError("Alpha must be numeric with or without a unit.")
-    return output_dict, found_radians_key
-
-
-# def determine_input_kind(input_data: Dict[str, np.ndarray]) -> str:
-#     input_keys = list(input_data.keys())
-#     for valid_kind, param_list in VALID_KINDS.items():
-#         for param_option in param_list:
-#             if set(input_keys) == set(param_option):
-#                 return valid_kind
-#     numeric_key_count = sum([isinstance(key, Quantity) for key in input_data])
-#     if numeric_key_count == 3:
-#         return "MZP"
-#     raise ValueError("Invalid Keys")  # TODO: improve this message
-
-
-# def get_transform_path(input_kind: str, output_kind: str) -> List[str]:
-#     try:
-#         path = nx.shortest_path(transform_graph, input_kind, output_kind)
-#     except nx.exception.NetworkXNoPath:
-#         raise RuntimeError(f"Not possible to convert {input_kind} to {output_kind}")  # TODO: make this a custom error
-#     return path
-
-
-# def get_transform_equation(path: List[str]) -> Callable:
-#     current_function = identity
-#     for i, step_start in enumerate(path[:-1]):
-#         step_end = path[i+1]
-#         current_function = _compose2(transform_graph.get_edge_data(step_start, step_end)['func'],
-#                                      current_function)
-#     return current_function
-
-
-# def _determine_image_shape(input_dict: Dict[str, np.ndarray]) -> Tuple[int, int]:
-#     keys = list(input_dict.keys())
-#     shape = input_dict[keys[0]].shape
-#     return shape
-
-
-# def add_alpha(input_data: Dict[str, np.ndarray], alpha_choice) -> Dict[str, np.ndarray]:
-#     # test if alpha exists. if not check if alpha keyword added. if not create default alpha with warning.
-
-#     img_shape = _determine_image_shape(input_data)
-#     if len(img_shape) == 2:  # it's an image and not just an array
-#         alpha_choice = "radial" if alpha_choice is None else alpha_choice
-#         if "alpha" not in input_data:
-#             if alpha_choice not in ALPHA_FUNCTIONS:
-#                 raise ValueError(f"Requested a {alpha_choice} alpha type. "
-#                                  f"This is not valid. Must be in {ALPHA_FUNCTIONS.keys()}")
-#             input_data['alpha'] = ALPHA_FUNCTIONS[alpha_choice](img_shape)
-
-#     return input_data
-
-
-# def convert_image_list_to_dict(input_data: List[str], alpha=None) -> NDCollection:
-#     # create output dictionary
-#     data_out={}
-
-#     # create list of FITS
-#     fits_type=[]
-
-#     # get length of list to determine how many files to process.
-#     list_len=len(input_data)
-#     assert list_len >= 2, 'requires at least 2 FITS files'
-
-#     for xlist_item in input_data:
-#         with fits.open(xlist_item) as hdul:
-#             fits_type.append(hdul[0].header['DETECTOR'])
-
-#     if len(set(fits_type)) != 1:
-#         raise Exception("Input FITS are of different types")
-
-#     if fits_type[0] == 'COR1' or fits_type[0] == 'COR2':
-#         data_out = load_data(input_data)
-#         alpha='radial90'
-#         # TODO: change alpha only if None, and also make a warning
-#     elif fits_type[0] == 'C2' or fits_type[0] == 'C3':
-#         data_out = load_data(input_data)
-#         alpha='radial'
-#         # TODO: change alpha only if None, and also make a warning
-#     else:
-#         raise Exception("the input FITS type is not supported. Use dictionary input.")
-
-#     # check if all polarized data entries, or if a B, pB pair
-#     if list_len==2:
-
-#         assert "Clear" in data_out, "expected a Clear (total brightness) data frame in the input polarization data pair"
-
-#         # checking that there is a polarized data frame, and what the value of the angle is.
-#         angle=None
-#         for key in data_out.keys():
-#             if isinstance(key, Quantity):
-#                 angle=key
-
-#         assert angle is not None, "the input polarization angle key is None, expected a numeric value"
-
-#         # to make BpB we need to add an alpha
-#         data_out = add_alpha(data_out, alpha)
-
-#         # resolve pB in terms of the radiance through a single arbitrary polarizer
-#         data_out = {'pB': pB_from_single_angle(data_out['Clear'], data_out[angle], angle, data_out['alpha']),
-#                      'B': data_out['Clear'],
-#                      'alpha': data_out['alpha']}
-
-#     # check angles of keys - create warning if not appropriate angles.
-#     elif list_len>2:
-
-#         # check that the key angles are complimentary
-#         key_total=0*u.degree
-#         for key in data_out.keys():
-#             if key=='Clear':
-#                 raise Exception("More than 3 files received. At least one input file was not polarized. Include a B, pB pair, or at least 3 complimentary polarized data frames." )
-
-#             key_total=key_total+key
-
-#         if key_total != 360*u.degree:
-#             warnings.warn("Input angles are not complimentary (total=360), processing but may not be accruate", Warning )
-
-#     return data_out
-
-
 def _compose2(f, g):
     return lambda *a, **kw: f(g(*a, **kw))
 
 
 def identity(x):
     return x
-
-
-def pB_from_single_angle(B, B_theta, theta, alpha, tol=1e-6):
-    """
-    Converts unpolarized brightness,`B`, Radiance through a polarizer at angle theta,`B_theta`,
-    Polarizer angle,`theta`, and Solar position angle of an image point, `alpha` into Coronal
-    polarized brightness, `pB`.
-
-    This function takes in four vars of `B`, `B_theta`, `theta`,and `alpha`.
-
-    Parameters
-    ----------
-    B : np.ndarray
-      'Clear' or total brightness data frame
-    B_theta : np.ndarray
-      polarized data at angle theta
-    theta : Quantity (astropy)
-      angle of polarized data frame
-    alpha : Quantity (astropy)
-      alpha array to accompany STEREO or LASCO dataframes
-    tol : float
-      tolerence at which the denominator is converted to a nan (see Notes)
-
-    Returns
-    -------
-    polarized brightness in terms of the radiance through a single arbitrary polarizer
-
-    Notes
-    ------
-    see Equation 5 in Deforest et al. 2022.
-    if this equation is used for single values, alpha will need to be a Quantity
-
-    Equation (5) is problematic, because the denominator is small when theta-alpha
-    is near pm pi/4. Therefore, a nan is inserted when < tol
-
-    Due to the cosine in the denominator, with an alpha varying from 0 to 360 degrees pB should vary from positive to
-    negative twice crossing zero four times (pB will go to infinity at this point).
-    """
-
-    pB_denominator = np.cos(2 * (theta - alpha))
-    pB_denominator[np.abs(pB_denominator) < tol] = np.nan
-
-    return (B - (2 * B_theta)) / pB_denominator

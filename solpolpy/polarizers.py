@@ -50,7 +50,9 @@ def npol_to_mzp(input_cube):
     Bmzp_cube.append(("Bm", NDCube(Bmzp[-60 * u.degree], wcs=input_cube["angle_1"].wcs, meta=metaM)))
     Bmzp_cube.append(("Bz", NDCube(Bmzp[0 * u.degree], wcs=input_cube["angle_1"].wcs, meta=metaZ)))
     Bmzp_cube.append(("Bp", NDCube(Bmzp[60 * u.degree], wcs=input_cube["angle_1"].wcs, meta=metaP)))
-
+    for p_angle in in_list:
+        if p_angle.lower() == "alpha":
+            Bmzp_cube.append(("alpha", NDCube(input_cube['alpha'].data * u.radian, wcs=input_cube["angle_1"].wcs, meta=metaP)))
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
@@ -75,8 +77,7 @@ def mzp_to_bpb(input_cube):
     # if "alpha" not in input_cube:
     #     raise ValueError("missing alpha")
 
-    alpha = input_cube[
-                'alpha'].data * u.radian
+    alpha = input_cube['alpha'].data * u.radian
     B = (2 / 3) * (np.sum([ith_polarizer_brightness
                            for ith_angle, ith_polarizer_brightness
                            in input_dict.items() if ith_angle != "alpha"], axis=0))

@@ -20,34 +20,34 @@ from solpolpy.instruments import load_data
 
 def resolve(input_data_files, out_polarize_state):
     """
-    Apply - apply a depolarization transform to a set of input
+    Apply - apply a polarization transformation to a set of input
     dataframes.
 
     Parameters
     ----------
-    input_data : Dict[str, np.ndarray]
-        Dictionary formatted as follows:
+    input_data : NDCollection
+        NDCollection formatted as follows:
 
-            - Stokes dictionary
-                "I":np.array - Should be included as a triplet of I,Q,U, and optionally V
-                "Q":np.array - Should be included as a triplet of I,Q,U, and optionally V
-                "U":np.array - Should be included as a triplet of I,Q,U, and optionally V
-                "V":np.array - Should be included as a triplet of I,Q,U, and optionally V
+            - Stokes NDCollection
+                "Bi":np.array - Should be included as a triplet of I,Q,U, and optionally V
+                "Bq":np.array - Should be included as a triplet of I,Q,U, and optionally V
+                "Bu":np.array - Should be included as a triplet of I,Q,U, and optionally V
+                "Bv":np.array - Should be included as a triplet of I,Q,U, and optionally V
 
-            - Brightness & Polarized brightness dictionary
+            - Brightness & Polarized brightness NDCollection
                 "B":np.array - Should be included as a double of B, pB
                 "pB":np.array - Should be included as a doublet of B, pB
 
-            - Radial & tangential brightness dictionary
+            - Radial & tangential brightness NDCollection
                 "Br":np.array - Should be included as a doublet of Bt, Br
                 "Bt":np.array - Should be included as a doublet of Bt, Br
 
-            - MZP triplet dictionary
-                "M":np.array - Should be included as a triplet of M,Z,P
-                "Z":np.array - Should be included as a triplet of M,Z,P
-                "P":np.array - Should be included as a triplet of M,Z,P
+            - MZP triplet NDCollection
+                "Bm":np.array - Should be included as a triplet of M,Z,P
+                "Bz":np.array - Should be included as a triplet of M,Z,P
+                "Bp":np.array - Should be included as a triplet of M,Z,P
 
-            - Angular dictionary [where keys are ints or floats representing
+            - Angular (npol) NDCollection [where keys are ints or floats representing
             polarizer angle]
                 X1:np.array[xn] - Should be included as at least a triplet of angles
                 X2:np.array[xn] - Should be included as at least a triplet of angles
@@ -59,7 +59,7 @@ def resolve(input_data_files, out_polarize_state):
       This is the polarization state you want to convert your input
       dataframes to.  These include:
 
-        - Stokes: convert the input dataframes to output Stokes dataframes. If
+        - stokes: convert the input dataframes to output Stokes dataframes. If
             3 polarization angles are input, or can be derived, the I, Q, and U
             Stokes parameters are output. If 4 or more polarization angles are
             provided, and the angles are conducsive, the full I,Q,U, and V
@@ -84,7 +84,7 @@ def resolve(input_data_files, out_polarize_state):
             a linear polarizer oriented radially to the centre Sun through the
             same point "Br".
 
-        - 3pol or MZP: converts input dataframes into a system of virtual
+        - MZP: converts input dataframes into a system of virtual
             polarizer triplets each separated by 60 degrees (Minus [-60],
             Zero [0], Plus [60]).
 
@@ -106,8 +106,8 @@ def resolve(input_data_files, out_polarize_state):
 
     Returns
     -------
-    numpy.ndarray
-        The transformed vector data are returned as a numpy.ndarray.  Most
+    NDCollection
+        The transformed data are returned as a NDcollection.  Most
         Transforms maintain the dimensionality of the source vectors.  Some
         embed (increase dimensionality of the vectors) or project (decrease
         dimensionality of the vectors); additional input dimensions, if
@@ -117,15 +117,20 @@ def resolve(input_data_files, out_polarize_state):
     if isinstance(input_data_files, list):
         input_data = load_data(input_data_files)
 
+#   Convert a set of inputs given at different polarizing angles to a common base of MZP.
     input_data_mzp = sp.polarizers.npol_to_mzp(input_data)
     input_kind = "MZP"
+    input_key = list(input_data)
 
     transform_path = get_transform_path(input_kind, out_polarize_state)
     equation = get_transform_equation(transform_path)
     requires_alpha = check_alpha_requirement(transform_path)
     if requires_alpha:
-        input_data_mzp = add_alpha(input_data_mzp)
-
+        for in_key in input_key:
+            if in_key.lower() == "alpha":
+                break
+            else:
+                input_data_mzp = add_alpha(input_data_mzp)
     result = equation(input_data_mzp)
 
     return result
@@ -164,6 +169,7 @@ def _determine_image_shape(input_cube) -> Tuple[int, int]:
 
 def add_alpha(input_data: NDCollection) -> NDCollection:
     # test if alpha exists. if not check if alpha keyword added. if not create default alpha with warning.
+
 
     img_shape = _determine_image_shape(input_data)
     keys = list(input_data)

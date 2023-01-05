@@ -262,6 +262,24 @@ def test_bp3_mzp_ones(bp3_ones):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
 @fixture
+def btbr_ones_mzp():
+    data_out = []
+    data_out.append(("Bt", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'Bt'})))
+    data_out.append(("Br", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'Br'})))
+    data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
+    return NDCollection(data_out, meta={}, aligned_axes="all")
+
+def test_btbr_mzp_ones(btbr_ones_mzp):
+    actual = pol.btbr_to_mzp(btbr_ones_mzp)
+    expected_data = []
+    expected_data.append(("Bm", NDCube(np.array([1]), wcs=wcs)))
+    expected_data.append(("Bz", NDCube(np.array([1]), wcs=wcs)))
+    expected_data.append(("Bp", NDCube(np.array([1]), wcs=wcs)))
+    expected = NDCollection(expected_data, meta={}, aligned_axes="all")
+    for k in list(expected):
+        assert np.allclose(actual[str(k)].data, expected[str(k)].data)
+
+@fixture
 def bp3_ones():
     data_out = []
     data_out.append(("B", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'B'})))

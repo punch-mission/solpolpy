@@ -7,19 +7,7 @@ from ndcube import NDCube, NDCollection
 def conv_polar_from_head(input_cube):
     return int(float(str(input_cube.meta['POLAR']).strip(" Deg")))
 
-# def alpha1(shape):
-#     '''
-#     assumes solar north is up
-#     creates radial polarization map
-#     '''
-#     x_size, y_size = shape
-#     x = np.arange(-x_size // 2, x_size // 2)
-#     y = np.arange(-y_size // 2, y_size // 2)
-#     xx, yy = np.meshgrid(x, y)
-#     # return np.rot90(np.fliplr(np.arctan2(yy, xx)+np.pi), k=1)*u.radian
-#     return np.fliplr(np.arctan2(yy, xx)+np.pi)*u.radian
-
-
+#TODO: prepare a config file where the reference angle say of STEREO, KCor etc can be set
 def npol_to_mzp(input_cube):
     """
     Notes
@@ -105,8 +93,6 @@ def bpb_to_mzp(input_cube):
     ------
     Equation 4 in Deforest et al. 2022.
     """
-    input_dict = {}
-    in_list = list(input_cube)
 
     if "alpha" not in input_cube:
         raise ValueError("missing alpha")
@@ -143,6 +129,7 @@ def bpb_to_btbr(input_cube):
     """
     input_dict = {}
     in_list = list(input_cube)
+
     if "alpha" not in input_cube:
         raise ValueError("missing alpha")
 

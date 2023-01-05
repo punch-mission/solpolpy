@@ -12,7 +12,7 @@ The bottom panel shows the output of the `solpolpy` to convert the initial basis
 to the Stokes I, Q and U.
 
 ```{image} images/eg_image.png
-:alt: example of correction
+:alt: example of polarization transformation
 :width: 800px
 :align: center
 ```

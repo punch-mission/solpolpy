@@ -116,20 +116,34 @@ def resolve(input_data: Union[List[str], NDCollection], out_polarize_state: str)
     if isinstance(input_data, list):
         input_data = load_data(input_data)
 
-#   Convert a set of inputs given at different polarizing angles to a common base of MZP.
-    input_data_mzp = sp.polarizers.npol_to_mzp(input_data)
-    input_kind = "MZP"
-    input_key = list(input_data)
+    input_kind = determine_input_kind(input_data)
+    if input_kind == "npol":
+        input_data = sp.polarizers.npol_to_mzp(input_data)
+        input_kind = "MZP"
 
+#   Convert a set of inputs given at different polarizing angles to a common base of MZP.
+#     input_data_mzp = sp.polarizers.npol_to_mzp(input_data)
+#     input_kind = "MZP"
+
+    input_key = list(input_data)
     transform_path = get_transform_path(input_kind, out_polarize_state)
     equation = get_transform_equation(transform_path)
     requires_alpha = check_alpha_requirement(transform_path)
 
     if requires_alpha and "alpha" not in input_key:
-        input_data_mzp = add_alpha(input_data_mzp)
-    result = equation(input_data_mzp)
+        input_data = add_alpha(input_data)
+    result = equation(input_data)
 
     return result
+
+
+def determine_input_kind(input_data: NDCollection) -> str:
+    input_keys = list(input_data)
+    for valid_kind, param_list in VALID_KINDS.items():
+        for param_option in param_list:
+            if set(input_keys) == set(param_option):
+                return valid_kind
+    raise ValueError("Unidentified Polarization System.")
 
 
 def get_transform_path(input_kind: str, output_kind: str) -> List[str]:
@@ -165,7 +179,6 @@ def _determine_image_shape(input_cube) -> Tuple[int, int]:
 
 def add_alpha(input_data: NDCollection) -> NDCollection:
     # test if alpha exists. if not check if alpha keyword added. if not create default alpha with warning.
-
 
     img_shape = _determine_image_shape(input_data)
     keys = list(input_data)

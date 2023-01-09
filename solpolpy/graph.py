@@ -6,7 +6,7 @@ from solpolpy.polarizers import npol_to_mzp, bpb_to_mzp, mzp_to_bpb, \
 
 
 transform_graph = nx.DiGraph()
-transform_graph.add_edge("any", "MZP",
+transform_graph.add_edge("npol", "MZP",
                          func=npol_to_mzp,
                          requires_alpha=False)
 transform_graph.add_edge("MZP", "BpB",

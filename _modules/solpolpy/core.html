@@ -1,47 +1,58 @@
 
+
 <!DOCTYPE html>
 
-<html>
+
+<html lang="en" >
+
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>solpolpy.core &#8212; My sample book</title>
-    
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="../../_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
 
-    
-  <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
-    
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
-    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../_static/togglebutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="../../_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
@@ -49,59 +60,91 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/solpolpy/core';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-<!-- Checkboxes to toggle the left sidebar -->
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
-<label class="overlay overlay-navbar" for="__navigation">
-    <div class="visually-hidden">Toggle navigation sidebar</div>
-</label>
-<!-- Checkboxes to toggle the in-page toc -->
-<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
-<label class="overlay overlay-pagetoc" for="__page-toc">
-    <div class="visually-hidden">Toggle in-page Table of Contents</div>
-</label>
-<!-- Headers at the top -->
-<div class="announcement header-item noprint"></div>
-<div class="header header-item noprint"></div>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-    
-    <div class="container-fluid" id="banner"></div>
-
-    
-
-    <div class="container-xl">
-      <div class="row">
-          
-<!-- Sidebar -->
-<div class="bd-sidebar noprint" id="site-navigation">
-    <div class="bd-sidebar__content">
-        <div class="bd-sidebar__top"><div class="navbar-brand-box">
-    <a class="navbar-brand text-wrap" href="../../index.html">
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
       
-        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+      <div class="bd-sidebar-primary bd-sidebar">
         
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+    
+    
       
-      
-      <img src="../../_static/logo.png" class="logo" alt="logo">
-      
-      
-      <h1 class="site-logo" id="site-title">My sample book</h1>
-      
-    </a>
-</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
-    <div class="bd-toc-item active">
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
@@ -111,156 +154,158 @@ const thebe_selector_output = ".output, .cell_output"
             </li>
         </ul>
         <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../../quickstart.html">
-   Quick Start
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../advanced_options.html">
-   Advanced Options
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../api.html">
-   API
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced_options.html">Advanced Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
 </ul>
 
     </div>
 </nav></div>
-        <div class="bd-sidebar__bottom">
-             <!-- To handle the deprecated key -->
-            
-            <div class="navbar_extra_footer">
-            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-            </div>
-            
-        </div>
     </div>
-    <div id="rtd-footer-container"></div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2F_modules/solpolpy/core.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
 </div>
 
 
-          
 
 
-          
-<!-- A tiny helper pixel to detect if we've scrolled -->
-<div class="sbt-scroll-pixel-helper"></div>
-<!-- Main content -->
-<div class="col py-0 content-container">
-    
-    <div class="header-article row sticky-top noprint">
-        
-
-
-
-<div class="col py-1 d-flex header-article-main">
-    <div class="header-article__left">
-        
-        <label for="__navigation"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="right"
-title="Toggle navigation"
->
-  
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-bars"></i>
-  </span>
-
-</label>
-
-        
-    </div>
-    <div class="header-article__right">
 <button onclick="toggleFullScreen()"
-  class="headerbtn"
-  data-toggle="tooltip"
-data-placement="bottom"
-title="Fullscreen mode"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
 >
   
 
-<span class="headerbtn__icon-container">
+<span class="btn__icon-container">
   <i class="fas fa-expand"></i>
   </span>
 
 </button>
 
-<div class="menu-dropdown menu-dropdown-repository-buttons">
-  <button class="headerbtn menu-dropdown__trigger"
-      aria-label="Source repositories">
-      <i class="fab fa-github"></i>
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
   </button>
-  <div class="menu-dropdown__content">
-    <ul>
-      <li>
-        <a href="https://github.com/executablebooks/jupyter-book"
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Source repository"
->
-  
+`);
+</script>
 
-<span class="headerbtn__icon-container">
-  <i class="fab fa-github"></i>
-  </span>
-<span class="headerbtn__text-container">repository</span>
-</a>
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
 
-      </li>
+</div></div>
       
-      <li>
-        <a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2F_modules/solpolpy/core.html&body=Your%20issue%20content%20here."
-   class="headerbtn"
-   data-toggle="tooltip"
-data-placement="left"
-title="Open an issue"
->
+    </div>
   
-
-<span class="headerbtn__icon-container">
-  <i class="fas fa-lightbulb"></i>
-  </span>
-<span class="headerbtn__text-container">open issue</span>
-</a>
-
-      </li>
-      
-    </ul>
-  </div>
 </div>
+</div>
+              
+              
 
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
     </div>
 </div>
 
-<!-- Table of contents -->
-<div class="col-md-3 bd-toc show noprint">
-</div>
-    </div>
-    <div class="article row">
-        <div class="col pl-md-3 pl-lg-5 content-container">
-            <!-- Table of contents that is only displayed when printing the page -->
-            <div id="jb-print-docs-body" class="onlyprint">
-                <h1></h1>
-                <!-- Table of contents -->
-                <div id="print-main-content">
-                    <div id="jb-print-toc">
-                        
-                    </div>
-                </div>
-            </div>
-            <main id="main-content" role="main">
+              
                 
-              <div>
-                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
   <h1>Source code for solpolpy.core</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">numbers</span>
 
 <span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
@@ -269,43 +314,47 @@ title="Open an issue"
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">solpolpy</span> <span class="k">as</span> <span class="nn">sp</span>
+
+<span class="kn">from</span> <span class="nn">ndcube</span> <span class="kn">import</span> <span class="n">NDCube</span><span class="p">,</span> <span class="n">NDCollection</span>
+<span class="kn">from</span> <span class="nn">astropy.wcs</span> <span class="kn">import</span> <span class="n">WCS</span>
 
 <span class="kn">from</span> <span class="nn">solpolpy.constants</span> <span class="kn">import</span> <span class="n">VALID_KINDS</span>
 <span class="kn">from</span> <span class="nn">solpolpy.graph</span> <span class="kn">import</span> <span class="n">transform_graph</span>
-<span class="kn">from</span> <span class="nn">solpolpy.alpha</span> <span class="kn">import</span> <span class="n">ALPHA_FUNCTIONS</span>
-<span class="kn">from</span> <span class="nn">solpolpy.instruments</span> <span class="kn">import</span> <span class="n">_convert_LASCO_list_to_dict</span><span class="p">,</span> <span class="n">_convert_STEREO_list_to_dict</span>
+<span class="kn">from</span> <span class="nn">solpolpy.alpha</span> <span class="kn">import</span> <span class="n">radial_north</span><span class="p">,</span> <span class="n">radial_west</span>
+<span class="kn">from</span> <span class="nn">solpolpy.instruments</span> <span class="kn">import</span> <span class="n">load_data</span>
 
 
-<div class="viewcode-block" id="resolve"><a class="viewcode-back" href="../../api.html#solpolpy.resolve">[docs]</a><span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">out_polarize_state</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Apply - apply a depolarization transform to a set of input</span>
+<div class="viewcode-block" id="resolve"><a class="viewcode-back" href="../../api.html#solpolpy.resolve">[docs]</a><span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">NDCollection</span><span class="p">],</span> <span class="n">out_polarize_state</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDCollection</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply - apply a polarization transformation to a set of input</span>
 <span class="sd">    dataframes.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    input_data : Dict[str, np.ndarray]</span>
-<span class="sd">        Dictionary formatted as follows:</span>
+<span class="sd">    input_data : NDCollection</span>
+<span class="sd">        NDCollection formatted as follows:</span>
 
-<span class="sd">            - Stokes dictionary</span>
-<span class="sd">                &quot;I&quot;:np.array - Should be included as a triplet of I,Q,U, and optionally V</span>
-<span class="sd">                &quot;Q&quot;:np.array - Should be included as a triplet of I,Q,U, and optionally V</span>
-<span class="sd">                &quot;U&quot;:np.array - Should be included as a triplet of I,Q,U, and optionally V</span>
-<span class="sd">                &quot;V&quot;:np.array - Should be included as a triplet of I,Q,U, and optionally V</span>
+<span class="sd">            - Stokes NDCollection</span>
+<span class="sd">                &quot;Bi&quot;:np.array - Should be included as a triplet of I,Q,U, and optionally V</span>
+<span class="sd">                &quot;Bq&quot;:np.array - Should be included as a triplet of I,Q,U, and optionally V</span>
+<span class="sd">                &quot;Bu&quot;:np.array - Should be included as a triplet of I,Q,U, and optionally V</span>
+<span class="sd">                &quot;Bv&quot;:np.array - Should be included as a triplet of I,Q,U, and optionally V</span>
 
-<span class="sd">            - Brightness &amp; Polarized brightness dictionary</span>
+<span class="sd">            - Brightness &amp; Polarized brightness NDCollection</span>
 <span class="sd">                &quot;B&quot;:np.array - Should be included as a double of B, pB</span>
 <span class="sd">                &quot;pB&quot;:np.array - Should be included as a doublet of B, pB</span>
 
-<span class="sd">            - Radial &amp; tangential brightness dictionary</span>
+<span class="sd">            - Radial &amp; tangential brightness NDCollection</span>
 <span class="sd">                &quot;Br&quot;:np.array - Should be included as a doublet of Bt, Br</span>
 <span class="sd">                &quot;Bt&quot;:np.array - Should be included as a doublet of Bt, Br</span>
 
-<span class="sd">            - MZP triplet dictionary</span>
-<span class="sd">                &quot;M&quot;:np.array - Should be included as a triplet of M,Z,P</span>
-<span class="sd">                &quot;Z&quot;:np.array - Should be included as a triplet of M,Z,P</span>
-<span class="sd">                &quot;P&quot;:np.array - Should be included as a triplet of M,Z,P</span>
+<span class="sd">            - MZP triplet NDCollection</span>
+<span class="sd">                &quot;Bm&quot;:np.array - Should be included as a triplet of M,Z,P</span>
+<span class="sd">                &quot;Bz&quot;:np.array - Should be included as a triplet of M,Z,P</span>
+<span class="sd">                &quot;Bp&quot;:np.array - Should be included as a triplet of M,Z,P</span>
 
-<span class="sd">            - Angular dictionary [where keys are ints or floats representing</span>
+<span class="sd">            - Angular (npol) NDCollection [where keys are ints or floats representing</span>
 <span class="sd">            polarizer angle]</span>
 <span class="sd">                X1:np.array[xn] - Should be included as at least a triplet of angles</span>
 <span class="sd">                X2:np.array[xn] - Should be included as at least a triplet of angles</span>
@@ -317,7 +366,7 @@ title="Open an issue"
 <span class="sd">      This is the polarization state you want to convert your input</span>
 <span class="sd">      dataframes to.  These include:</span>
 
-<span class="sd">        - Stokes: convert the input dataframes to output Stokes dataframes. If</span>
+<span class="sd">        - stokes: convert the input dataframes to output Stokes dataframes. If</span>
 <span class="sd">            3 polarization angles are input, or can be derived, the I, Q, and U</span>
 <span class="sd">            Stokes parameters are output. If 4 or more polarization angles are</span>
 <span class="sd">            provided, and the angles are conducsive, the full I,Q,U, and V</span>
@@ -342,7 +391,7 @@ title="Open an issue"
 <span class="sd">            a linear polarizer oriented radially to the centre Sun through the</span>
 <span class="sd">            same point &quot;Br&quot;.</span>
 
-<span class="sd">        - 3pol or MZP: converts input dataframes into a system of virtual</span>
+<span class="sd">        - MZP: converts input dataframes into a system of virtual</span>
 <span class="sd">            polarizer triplets each separated by 60 degrees (Minus [-60],</span>
 <span class="sd">            Zero [0], Plus [60]).</span>
 
@@ -364,113 +413,44 @@ title="Open an issue"
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    numpy.ndarray</span>
-<span class="sd">        The transformed vector data are returned as a numpy.ndarray.  Most</span>
+<span class="sd">    NDCollection</span>
+<span class="sd">        The transformed data are returned as a NDcollection.  Most</span>
 <span class="sd">        Transforms maintain the dimensionality of the source vectors.  Some</span>
 <span class="sd">        embed (increase dimensionality of the vectors) or project (decrease</span>
 <span class="sd">        dimensionality of the vectors); additional input dimensions, if</span>
 <span class="sd">        present, are still appended to the output vectors in all any case.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="n">input_data</span> <span class="o">=</span> <span class="n">convert_image_list_to_dict</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">input_data</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
 
-
-    <span class="n">input_data</span><span class="p">,</span> <span class="n">input_has_radians</span> <span class="o">=</span> <span class="n">sanitize_data_dict</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
     <span class="n">input_kind</span> <span class="o">=</span> <span class="n">determine_input_kind</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">input_kind</span> <span class="o">==</span> <span class="s2">&quot;npol&quot;</span><span class="p">:</span>
+        <span class="n">input_data</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">polarizers</span><span class="o">.</span><span class="n">npol_to_mzp</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+        <span class="n">input_kind</span> <span class="o">=</span> <span class="s2">&quot;MZP&quot;</span>
 
+<span class="c1">#   Convert a set of inputs given at different polarizing angles to a common base of MZP.</span>
+<span class="c1">#     input_data_mzp = sp.polarizers.npol_to_mzp(input_data)</span>
+<span class="c1">#     input_kind = &quot;MZP&quot;</span>
+
+    <span class="n">input_key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
     <span class="n">transform_path</span> <span class="o">=</span> <span class="n">get_transform_path</span><span class="p">(</span><span class="n">input_kind</span><span class="p">,</span> <span class="n">out_polarize_state</span><span class="p">)</span>
     <span class="n">equation</span> <span class="o">=</span> <span class="n">get_transform_equation</span><span class="p">(</span><span class="n">transform_path</span><span class="p">)</span>
     <span class="n">requires_alpha</span> <span class="o">=</span> <span class="n">check_alpha_requirement</span><span class="p">(</span><span class="n">transform_path</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">requires_alpha</span><span class="p">:</span>
-        <span class="n">input_data</span> <span class="o">=</span> <span class="n">add_alpha</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
-
+    <span class="k">if</span> <span class="n">requires_alpha</span> <span class="ow">and</span> <span class="s2">&quot;alpha&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_key</span><span class="p">:</span>
+        <span class="n">input_data</span> <span class="o">=</span> <span class="n">add_alpha</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">equation</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">input_has_radians</span><span class="p">:</span>
-        <span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sanitize_data_dict</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
 
-<span class="k">def</span> <span class="nf">sanitize_data_dict</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="n">output_angle_unit</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">output_angle_unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Keys must be converted to degrees or radians. Found output_angle_unit=</span><span class="si">{</span><span class="n">output_angle_unit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Set up necessary conversions</span>
-    <span class="n">deg2rad</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">180</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
-    <span class="n">rad2deg</span> <span class="o">=</span> <span class="p">(</span><span class="mi">180</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
-
-    <span class="c1"># Sanitize all the keys</span>
-    <span class="n">found_radians_key</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">output_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Real</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">output_angle_unit</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">:</span>
-                <span class="n">output_dict</span><span class="p">[</span><span class="n">key</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">output_dict</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported key type of </span><span class="si">{</span><span class="n">key</span><span class="o">.</span><span class="n">unit</span><span class="si">}</span><span class="s2"> found. Must be radians or degrees.&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">:</span>
-                <span class="n">found_radians_key</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">if</span> <span class="n">output_angle_unit</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">:</span>
-                    <span class="n">output_dict</span><span class="p">[</span><span class="n">key</span><span class="o">*</span><span class="n">rad2deg</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">output_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="k">elif</span> <span class="n">key</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">output_angle_unit</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">:</span>
-                    <span class="n">output_dict</span><span class="p">[</span><span class="n">key</span><span class="o">*</span><span class="n">deg2rad</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">output_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># case for all the string keys</span>
-            <span class="n">output_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-
-    <span class="c1"># Sanitize alpha map</span>
-    <span class="k">if</span> <span class="s2">&quot;alpha&quot;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">],</span> <span class="n">Quantity</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">:</span>
-                <span class="n">found_radians_key</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">if</span> <span class="n">output_angle_unit</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">:</span>
-                    <span class="n">output_dict</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">rad2deg</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">output_dict</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">output_angle_unit</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">:</span>
-                    <span class="n">output_dict</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">output_dict</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">deg2rad</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alpha must be in degrees or radians. Found </span><span class="si">{</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span><span class="si">}</span><span class="s2"> unit.&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">],</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Real</span><span class="p">)</span> <span class="ow">or</span> \
-                <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">output_angle_unit</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">:</span>
-                <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">output_dict</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">radian</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Alpha must be numeric with or without a unit.&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">output_dict</span><span class="p">,</span> <span class="n">found_radians_key</span>
-
-
-<span class="k">def</span> <span class="nf">check_alpha_requirement</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-    <span class="n">requires_alpha</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step_start</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
-        <span class="n">step_end</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="n">requires_alpha</span> <span class="o">=</span> <span class="n">transform_graph</span><span class="o">.</span><span class="n">get_edge_data</span><span class="p">(</span><span class="n">step_start</span><span class="p">,</span> <span class="n">step_end</span><span class="p">)[</span><span class="s1">&#39;requires_alpha&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">requires_alpha</span>
-    <span class="k">return</span> <span class="n">requires_alpha</span>
-
-
-<span class="k">def</span> <span class="nf">determine_input_kind</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="n">input_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="k">def</span> <span class="nf">determine_input_kind</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">NDCollection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">input_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">valid_kind</span><span class="p">,</span> <span class="n">param_list</span> <span class="ow">in</span> <span class="n">VALID_KINDS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">param_option</span> <span class="ow">in</span> <span class="n">param_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">input_keys</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">param_option</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">valid_kind</span>
-    <span class="n">numeric_key_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">input_data</span><span class="p">])</span>
-    <span class="k">if</span> <span class="n">numeric_key_count</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;MZP&quot;</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid Keys&quot;</span><span class="p">)</span>  <span class="c1"># TODO: improve this message</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unidentified Polarization System.&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">get_transform_path</span><span class="p">(</span><span class="n">input_kind</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_kind</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
@@ -484,98 +464,59 @@ title="Open an issue"
 <span class="k">def</span> <span class="nf">get_transform_equation</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
     <span class="n">current_function</span> <span class="o">=</span> <span class="n">identity</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step_start</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
-        <span class="n">step_end</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">step_end</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">current_function</span> <span class="o">=</span> <span class="n">_compose2</span><span class="p">(</span><span class="n">transform_graph</span><span class="o">.</span><span class="n">get_edge_data</span><span class="p">(</span><span class="n">step_start</span><span class="p">,</span> <span class="n">step_end</span><span class="p">)[</span><span class="s1">&#39;func&#39;</span><span class="p">],</span>
                                      <span class="n">current_function</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">current_function</span>
 
 
-<span class="k">def</span> <span class="nf">_determine_image_shape</span><span class="p">(</span><span class="n">input_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    <span class="n">shape</span> <span class="o">=</span> <span class="n">input_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">shape</span>
+<span class="k">def</span> <span class="nf">check_alpha_requirement</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="n">requires_alpha</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step_start</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">step_end</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">requires_alpha</span> <span class="o">=</span> <span class="n">transform_graph</span><span class="o">.</span><span class="n">get_edge_data</span><span class="p">(</span><span class="n">step_start</span><span class="p">,</span> <span class="n">step_end</span><span class="p">)[</span><span class="s1">&#39;requires_alpha&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">requires_alpha</span>
+    <span class="k">return</span> <span class="n">requires_alpha</span>
+
+
+<span class="k">def</span> <span class="nf">_determine_image_shape</span><span class="p">(</span><span class="n">input_cube</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_cube</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">input_cube</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
     <span class="k">return</span> <span class="n">shape</span>
 
 
-<span class="k">def</span> <span class="nf">add_alpha</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">alpha_choice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">add_alpha</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">NDCollection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDCollection</span><span class="p">:</span>
     <span class="c1"># test if alpha exists. if not check if alpha keyword added. if not create default alpha with warning.</span>
 
     <span class="n">img_shape</span> <span class="o">=</span> <span class="n">_determine_image_shape</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+    <span class="n">wcs</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">wcs</span>
+    <span class="n">metad</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">meta</span>
+    <span class="n">deg2rad</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">180</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
+
+    <span class="c1"># TODO: don&#39;t use inputs inside</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># it&#39;s an image and not just an array</span>
-        <span class="n">alpha_choice</span> <span class="o">=</span> <span class="s2">&quot;radial&quot;</span> <span class="k">if</span> <span class="n">alpha_choice</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">alpha_choice</span>
-        <span class="k">if</span> <span class="s2">&quot;alpha&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_data</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">alpha_choice</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ALPHA_FUNCTIONS</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Requested a </span><span class="si">{</span><span class="n">alpha_choice</span><span class="si">}</span><span class="s2"> alpha type. &quot;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;This is not valid. Must be in </span><span class="si">{</span><span class="n">ALPHA_FUNCTIONS</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">input_data</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ALPHA_FUNCTIONS</span><span class="p">[</span><span class="n">alpha_choice</span><span class="p">](</span><span class="n">img_shape</span><span class="p">)</span>
+        <span class="n">inp</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Do you wish to provide an alpha array?&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Continuing with default options... Waiting for input...&quot;</span><span class="p">)</span>
+            <span class="n">inp_ref</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Choose the reference along the Solar: </span><span class="se">\&quot;</span><span class="s2">North</span><span class="se">\&quot;</span><span class="s2"> or </span><span class="se">\&quot;</span><span class="s2">West</span><span class="se">\&quot;</span><span class="s2">:&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">inp_ref</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">):</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="n">radial_north</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">alpha</span> <span class="o">=</span> <span class="n">radial_west</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span>
+            <span class="n">input_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">NDCollection</span><span class="p">([(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">NDCube</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">wcs</span><span class="o">=</span><span class="n">wcs</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="n">metad</span><span class="p">))],</span> <span class="n">meta</span><span class="o">=</span><span class="p">{},</span> <span class="n">aligned_axes</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">inp</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Provide the alpha matrix in FITS format&quot;</span><span class="p">)</span>
+            <span class="n">alpha_path</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Provide the path of alpha FITS file:&quot;</span><span class="p">)</span>
+            <span class="n">hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">alpha_path</span><span class="p">)</span>
+
+            <span class="c1"># TODO: make the FITS file use a header keyword to specify the units of alpha</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">hdu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">alph</span> <span class="o">=</span> <span class="n">hdu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">deg2rad</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">alph</span> <span class="o">=</span> <span class="n">hdu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+            <span class="n">input_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">NDCollection</span><span class="p">([(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">NDCube</span><span class="p">(</span><span class="n">alph</span><span class="p">,</span> <span class="n">wcs</span><span class="o">=</span><span class="n">wcs</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="n">metad</span><span class="p">))],</span> <span class="n">meta</span><span class="o">=</span><span class="p">{},</span> <span class="n">aligned_axes</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">input_data</span>
-
-
-<span class="k">def</span> <span class="nf">convert_image_list_to_dict</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="c1"># create output dictionary</span>
-    <span class="n">data_out</span><span class="o">=</span><span class="p">{}</span>
-    
-    <span class="c1"># create list of FITS</span>
-    <span class="n">fits_type</span><span class="o">=</span><span class="p">[]</span>
-
-    <span class="c1"># get length of list to determine how many files to process.</span>
-    <span class="n">list_len</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">list_len</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;requires at least 2 FITS files&#39;</span>
-
-    <span class="k">for</span> <span class="n">xlist_item</span> <span class="ow">in</span> <span class="n">input_data</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">xlist_item</span><span class="p">)</span> <span class="k">as</span> <span class="n">hdul</span><span class="p">:</span>
-            <span class="n">fits_type</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;DETECTOR&#39;</span><span class="p">])</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">fits_type</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Input FITS are of different types&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">fits_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;COR1&#39;</span> <span class="ow">or</span> <span class="n">fits_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;COR2&#39;</span><span class="p">:</span>
-        <span class="n">data_out</span> <span class="o">=</span> <span class="n">_convert_STEREO_list_to_dict</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
-        <span class="n">alpha</span><span class="o">=</span><span class="s1">&#39;radial90&#39;</span>
-        <span class="c1"># TODO: change alpha only if None, and also make a warning</span>
-    <span class="k">elif</span> <span class="n">fits_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;C2&#39;</span> <span class="ow">or</span> <span class="n">fits_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;C3&#39;</span><span class="p">:</span>
-        <span class="n">data_out</span> <span class="o">=</span> <span class="n">_convert_LASCO_list_to_dict</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
-        <span class="n">alpha</span><span class="o">=</span><span class="s1">&#39;radial&#39;</span>
-        <span class="c1"># TODO: change alpha only if None, and also make a warning</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;the input FITS type is not supported. Use dictionary input.&quot;</span><span class="p">)</span>
-
-    <span class="c1"># check if all polarized data entries, or if a B, pB pair</span>
-    <span class="k">if</span> <span class="n">list_len</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
-
-        <span class="k">assert</span> <span class="s2">&quot;Clear&quot;</span> <span class="ow">in</span> <span class="n">data_out</span><span class="p">,</span> <span class="s2">&quot;expected a Clear (total brightness) data frame in the input polarization data pair&quot;</span>
-
-        <span class="c1"># checking that there is a polarized data frame, and what the value of the angle is.</span>
-        <span class="n">angle</span><span class="o">=</span><span class="kc">None</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_out</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">):</span> 
-                <span class="n">angle</span><span class="o">=</span><span class="n">key</span>
-        
-        <span class="k">assert</span> <span class="n">angle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;the input polarization angle key is None, expected a numeric value&quot;</span>
-
-        <span class="c1"># to make BpB we need to add an alpha</span>
-        <span class="n">data_out</span> <span class="o">=</span> <span class="n">add_alpha</span><span class="p">(</span><span class="n">data_out</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
-
-        <span class="c1"># resolve pB in terms of the radiance through a single arbitrary polarizer</span>
-        <span class="n">data_out</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pB&#39;</span><span class="p">:</span> <span class="n">pB_from_single_angle</span><span class="p">(</span><span class="n">data_out</span><span class="p">[</span><span class="s1">&#39;Clear&#39;</span><span class="p">],</span> <span class="n">data_out</span><span class="p">[</span><span class="n">angle</span><span class="p">],</span> <span class="n">angle</span><span class="p">,</span> <span class="n">data_out</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]),</span>
-                     <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="n">data_out</span><span class="p">[</span><span class="s1">&#39;Clear&#39;</span><span class="p">],</span> 
-                     <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="n">data_out</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]}</span>
-
-    <span class="c1"># check angles of keys - create warning if not appropriate angles.</span>
-    <span class="k">elif</span> <span class="n">list_len</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">:</span>
-
-        <span class="c1"># check that the key angles are complimentary</span>
-        <span class="n">key_total</span><span class="o">=</span><span class="mi">0</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_out</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;Clear&#39;</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;More than 3 files received. At least one input file was not polarized. Include a B, pB pair, or at least 3 complimentary polarized data frames.&quot;</span> <span class="p">)</span>
-                
-            <span class="n">key_total</span><span class="o">=</span><span class="n">key_total</span><span class="o">+</span><span class="n">key</span>
-
-        <span class="k">if</span> <span class="n">key_total</span> <span class="o">!=</span> <span class="mi">360</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Input angles are not complimentary (total=360), processing but may not be accruate&quot;</span><span class="p">,</span> <span class="ne">Warning</span> <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">data_out</span>
 
 
 <span class="k">def</span> <span class="nf">_compose2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
@@ -584,82 +525,69 @@ title="Open an issue"
 
 <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span>
-
-
-<span class="k">def</span> <span class="nf">pB_from_single_angle</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">B_theta</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Converts unpolarized brightness,`B`, Radiance through a polarizer at angle theta,`B_theta`,</span>
-<span class="sd">    Polarizer angle,`theta`, and Solar position angle of an image point, `alpha` into Coronal</span>
-<span class="sd">    polarized brightness, `pB`.</span>
-<span class="sd">    </span>
-<span class="sd">    This function takes in four vars of `B`, `B_theta`, `theta`,and `alpha`.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    B : np.ndarray</span>
-<span class="sd">      &#39;Clear&#39; or total brightness data frame  </span>
-<span class="sd">    B_theta : np.ndarray</span>
-<span class="sd">      polarized data at angle theta</span>
-<span class="sd">    theta : Quantity (astropy)</span>
-<span class="sd">      angle of polarized data frame</span>
-<span class="sd">    alpha : Quantity (astropy)</span>
-<span class="sd">      alpha array to accompany STEREO or LASCO dataframes</span>
-<span class="sd">    tol : float</span>
-<span class="sd">      tolerence at which the denominator is converted to a nan (see Notes)</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    polarized brightness in terms of the radiance through a single arbitrary polarizer</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    ------</span>
-<span class="sd">    see Equation 5 in Deforest et al. 2022.</span>
-<span class="sd">    if this equation is used for single values, alpha will need to be a Quantity</span>
-
-<span class="sd">    Equation (5) is problematic, because the denominator is small when theta-alpha </span>
-<span class="sd">    is near pm pi/4. Therefore, a nan is inserted when &lt; tol</span>
-
-<span class="sd">    Due to the cosine in the denominator, with an alpha varying from 0 to 360 degrees pB should vary from positive to</span>
-<span class="sd">    negative twice crossing zero four times (pB will go to infinity at this point).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="n">pB_denominator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="p">)</span>
-    <span class="n">pB_denominator</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pB_denominator</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-
-    <span class="k">return</span> <span class="p">(</span> <span class="n">B</span><span class="o">-</span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="n">B_theta</span> <span class="p">)</span> <span class="p">)</span> <span class="o">/</span> <span class="n">pB_denominator</span>
-
 </pre></div>
 
-              </div>
+                </article>
               
-            </main>
-            <footer class="footer-article noprint">
-                
-    <!-- Previous / next buttons -->
-<div class='prev-next-area'>
+
+              
+              
+                <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
 </div>
-            </footer>
-        </div>
-    </div>
-    <div class="footer-content row">
-        <footer class="col footer"><p>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            <div class="bd-footer-content__inner">
+<div class="bd-footer-content__inner container">
   
-    By The Jupyter Book Community<br/>
-  
-      &copy; Copyright 2022.<br/>
-</p>
-        </footer>
-    </div>
+  <div class="footer-item">
     
-</div>
+<p class="component-author">
+By The Jupyter Book Community
+</p>
 
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
 
-      </div>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div></div>
+          </footer>
+        
+
+      </main>
     </div>
+  </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
 
-
+  <footer class="bd-footer">
+  </footer>
   </body>
 </html>

@@ -20,7 +20,8 @@ dependencies = [
     "astropy",
     "numpy",
     "matplotlib",
-    "networkx"
+    "networkx",
+    "ndcube"
 ]
 
 [project.optional-dependencies]

@@ -19,7 +19,7 @@ to the Stokes I, Q and U.
 As this package is not currently released, you must clone the repo and install with `pip install .`. Then follow [the documentation](https://punch-mission.github.io/solpolpy/quickstart.html).
 
 ## Getting Help
-Please contact Marcus Hughes at [marcus.hughes@swri.org](mailto:marcus.hughes@swri.org). 
+Please contact [Ritesh Patel](mailto:ritesh.patel@swri.org) or [Marcus Hughes](mailto:marcus.hughes@swri.org). 
 
 ## Contributing
 We encourage all contributions. If you have a problem with the code or would like to see a new feature, please open an issue. Or you can submit a pull request. 

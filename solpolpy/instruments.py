@@ -28,12 +28,12 @@ def load_data(path_list: List[str]) -> NDCollection:
     list_len = len(path_list)
     assert list_len >= 2, 'requires at least 2 FITS files'
 
-    for xlist_item in path_list:
-        with fits.open(xlist_item) as hdul:
-            fits_type.append(hdul[0].header['DETECTOR'])
-
-    if len(set(fits_type)) != 1:
-        raise Exception("Input FITS are of different types")
+    # for xlist_item in path_list:
+    #     with fits.open(xlist_item) as hdul:
+    #         fits_type.append(hdul[0].header['DETECTOR'])
+    #
+    # if len(set(fits_type)) != 1:
+    #     raise Exception("Input FITS are of different types")
 
     data_out = []
     i = 0

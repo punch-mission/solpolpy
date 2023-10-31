@@ -19,6 +19,11 @@ def npol_to_mzp(input_cube):
     in_list = list(input_cube)
     conv_fact = (np.pi * u.radian) / (180 * u.degree)
 
+    if input_cube['angle_1'].meta['OBSRVTRY'] == 'STEREO_B':
+        offset_angle = -18 * u.degree * conv_fact  # STEREOB
+    if input_cube['angle_1'].meta['OBSRVTRY'] == 'STEREO_A':
+        offset_angle = 45.8 * u.degree * conv_fact  # STEREOA
+
     for p_angle in in_list:
         if p_angle == "alpha":
             break
@@ -28,7 +33,7 @@ def npol_to_mzp(input_cube):
     mzp_ang = [-60, 0, 60]
     Bmzp = {}
     for ang in mzp_ang: Bmzp[ang * u.degree] = (1 / 3) * np.sum(
-        [ith_polarizer_brightness * (1 + 2 * np.cos(2 * (ang * u.degree * conv_fact - ith_angle)))
+        [ith_polarizer_brightness * (1 + 2 * np.cos(2 * (ang * u.degree * conv_fact - (ith_angle-offset_angle))))
          for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0)
 
     # todo: update header properly; time info?

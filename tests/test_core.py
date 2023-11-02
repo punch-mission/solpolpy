@@ -27,9 +27,9 @@ wcs.crval = 10, 0.5, 1
 @fixture
 def npol_ones():
     data_out = []
-    data_out.append(("angle_1", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 60})))
-    data_out.append(("angle_2", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 0})))
-    data_out.append(("angle_3", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60})))
+    data_out.append(("angle_1", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 60, 'OBSRVTRY': 'LASCO'})))
+    data_out.append(("angle_2", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 0, 'OBSRVTRY': 'LASCO'})))
+    data_out.append(("angle_3", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60, 'OBSRVTRY': 'LASCO'})))
     # data_out.append(("alpha", NDCube(np.array([0])*u.radian, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
@@ -142,7 +142,7 @@ def test_determine_input_kind_npol(npol_ones):
     assert determine_input_kind(npol_ones), "npol"
 
 def test_determine_input_kind_fourpol(four_pol_ones):
-    assert determine_input_kind(four_pol_ones), "npol"
+    assert determine_input_kind(four_pol_ones), "fourpol"
 
 def test_determine_input_kind_mzp(mzp_ones):
     assert determine_input_kind(mzp_ones), "MZP"

@@ -18,9 +18,9 @@ wcs.cname = 'wavelength', 'HPC lat', 'HPC lon'
 @fixture
 def npol_mzp_zeros():
     data_out = []
-    data_out.append(("angle_1", NDCube(np.array([0]), wcs=wcs, meta={'POLAR': 60.0})))
-    data_out.append(("angle_2", NDCube(np.array([0]), wcs=wcs, meta={'POLAR': 0.0})))
-    data_out.append(("angle_3", NDCube(np.array([0]), wcs=wcs, meta={'POLAR': -60.0})))
+    data_out.append(("angle_1", NDCube(np.array([0]), wcs=wcs, meta={'POLAR': 60.0, 'OBSRVTRY': 'LASCO'})))
+    data_out.append(("angle_2", NDCube(np.array([0]), wcs=wcs, meta={'POLAR': 0.0, 'OBSRVTRY': 'LASCO'})))
+    data_out.append(("angle_3", NDCube(np.array([0]), wcs=wcs, meta={'POLAR': -60.0, 'OBSRVTRY': 'LASCO'})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
@@ -37,9 +37,9 @@ def test_npol_mzp_zeros(npol_mzp_zeros):
 @fixture
 def npol_mzp_ones():
     data_out = []
-    data_out.append(("angle_1", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 60})))
-    data_out.append(("angle_2", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 0})))
-    data_out.append(("angle_3", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60})))
+    data_out.append(("angle_1", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 60, 'OBSRVTRY': 'LASCO'})))
+    data_out.append(("angle_2", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 0, 'OBSRVTRY': 'LASCO'})))
+    data_out.append(("angle_3", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60, 'OBSRVTRY': 'LASCO'})))
     # data_out.append(("alpha", NDCube(np.array([0]))*u.radian, wcs=wcs))
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
@@ -56,9 +56,9 @@ def test_npol_mzp_ones(npol_mzp_ones):
 @fixture
 def mzp_ones_alpha():
     data_out = []
-    data_out.append(("angle_1", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 60})))
-    data_out.append(("angle_2", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 0})))
-    data_out.append(("angle_3", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60})))
+    data_out.append(("angle_1", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 60, 'OBSRVTRY': 'LASCO'})))
+    data_out.append(("angle_2", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 0, 'OBSRVTRY': 'LASCO'})))
+    data_out.append(("angle_3", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60, 'OBSRVTRY': 'LASCO'})))
     data_out.append(("alpha", NDCube(np.array([0]), wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
 

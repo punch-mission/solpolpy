@@ -20,9 +20,9 @@ def npol_to_mzp(input_cube):
     conv_fact = (np.pi * u.radian) / (180 * u.degree)
 
     if input_cube['angle_1'].meta['OBSRVTRY'] == 'STEREO_B':
-        offset_angle = -18 * u.degree * conv_fact  # STEREOB
+        offset_angle = -18   # STEREOB
     elif input_cube['angle_1'].meta['OBSRVTRY'] == 'STEREO_A':
-        offset_angle = 45.8 * u.degree * conv_fact  # STEREOA
+        offset_angle = 45.8  # STEREOA
     else:
         offset_angle = 0
 

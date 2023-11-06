@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>solpolpy.core &#8212; My sample book</title>
+    <title>solpolpy.core &#8212; solpolpy</title>
   
   
   
@@ -18,12 +18,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -37,8 +37,9 @@
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -73,6 +74,15 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -133,14 +143,9 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   
-    
-    
-      
-    
-    
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
+  
+    <p class="title logo__title">solpolpy</p>
   
 </a></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
@@ -211,7 +216,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+      <li><a href="https://github.com/punch-mission/solpolpy" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -228,7 +233,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2F_modules/solpolpy/core.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/punch-mission/solpolpy/issues/new?title=Issue%20on%20page%20%2F_modules/solpolpy/core.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -264,10 +269,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -275,7 +280,7 @@ document.write(`
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -428,10 +433,6 @@ document.write(`
         <span class="n">input_data</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">polarizers</span><span class="o">.</span><span class="n">npol_to_mzp</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
         <span class="n">input_kind</span> <span class="o">=</span> <span class="s2">&quot;MZP&quot;</span>
 
-<span class="c1">#   Convert a set of inputs given at different polarizing angles to a common base of MZP.</span>
-<span class="c1">#     input_data_mzp = sp.polarizers.npol_to_mzp(input_data)</span>
-<span class="c1">#     input_kind = &quot;MZP&quot;</span>
-
     <span class="n">input_key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
     <span class="n">transform_path</span> <span class="o">=</span> <span class="n">get_transform_path</span><span class="p">(</span><span class="n">input_kind</span><span class="p">,</span> <span class="n">out_polarize_state</span><span class="p">)</span>
     <span class="n">equation</span> <span class="o">=</span> <span class="n">get_transform_equation</span><span class="p">(</span><span class="n">transform_path</span><span class="p">)</span>
@@ -493,28 +494,11 @@ document.write(`
     <span class="n">metad</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">meta</span>
     <span class="n">deg2rad</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">180</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
 
-    <span class="c1"># TODO: don&#39;t use inputs inside</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># it&#39;s an image and not just an array</span>
-        <span class="n">inp</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Do you wish to provide an alpha array?&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Continuing with default options... Waiting for input...&quot;</span><span class="p">)</span>
-            <span class="n">inp_ref</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Choose the reference along the Solar: </span><span class="se">\&quot;</span><span class="s2">North</span><span class="se">\&quot;</span><span class="s2"> or </span><span class="se">\&quot;</span><span class="s2">West</span><span class="se">\&quot;</span><span class="s2">:&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">inp_ref</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">):</span>
-                <span class="n">alpha</span> <span class="o">=</span> <span class="n">radial_north</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">alpha</span> <span class="o">=</span> <span class="n">radial_west</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span>
-            <span class="n">input_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">NDCollection</span><span class="p">([(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">NDCube</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">wcs</span><span class="o">=</span><span class="n">wcs</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="n">metad</span><span class="p">))],</span> <span class="n">meta</span><span class="o">=</span><span class="p">{},</span> <span class="n">aligned_axes</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">inp</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Provide the alpha matrix in FITS format&quot;</span><span class="p">)</span>
-            <span class="n">alpha_path</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Provide the path of alpha FITS file:&quot;</span><span class="p">)</span>
-            <span class="n">hdu</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">alpha_path</span><span class="p">)</span>
-
-            <span class="c1"># TODO: make the FITS file use a header keyword to specify the units of alpha</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">hdu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">alph</span> <span class="o">=</span> <span class="n">hdu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">deg2rad</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">alph</span> <span class="o">=</span> <span class="n">hdu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
-            <span class="n">input_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">NDCollection</span><span class="p">([(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">NDCube</span><span class="p">(</span><span class="n">alph</span><span class="p">,</span> <span class="n">wcs</span><span class="o">=</span><span class="n">wcs</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="n">metad</span><span class="p">))],</span> <span class="n">meta</span><span class="o">=</span><span class="p">{},</span> <span class="n">aligned_axes</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">))</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">radial_north</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data must be an image with 2 dimensions, found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">img_shape</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="n">input_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">NDCollection</span><span class="p">([(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="n">NDCube</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">wcs</span><span class="o">=</span><span class="n">wcs</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="n">metad</span><span class="p">))],</span> <span class="n">meta</span><span class="o">=</span><span class="p">{},</span> <span class="n">aligned_axes</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">input_data</span>
 
@@ -532,16 +516,12 @@ document.write(`
 
               
               
-                <footer class="bd-footer-article">
-                  
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
 <div class="prev-next-area">
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -557,7 +537,7 @@ document.write(`
   <div class="footer-item">
     
 <p class="component-author">
-By The Jupyter Book Community
+By PUNCH SOC
 </p>
 
   </div>
@@ -590,8 +570,8 @@ By The Jupyter Book Community
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
 
   <footer class="bd-footer">
   </footer>

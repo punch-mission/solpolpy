@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Quick Start &#8212; My sample book</title>
+    <title>Quick Start &#8212; solpolpy</title>
   
   
   
@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,8 +38,9 @@
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -76,6 +77,15 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -136,14 +146,9 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   
-    
-    
-      
-    
-    
-    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
+  
+    <p class="title logo__title">solpolpy</p>
   
 </a></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
@@ -214,7 +219,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+      <li><a href="https://github.com/punch-mission/solpolpy" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -231,7 +236,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fquickstart.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/punch-mission/solpolpy/issues/new?title=Issue%20on%20page%20%2Fquickstart.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -315,10 +320,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -326,7 +331,7 @@ document.write(`
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -372,8 +377,6 @@ document.write(`
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">solpolpy</span></code> supports the conversion among the polarization systems listed below
 (Use the keyword inside the parenthesis in string format for out_polarize_state in the calling sequence).</p>
-<p>Npol (npol): Set of images taken at more than three polarizing angles
-(e.g. 0°, 45°, 90° and 135°).</p>
 <p>MZP (MZP): Triplet of images taken at -60°, 0°, and +60° polarizing angles.</p>
 <p>B<sub>T</sub>, B<sub>R</sub> (BtBr): Pair of images with polarization along the
 tangential and radial direction with respect to the Sun respectively.</p>
@@ -383,6 +386,8 @@ polarized brightness along ±45° (U) .</p>
 <p>B, pB, pB’ (Bp3): Analogous to Stokes I, Q and U, but rotates with α around the
 Sun unlike the later with fixed frame of reference of the instrument.</p>
 <p>B, θ, p (Bthp): System with total (unpolarized) brightness, angle and degree of polarization.</p>
+<p>4 polarizer system (fourpol): For observations taken at sequence of four polarizer angles, i.e.  0°, 45°, 90° and 135°.</p>
+<p>Npol (npol): Set of images taken at more than three polarizing angles</p>
 <p>The equations required for the transformations from one system to another can be found in <a class="reference external" href="https://doi.org/10.3847/1538-4357/ac43b6">Deforest et al. 2022</a>.</p>
 </section>
 <section id="calling-sequence">
@@ -391,7 +396,7 @@ Sun unlike the later with fixed frame of reference of the instrument.</p>
 <span class="n">output</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">out_polarize_state</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>input_data: Input NDCollection of the type listed above</p>
+<p>input_data: Input NDCollection of the type listed above or string of path to FITS files</p>
 <p>out_polarize_state: String of required output polarization state</p>
 <p>output: Output NDCollection of polarization state in ‘out_polarize_state’</p>
 </section>
@@ -422,11 +427,10 @@ Sun unlike the later with fixed frame of reference of the instrument.</p>
 
               
               
-                <footer class="bd-footer-article">
-                  
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="intro.html"
@@ -446,10 +450,7 @@ Sun unlike the later with fixed frame of reference of the instrument.</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -480,7 +481,7 @@ Sun unlike the later with fixed frame of reference of the instrument.</p>
   <div class="footer-item">
     
 <p class="component-author">
-By The Jupyter Book Community
+By PUNCH SOC
 </p>
 
   </div>
@@ -513,8 +514,8 @@ By The Jupyter Book Community
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
 
   <footer class="bd-footer">
   </footer>

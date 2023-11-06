@@ -326,7 +326,7 @@ def fourpol_ones():
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 def test_fourpol_to_stokes_ones():
-    actual = pol.btbr_to_npol(btbr_ones,[0,120,240])
+    actual = pol.fourpol_to_stokes(btbr_ones,[0,120,240])
     expected_data = []
     expected_data.append(("Bi", NDCube(np.array([2]), wcs=wcs)))
     expected_data.append(("Bq", NDCube(np.array([0]), wcs=wcs)))

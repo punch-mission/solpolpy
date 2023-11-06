@@ -34,6 +34,8 @@ jobs:
         pytest --cov=solpolpy tests/ --cov-report xml:/home/runner/coverage.xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with: 
         fail_ci_if_error: true
         verbose: true

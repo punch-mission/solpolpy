@@ -12,23 +12,30 @@ def npol_to_mzp(input_cube):
     """
     Notes
     ------
-    Equation 44 in Deforest et al. 2022.
+    Equation 44 in DeForest et al. 2022.
 
     """""
     input_dict = {}
     in_list = list(input_cube)
     conv_fact = (np.pi * u.radian) / (180 * u.degree)
 
+    # constants come from https://www.sciencedirect.com/science/article/pii/S0019103515003620?via%3Dihub
+    if input_cube['angle_1'].meta['OBSRVTRY'] == 'STEREO_B':
+        offset_angle = -18 * u.degree # STEREOB
+    elif input_cube['angle_1'].meta['OBSRVTRY'] == 'STEREO_A':
+        offset_angle = 45.8 * u.degree # STEREOA
+    else:
+        offset_angle = 0
+
     for p_angle in in_list:
         if p_angle == "alpha":
             break
-        # input_dict[(conv_polar_from_head(input_cube[p_angle])) * u.degree * conv_fact] = input_cube[p_angle].data
         input_dict[(conv_polar_from_head(input_cube[p_angle])) * u.degree * conv_fact] = input_cube[p_angle].data
 
     mzp_ang = [-60, 0, 60]
     Bmzp = {}
     for ang in mzp_ang: Bmzp[ang * u.degree] = (1 / 3) * np.sum(
-        [ith_polarizer_brightness * (1 + 2 * np.cos(2 * (ang * u.degree * conv_fact - ith_angle)))
+        [ith_polarizer_brightness * (1 + 2 * np.cos(2 * (ang * u.degree * conv_fact - (ith_angle-offset_angle))))
          for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0)
 
     # todo: update header properly; time info?
@@ -48,7 +55,7 @@ def mzp_to_bpb(input_cube):
     """
     Notes
     ------
-    Equation 7 and 9 in Deforest et al. 2022.
+    Equation 7 and 9 in DeForest et al. 2022.
 
     """""
     # TODO: need to check if 3 angles are input.
@@ -61,9 +68,6 @@ def mzp_to_bpb(input_cube):
         if p_angle == "alpha":
             break
         input_dict[(input_cube[p_angle].meta['POLAR']) * u.degree * conv_fact] = input_cube[p_angle].data
-
-    # if "alpha" not in input_cube:
-    #     raise ValueError("missing alpha")
 
     alpha = input_cube['alpha'].data * u.radian
     B = (2 / 3) * (np.sum([ith_polarizer_brightness
@@ -91,16 +95,11 @@ def bpb_to_mzp(input_cube):
     """
     Notes
     ------
-    Equation 4 in Deforest et al. 2022.
+    Equation 4 in DeForest et al. 2022.
     """
 
     if "alpha" not in input_cube:
         raise ValueError("missing alpha")
-
-    # for p_angle in in_list:
-    #     if p_angle == "alpha":
-    #         break
-    #     input_dict[(input_cube[p_angle].meta['POLAR'])] = input_cube[p_angle].data
 
     alpha = input_cube['alpha'].data * u.radian
     B, pB = input_cube["B"].data, input_cube["pB"].data
@@ -125,7 +124,7 @@ def bpb_to_btbr(input_cube):
     """
     Notes
     ------
-    Equation 1 and 2 in Deforest et al. 2022.
+    Equation 1 and 2 in DeForest et al. 2022.
     """
     input_dict = {}
     in_list = list(input_cube)
@@ -159,7 +158,7 @@ def btbr_to_bpb(input_cube):
     """
     Notes
     ------
-    Equation in Table 1 in Deforest et al. 2022.
+    Equation in Table 1 in DeForest et al. 2022.
     """
     input_dict = {}
     in_list = list(input_cube)
@@ -193,7 +192,7 @@ def mzp_to_stokes(input_cube):
     """
     Notes
     ------
-    Equation 9, 12 and 13 in Deforest et al. 2022.
+    Equation 9, 12 and 13 in DeForest et al. 2022.
     """
     Bm, Bz, Bp = input_cube["Bm"].data, input_cube["Bz"].data, input_cube["Bp"].data
 
@@ -210,8 +209,6 @@ def mzp_to_stokes(input_cube):
     BStokes_cube.append(("Bi", NDCube(Bi, wcs=input_cube["Bm"].wcs, meta=metaI)))
     BStokes_cube.append(("Bq", NDCube(Bq, wcs=input_cube["Bm"].wcs, meta=metaQ)))
     BStokes_cube.append(("Bu", NDCube(Bu, wcs=input_cube["Bm"].wcs, meta=metaU)))
-    # BStokes_cube["alpha"] = NDCube(alpha, wcs=input_cube["B"].wcs)
-
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")
 
 
@@ -219,7 +216,7 @@ def stokes_to_mzp(input_cube):
     """
     Notes
     ------
-    Equation 11 in Deforest et al. 2022. with alpha = np.pi/2
+    Equation 11 in DeForest et al. 2022. with alpha = np.pi/2
     """
 
     alpha = np.pi / 2
@@ -248,7 +245,7 @@ def mzp_to_bp3(input_cube):
     """
     Notes
     ------
-    Equation 7, 9 and 10 in Deforest et al. 2022.
+    Equation 7, 9 and 10 in DeForest et al. 2022.
     """""
     input_dict = {}
     in_list = list(input_cube)
@@ -258,12 +255,7 @@ def mzp_to_bp3(input_cube):
         if p_angle == "alpha":
             break
         input_dict[(input_cube[p_angle].meta['POLAR'] * u.degree * conv_fact)] = input_cube[p_angle].data
-
-        # alpha = alpha1([input_cube['Bm'].meta['NAXIS1'], input_cube['Bm'].meta['NAXIS2']]) #input_dict['alpha']
-
-    # if "alpha" not in input_cube:
-    #     raise ValueError("missing alpha")
-
+        
     alpha = input_cube['alpha'].data * u.radian
     B = (2 / 3) * (np.sum([ith_polarizer_brightness for ith_angle, ith_polarizer_brightness
                            in input_dict.items() if ith_angle != "alpha"], axis=0))
@@ -295,7 +287,7 @@ def bp3_to_mzp(input_cube):
     """
     Notes
     ------
-    Equation 11 in Deforest et al. 2022.
+    Equation 11 in DeForest et al. 2022.
     """""
     conv_fact = (np.pi * u.radian) / (180 * u.degree)
 
@@ -325,7 +317,7 @@ def btbr_to_mzp(input_cube):
     """
     Notes
     ------
-    Equation 3 in Deforest et al. 2022.
+    Equation 3 in DeForest et al. 2022.
     """
     if "alpha" not in input_cube:
         raise ValueError("missing alpha")
@@ -352,7 +344,7 @@ def bp3_to_bthp(input_cube):
     """
     Notes
     ------
-    Equations 9, 15, 16 in Deforest et al. 2022.
+    Equations 9, 15, 16 in DeForest et al. 2022.
     """""
     if "alpha" not in input_cube:
         raise ValueError("missing alpha")
@@ -378,7 +370,7 @@ def btbr_to_npol(input_cube, angles):
     """
     Notes
     ------
-    Equation 3 in Deforest et al. 2022.
+    Equation 3 in DeForest et al. 2022.
     angles: list of input angles in degree
     """
     if "alpha" not in input_cube:
@@ -400,45 +392,21 @@ def btbr_to_npol(input_cube, angles):
     return NDCollection(Bnpol_cube, meta={}, aligned_axes="all")
 
 
-# TODO: decide if we keep
-# def pB_from_single_angle(B, B_theta, theta, alpha, tol=1e-6):
-#     """
-#     Converts unpolarized brightness,`B`, Radiance through a polarizer at angle theta,`B_theta`,
-#     Polarizer angle,`theta`, and Solar position angle of an image point, `alpha` into Coronal
-#     polarized brightness, `pB`.
-#
-#     This function takes in four vars of `B`, `B_theta`, `theta`,and `alpha`.
-#
-#     Parameters
-#     ----------
-#     B : np.ndarray
-#       'Clear' or total brightness data frame
-#     B_theta : np.ndarray
-#       polarized data at angle theta
-#     theta : Quantity (astropy)
-#       angle of polarized data frame
-#     alpha : Quantity (astropy)
-#       alpha array to accompany STEREO or LASCO dataframes
-#     tol : float
-#       tolerence at which the denominator is converted to a nan (see Notes)
-#
-#     Returns
-#     -------
-#     polarized brightness in terms of the radiance through a single arbitrary polarizer
-#
-#     Notes
-#     ------
-#     see Equation 5 in Deforest et al. 2022.
-#     if this equation is used for single values, alpha will need to be a Quantity
-#
-#     Equation (5) is problematic, because the denominator is small when theta-alpha
-#     is near pm pi/4. Therefore, a nan is inserted when < tol
-#
-#     Due to the cosine in the denominator, with an alpha varying from 0 to 360 degrees pB should vary from positive to
-#     negative twice crossing zero four times (pB will go to infinity at this point).
-#     """
-#
-#     pB_denominator = np.cos(2 * (theta - alpha))
-#     pB_denominator[np.abs(pB_denominator) < tol] = np.nan
-#
-#     return (B - (2 * B_theta)) / pB_denominator
+def fourpol_to_stokes(input_cube):
+    """
+    Notes
+    ------
+    Table 1 in DeForest et al. 2022.
+
+    """""
+    Bi = input_cube["B0"].data + input_cube["B90"].data
+    Bq = input_cube["B90"].data - input_cube["B0"].data
+    Bu = input_cube["B135"].data - input_cube["B45"].data
+
+    metaI, metaQ, metaU = copy.copy(input_cube["B0"].meta), copy.copy(input_cube["B0"].meta), copy.copy(input_cube["B0"].meta)
+    BStokes_cube = []
+    BStokes_cube.append(("Bi", NDCube(Bi, wcs=input_cube["B0"].wcs, meta=metaI)))
+    BStokes_cube.append(("Bq", NDCube(Bq, wcs=input_cube["B0"].wcs, meta=metaQ)))
+    BStokes_cube.append(("Bu", NDCube(Bu, wcs=input_cube["B0"].wcs, meta=metaU)))
+
+    return NDCollection(BStokes_cube, meta={}, aligned_axes="all")

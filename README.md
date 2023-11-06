@@ -3,7 +3,6 @@
 
 **UNDER DEVELOPMENT**
 
-
 `solpolpy` is a solar polarization resolver based on [Deforest et al. 2022](https://doi.org/10.3847/1538-4357/ac43b6).
 It converts between various polarization formats, e.g. from the native three triple version from observations
 (also known as the MZP convention) to polarization brightness (pB) and total polarization (B), Stokes I, Q and U, etc.
@@ -19,16 +18,16 @@ to the Stokes I, Q and U.
 As this package is not currently released, you must clone the repo and install with `pip install .`. Then follow [the documentation](https://punch-mission.github.io/solpolpy/quickstart.html).
 
 ## Getting Help
-Please contact Marcus Hughes at [marcus.hughes@swri.org](mailto:marcus.hughes@swri.org). 
+Please contact [Ritesh Patel](mailto:ritesh.patel@swri.org) or [Marcus Hughes](mailto:marcus.hughes@swri.org). 
 
 ## Contributing
 We encourage all contributions. If you have a problem with the code or would like to see a new feature, please open an issue. Or you can submit a pull request. 
 
 ## Code of Conduct
-Coming soon.  
+[Access here](CODE_OF_CONDUCT.md)
 
 ## Citation
-Coming soon. 
+Coming soon with the publication of a paper. 
 
 ## Origin of the Name
 `solpolpy` is just a combination of `sol` for solar, `pol` for polarization, and `py` for Python. 

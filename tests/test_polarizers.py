@@ -319,10 +319,10 @@ def test_btbr_npol_ones(btbr_ones):
 @fixture
 def fourpol_ones():
     data_out = []
-    data_out.append(("B0", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'B0'})))
-    data_out.append(("B45", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'B45'})))
-    data_out.append(("B90", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'B90'})))
-    data_out.append(("B135", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'B135'})))
+    data_out.append((0, NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 0})))
+    data_out.append((45, NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 45})))
+    data_out.append((90, NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 90})))
+    data_out.append((135, NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 135})))
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 def test_fourpol_to_stokes_ones(fourpol_ones):

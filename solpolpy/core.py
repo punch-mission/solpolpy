@@ -121,10 +121,6 @@ def resolve(input_data: Union[List[str], NDCollection], out_polarize_state: str)
         input_data = sp.polarizers.npol_to_mzp(input_data)
         input_kind = "MZP"
 
-#   Convert a set of inputs given at different polarizing angles to a common base of MZP.
-#     input_data_mzp = sp.polarizers.npol_to_mzp(input_data)
-#     input_kind = "MZP"
-
     input_key = list(input_data)
     transform_path = get_transform_path(input_kind, out_polarize_state)
     equation = get_transform_equation(transform_path)
@@ -186,28 +182,11 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
     metad = input_data[keys[0]].meta
     deg2rad = (np.pi * u.radian) / (180 * u.degree)
 
-    # TODO: don't use inputs inside
     if len(img_shape) == 2:  # it's an image and not just an array
-        inp = input("Do you wish to provide an alpha array?").lower()
-        if inp.startswith('n'):
-            print("Continuing with default options... Waiting for input...")
-            inp_ref = input("Choose the reference along the Solar: \"North\" or \"West\":").lower()
-            if inp_ref.startswith('n'):
-                alpha = radial_north(img_shape)
-            else:
-                alpha = radial_west(img_shape)
-            input_data.update(NDCollection([("alpha", NDCube(alpha, wcs=wcs, meta=metad))], meta={}, aligned_axes='all'))
-        elif inp.startswith('y'):
-            print("Provide the alpha matrix in FITS format")
-            alpha_path = input("Provide the path of alpha FITS file:")
-            hdu = fits.open(alpha_path)
-
-            # TODO: make the FITS file use a header keyword to specify the units of alpha
-            if np.max(hdu[0].data) > 2 * np.pi + 1:
-                alph = hdu[0].data * deg2rad
-            else:
-                alph = hdu[0].data
-            input_data.update(NDCollection([("alpha", NDCube(alph, wcs=wcs, meta=metad))], meta={}, aligned_axes='all'))
+        alpha = radial_north(img_shape)
+    else:
+        raise ValueError(f"Data must be an image with 2 dimensions, found {len(img_shape)}.")
+    input_data.update(NDCollection([("alpha", NDCube(alph, wcs=wcs, meta=metad))], meta={}, aligned_axes='all'))
 
     return input_data
 

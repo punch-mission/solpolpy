@@ -19,23 +19,23 @@ def npol_to_mzp(input_cube):
     in_list = list(input_cube)
     conv_fact = (np.pi * u.radian) / (180 * u.degree)
 
+    # constants come from https://www.sciencedirect.com/science/article/pii/S0019103515003620?via%3Dihub
     if input_cube['angle_1'].meta['OBSRVTRY'] == 'STEREO_B':
-        offset_angle = -18   # STEREOB
+        offset_angle = -18 * u.degree # STEREOB
     elif input_cube['angle_1'].meta['OBSRVTRY'] == 'STEREO_A':
-        offset_angle = 45.8  # STEREOA
+        offset_angle = 45.8 * u.degree # STEREOA
     else:
         offset_angle = 0
 
     for p_angle in in_list:
         if p_angle == "alpha":
             break
-        # input_dict[(conv_polar_from_head(input_cube[p_angle])) * u.degree * conv_fact] = input_cube[p_angle].data
         input_dict[(conv_polar_from_head(input_cube[p_angle])) * u.degree * conv_fact] = input_cube[p_angle].data
 
     mzp_ang = [-60, 0, 60]
     Bmzp = {}
     for ang in mzp_ang: Bmzp[ang * u.degree] = (1 / 3) * np.sum(
-        [ith_polarizer_brightness * (1 + 2 * np.cos(2 * (ang * u.degree * conv_fact - (ith_angle-offset_angle* u.degree * conv_fact))))
+        [ith_polarizer_brightness * (1 + 2 * np.cos(2 * (ang * u.degree * conv_fact - (ith_angle-offset_angle))))
          for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0)
 
     # todo: update header properly; time info?
@@ -69,9 +69,6 @@ def mzp_to_bpb(input_cube):
             break
         input_dict[(input_cube[p_angle].meta['POLAR']) * u.degree * conv_fact] = input_cube[p_angle].data
 
-    # if "alpha" not in input_cube:
-    #     raise ValueError("missing alpha")
-
     alpha = input_cube['alpha'].data * u.radian
     B = (2 / 3) * (np.sum([ith_polarizer_brightness
                            for ith_angle, ith_polarizer_brightness
@@ -103,11 +100,6 @@ def bpb_to_mzp(input_cube):
 
     if "alpha" not in input_cube:
         raise ValueError("missing alpha")
-
-    # for p_angle in in_list:
-    #     if p_angle == "alpha":
-    #         break
-    #     input_dict[(input_cube[p_angle].meta['POLAR'])] = input_cube[p_angle].data
 
     alpha = input_cube['alpha'].data * u.radian
     B, pB = input_cube["B"].data, input_cube["pB"].data
@@ -217,8 +209,6 @@ def mzp_to_stokes(input_cube):
     BStokes_cube.append(("Bi", NDCube(Bi, wcs=input_cube["Bm"].wcs, meta=metaI)))
     BStokes_cube.append(("Bq", NDCube(Bq, wcs=input_cube["Bm"].wcs, meta=metaQ)))
     BStokes_cube.append(("Bu", NDCube(Bu, wcs=input_cube["Bm"].wcs, meta=metaU)))
-    # BStokes_cube["alpha"] = NDCube(alpha, wcs=input_cube["B"].wcs)
-
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")
 
 
@@ -265,12 +255,7 @@ def mzp_to_bp3(input_cube):
         if p_angle == "alpha":
             break
         input_dict[(input_cube[p_angle].meta['POLAR'] * u.degree * conv_fact)] = input_cube[p_angle].data
-
-        # alpha = alpha1([input_cube['Bm'].meta['NAXIS1'], input_cube['Bm'].meta['NAXIS2']]) #input_dict['alpha']
-
-    # if "alpha" not in input_cube:
-    #     raise ValueError("missing alpha")
-
+        
     alpha = input_cube['alpha'].data * u.radian
     B = (2 / 3) * (np.sum([ith_polarizer_brightness for ith_angle, ith_polarizer_brightness
                            in input_dict.items() if ith_angle != "alpha"], axis=0))
@@ -430,6 +415,5 @@ def fourpol_to_stokes(input_cube):
     BStokes_cube.append(("Bi", NDCube(Bi, wcs=input_cube[0].wcs, meta=metaI)))
     BStokes_cube.append(("Bq", NDCube(Bq, wcs=input_cube[0].wcs, meta=metaQ)))
     BStokes_cube.append(("Bu", NDCube(Bu, wcs=input_cube[0].wcs, meta=metaU)))
-    # BStokes_cube["alpha"] = NDCube(alpha, wcs=input_cube["B"].wcs)
 
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")

@@ -186,7 +186,7 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
         alpha = radial_north(img_shape)
     else:
         raise ValueError(f"Data must be an image with 2 dimensions, found {len(img_shape)}.")
-    input_data.update(NDCollection([("alpha", NDCube(alph, wcs=wcs, meta=metad))], meta={}, aligned_axes='all'))
+    input_data.update(NDCollection([("alpha", NDCube(alpha, wcs=wcs, meta=metad))], meta={}, aligned_axes='all'))
 
     return input_data
 

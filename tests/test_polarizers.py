@@ -40,7 +40,6 @@ def npol_mzp_ones():
     data_out.append(("angle_1", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 60, 'OBSRVTRY': 'STEREO_B'})))
     data_out.append(("angle_2", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 0, 'OBSRVTRY': 'STEREO_B'})))
     data_out.append(("angle_3", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60, 'OBSRVTRY': 'STEREO_B'})))
-    # data_out.append(("alpha", NDCube(np.array([0]))*u.radian, wcs=wcs))
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 def test_npol_mzp_ones(npol_mzp_ones):
@@ -313,6 +312,25 @@ def test_btbr_npol_ones(btbr_ones):
     expected_data.append(("B120", NDCube(np.array([1]), wcs=wcs)))
     expected_data.append(("B240", NDCube(np.array([1]), wcs=wcs)))
     expected_data.append(("alpha", NDCube(np.array([0])*u.radian, wcs=wcs)))
+    expected = NDCollection(expected_data, meta={}, aligned_axes="all")
+    for k in list(expected):
+        assert np.allclose(actual[str(k)].data, expected[str(k)].data)
+
+@fixture
+def fourpol_ones():
+    data_out = []
+    data_out.append(("B0", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'B0'})))
+    data_out.append(("B45", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'B45'})))
+    data_out.append(("B90", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'B90'})))
+    data_out.append(("B135", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'B135'})))
+    return NDCollection(data_out, meta={}, aligned_axes="all")
+
+def test_fourpol_to_stokes_ones():
+    actual = pol.btbr_to_npol(btbr_ones,[0,120,240])
+    expected_data = []
+    expected_data.append(("Bi", NDCube(np.array([2]), wcs=wcs)))
+    expected_data.append(("Bq", NDCube(np.array([0]), wcs=wcs)))
+    expected_data.append(("Bu", NDCube(np.array([0]), wcs=wcs)))
     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)

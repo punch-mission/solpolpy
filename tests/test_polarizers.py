@@ -15,6 +15,7 @@ wcs.crpix = 0, 2, 2
 wcs.crval = 10, 0.5, 1
 wcs.cname = 'wavelength', 'HPC lat', 'HPC lon'
 
+
 @fixture
 def npol_mzp_zeros():
     data_out = []
@@ -23,6 +24,7 @@ def npol_mzp_zeros():
     data_out.append(("angle_3", NDCube(np.array([0]), wcs=wcs, meta={'POLAR': -60.0, 'OBSRVTRY': 'STEREO_A'})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_npol_mzp_zeros(npol_mzp_zeros):
     actual = pol.npol_to_mzp(npol_mzp_zeros)
@@ -34,6 +36,7 @@ def test_npol_mzp_zeros(npol_mzp_zeros):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def npol_mzp_ones():
     data_out = []
@@ -41,6 +44,7 @@ def npol_mzp_ones():
     data_out.append(("angle_2", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 0, 'OBSRVTRY': 'STEREO_B'})))
     data_out.append(("angle_3", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60, 'OBSRVTRY': 'STEREO_B'})))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_npol_mzp_ones(npol_mzp_ones):
     actual = pol.npol_to_mzp(npol_mzp_ones)
@@ -52,6 +56,7 @@ def test_npol_mzp_ones(npol_mzp_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def mzp_ones_alpha():
     data_out = []
@@ -60,6 +65,7 @@ def mzp_ones_alpha():
     data_out.append(("angle_3", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60, 'OBSRVTRY': 'LASCO'})))
     data_out.append(("alpha", NDCube(np.array([0]), wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_npol_mzp_ones_alpha(mzp_ones_alpha):
     actual = pol.npol_to_mzp(mzp_ones_alpha)
@@ -72,6 +78,7 @@ def test_npol_mzp_ones_alpha(mzp_ones_alpha):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def mzp_zeros():
     data_out = []
@@ -80,6 +87,7 @@ def mzp_zeros():
     data_out.append(("Bp", NDCube(np.array([0]), wcs=wcs, meta={'POLAR': -60})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_mzp_bpb_zeros(mzp_zeros):
     actual = pol.mzp_to_bpb(mzp_zeros)
@@ -91,6 +99,7 @@ def test_mzp_bpb_zeros(mzp_zeros):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def mzp_ones():
     data_out = []
@@ -99,6 +108,7 @@ def mzp_ones():
     data_out.append(("Bp", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_mzp_bpb_ones(mzp_ones):
     actual = pol.mzp_to_bpb(mzp_ones)
@@ -110,6 +120,7 @@ def test_mzp_bpb_ones(mzp_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def bpb_zeros():
     data_out = []
@@ -117,6 +128,7 @@ def bpb_zeros():
     data_out.append(("pB", NDCube(np.array([0]), wcs=wcs, meta={'POLAR': 'pB'})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_bpb_mzp_zeros(bpb_zeros):
     actual = pol.bpb_to_mzp(bpb_zeros)
@@ -129,6 +141,7 @@ def test_bpb_mzp_zeros(bpb_zeros):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def bpb_ones():
     data_out = []
@@ -136,6 +149,7 @@ def bpb_ones():
     data_out.append(("pB", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'pB'})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_bpb_mzp_ones(bpb_ones):
     actual = pol.bpb_to_mzp(bpb_ones)
@@ -148,6 +162,7 @@ def test_bpb_mzp_ones(bpb_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def btbr_bpb_ones():
     data_out = []
@@ -155,6 +170,7 @@ def btbr_bpb_ones():
     data_out.append(("pB", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'pB'})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_bpb_btbr_ones(btbr_bpb_ones):
     actual = pol.bpb_to_btbr(btbr_bpb_ones)
@@ -166,6 +182,7 @@ def test_bpb_btbr_ones(btbr_bpb_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def btbr_ones():
     data_out = []
@@ -173,6 +190,7 @@ def btbr_ones():
     data_out.append(("Br", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'Br'})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_btbr_bpb_ones(btbr_ones):
     actual = pol.btbr_to_bpb(btbr_ones)
@@ -184,6 +202,7 @@ def test_btbr_bpb_ones(btbr_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def mzp_ones():
     data_out = []
@@ -192,6 +211,7 @@ def mzp_ones():
     data_out.append(("Bp", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_mzp_stokes_ones(mzp_ones):
     actual = pol.mzp_to_stokes(mzp_ones)
@@ -203,6 +223,7 @@ def test_mzp_stokes_ones(mzp_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def stokes_ones():
     data_out = []
@@ -210,6 +231,7 @@ def stokes_ones():
     data_out.append(("Bq", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'Bq'})))
     data_out.append(("Bu", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'Bu'})))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_stokes_mzp_ones(stokes_ones):
     actual = pol.stokes_to_mzp(stokes_ones)
@@ -221,6 +243,7 @@ def test_stokes_mzp_ones(stokes_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def mzp_ones():
     data_out = []
@@ -229,6 +252,7 @@ def mzp_ones():
     data_out.append(("Bp", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_mzp_bp3_ones(mzp_ones):
     actual = pol.mzp_to_bp3(mzp_ones)
@@ -241,6 +265,7 @@ def test_mzp_bp3_ones(mzp_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def bp3_ones():
     data_out = []
@@ -249,6 +274,7 @@ def bp3_ones():
     data_out.append(("pBp", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'pBp'})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_bp3_mzp_ones(bp3_ones):
     actual = pol.bp3_to_mzp(bp3_ones)
@@ -260,6 +286,7 @@ def test_bp3_mzp_ones(bp3_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def btbr_ones_mzp():
     data_out = []
@@ -267,6 +294,7 @@ def btbr_ones_mzp():
     data_out.append(("Br", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'Br'})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_btbr_mzp_ones(btbr_ones_mzp):
     actual = pol.btbr_to_mzp(btbr_ones_mzp)
@@ -278,6 +306,7 @@ def test_btbr_mzp_ones(btbr_ones_mzp):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def bp3_ones():
     data_out = []
@@ -286,6 +315,7 @@ def bp3_ones():
     data_out.append(("pBp", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'pBp'})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_bp3_bthp_ones(bp3_ones):
     actual = pol.bp3_to_bthp(bp3_ones)
@@ -297,6 +327,7 @@ def test_bp3_bthp_ones(bp3_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def btbr_ones():
     data_out = []
@@ -304,6 +335,7 @@ def btbr_ones():
     data_out.append(("Br", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 'Br'})))
     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
 
 def test_btbr_npol_ones(btbr_ones):
     actual = pol.btbr_to_npol(btbr_ones,[0,120,240])
@@ -316,14 +348,24 @@ def test_btbr_npol_ones(btbr_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+
 @fixture
 def fourpol_ones():
+    wcs = astropy.wcs.WCS(naxis=1)
+    wcs.ctype = 'ONE'
+    wcs.cunit = 'deg'
+    wcs.cdelt = 0.1
+    wcs.crpix = 0
+    wcs.crval = 0
+    wcs.cname = 'ONE'
+
     data_out = []
-    data_out.append((0, NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 0})))
-    data_out.append((45, NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 45})))
-    data_out.append((90, NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 90})))
-    data_out.append((135, NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 135})))
-    return NDCollection(data_out, meta={}, aligned_axes="all")
+    data_out.append(("B0", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 0})))
+    data_out.append(("B45", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 45})))
+    data_out.append(("B90", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 90})))
+    data_out.append(("B135", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 135})))
+    return NDCollection(key_data_pairs=data_out, meta={}, aligned_axes='all')
+
 
 def test_fourpol_to_stokes_ones(fourpol_ones):
     actual = pol.fourpol_to_stokes(fourpol_ones)

@@ -391,6 +391,7 @@ def btbr_to_npol(input_cube, angles):
 
     return NDCollection(Bnpol_cube, meta={}, aligned_axes="all")
 
+
 def fourpol_to_stokes(input_cube):
     """
     Notes
@@ -398,22 +399,14 @@ def fourpol_to_stokes(input_cube):
     Table 1 in DeForest et al. 2022.
 
     """""
-    input_dict = {}
-    in_list = list(input_cube)
+    Bi = input_cube["B0"].data + input_cube["B90"].data
+    Bq = input_cube["B90"].data - input_cube["B0"].data
+    Bu = input_cube["B135"].data - input_cube["B45"].data
 
-    for p_angle in in_list:
-        if p_angle == "alpha":
-            break
-        input_dict[(input_cube[p_angle].meta['POLAR'])] = input_cube[p_angle].data
-
-    Bi = input_cube[0].data + input_cube[90].data
-    Bq = input_cube[90].data - input_cube[0].data
-    Bu = input_cube[135].data - input_cube[45].data
-
-    metaI, metaQ, metaU = copy.copy(input_cube[0].meta), copy.copy(input_cube[0].meta), copy.copy(input_cube[0].meta)
+    metaI, metaQ, metaU = copy.copy(input_cube["B0"].meta), copy.copy(input_cube["B0"].meta), copy.copy(input_cube["B0"].meta)
     BStokes_cube = []
-    BStokes_cube.append(("Bi", NDCube(Bi, wcs=input_cube[0].wcs, meta=metaI)))
-    BStokes_cube.append(("Bq", NDCube(Bq, wcs=input_cube[0].wcs, meta=metaQ)))
-    BStokes_cube.append(("Bu", NDCube(Bu, wcs=input_cube[0].wcs, meta=metaU)))
+    BStokes_cube.append(("Bi", NDCube(Bi, wcs=input_cube["B0"].wcs, meta=metaI)))
+    BStokes_cube.append(("Bq", NDCube(Bq, wcs=input_cube["B0"].wcs, meta=metaQ)))
+    BStokes_cube.append(("Bu", NDCube(Bu, wcs=input_cube["B0"].wcs, meta=metaU)))
 
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")

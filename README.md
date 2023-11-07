@@ -2,6 +2,7 @@
 [![codecov](https://codecov.io/gh/punch-mission/solpolpy/branch/main/graph/badge.svg?token=835TUH7CKI)](https://codecov.io/gh/punch-mission/solpolpy)
 [![CI](https://github.com/punch-mission/solpolpy/actions/workflows/CI.yml/badge.svg)](https://github.com/punch-mission/solpolpy/actions/workflows/CI.yml)
 [![PyPI version](https://badge.fury.io/py/solpolpy.svg)](https://badge.fury.io/py/solpolpy)
+[![DOI](https://zenodo.org/badge/498801276.svg)](https://zenodo.org/doi/10.5281/zenodo.10076326)
 
 🚧🚧🚧 **UNDER DEVELOPMENT** 🚧🚧🚧
 

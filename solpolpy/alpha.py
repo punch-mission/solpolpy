@@ -28,8 +28,7 @@ def radial_north(shape):
     y = np.arange(-y_size // 2, y_size // 2)
     xx, yy = np.meshgrid(x, y)
     return np.rot90(np.fliplr(np.arctan2(yy, xx)+np.pi), k=1)*u.radian
-    # return np.flipud(np.rot90(np.fliplr(np.arctan2(yy, xx) + np.pi), k=1))* u.radian
-
+    
 
 def zeros(shape):
     return np.zeros(shape)

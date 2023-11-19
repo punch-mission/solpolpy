@@ -33,7 +33,7 @@ Calling Sequence
 
 input_data: Input NDCollection of the type listed above or string of path to FITS files
 
-out_polarize_state: String of required output polarization state
+out_polarize_state: String of required output polarization state; keywords inside the parenthesis listed above.
 
 output: Output NDCollection of polarization state in 'out_polarize_state'
 

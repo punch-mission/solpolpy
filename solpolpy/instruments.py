@@ -29,7 +29,7 @@ def load_data(path_list: List[str]) -> NDCollection:
     for i, data_path in enumerate(path_list):
         with fits.open(data_path) as hdul:
             wcs = WCS(hdul[0].header)
-            data_out.append(("angle_" + str(i), 
+            data_out.append(("angle_" + str(i+1),
                              NDCube(hdul[0].data, 
                                     wcs=wcs, 
                                     meta=hdul[0].header)))

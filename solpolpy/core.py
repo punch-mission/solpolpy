@@ -1,20 +1,15 @@
 from typing import Callable, List, Tuple, Union
-import numbers
 
-from astropy.io import fits
 import astropy.units as u
-from astropy.units.quantity import Quantity
 import numpy as np
 import networkx as nx
-import warnings
 import solpolpy as sp
 
 from ndcube import NDCube, NDCollection
-from astropy.wcs import WCS
 
 from solpolpy.constants import VALID_KINDS
 from solpolpy.graph import transform_graph
-from solpolpy.alpha import radial_north, radial_west
+from solpolpy.alpha import radial_north
 from solpolpy.instruments import load_data
 
 
@@ -25,78 +20,21 @@ def resolve(input_data: Union[List[str], NDCollection], out_polarize_state: str)
 
     Parameters
     ----------
-    input_data : NDCollection
-        NDCollection formatted as follows:
-
-            - Stokes NDCollection
-                "Bi":np.array - Should be included as a triplet of I,Q,U, and optionally V
-                "Bq":np.array - Should be included as a triplet of I,Q,U, and optionally V
-                "Bu":np.array - Should be included as a triplet of I,Q,U, and optionally V
-                "Bv":np.array - Should be included as a triplet of I,Q,U, and optionally V
-
-            - Brightness & Polarized brightness NDCollection
-                "B":np.array - Should be included as a double of B, pB
-                "pB":np.array - Should be included as a doublet of B, pB
-
-            - Radial & tangential brightness NDCollection
-                "Br":np.array - Should be included as a doublet of Bt, Br
-                "Bt":np.array - Should be included as a doublet of Bt, Br
-
-            - MZP triplet NDCollection
-                "Bm":np.array - Should be included as a triplet of M,Z,P
-                "Bz":np.array - Should be included as a triplet of M,Z,P
-                "Bp":np.array - Should be included as a triplet of M,Z,P
-
-            - Angular (npol) NDCollection [where keys are ints or floats representing
-            polarizer angle]
-                X1:np.array[xn] - Should be included as at least a triplet of angles
-                X2:np.array[xn] - Should be included as at least a triplet of angles
-                X3:np.array[xn] - Should be included as at least a triplet of angles
-                ...                               ...
-                Xn:np.array[xn] - Should be included as at least a triplet of angles
+    input_data : NDCollection or List[str]
+        Either: 1) a collection where each member NDCube has an expected name or 2) a list of paths to FITS files.
+        We recommend option 2.
 
     out_polarize_state : string
-      This is the polarization state you want to convert your input
-      dataframes to.  These include:
-
-        - stokes: convert the input dataframes to output Stokes dataframes. If
-            3 polarization angles are input, or can be derived, the I, Q, and U
-            Stokes parameters are output. If 4 or more polarization angles are
-            provided, and the angles are conducsive, the full I,Q,U, and V
-            Stokes parameters are provided.
-
-        - B: converts input dataframes into B ("unpolarized
-            brightness") parameters.
-
-        - pB: converts input dataframes into pB ("polarized brightness")
-            parameters.
-
-        - Bt: Produces "Bt", the radiance observed through a linear polarizer
-            oriented tangentially to a solar-concentric circle passing through
-            the image point of interest.
-
-        - Br: Produces "Br" the radiance observed through a linear polarizer
-            oriented radially to the centre Sun through the same point.
-
-        - BrBt: Produces both the  radiance observed through a linear polarizer
-            oriented tangentially to a solar-concentric circle passing through
-            the image point of interest "Bt", and the radiance observed through
-            a linear polarizer oriented radially to the centre Sun through the
-            same point "Br".
-
-        - MZP: converts input dataframes into a system of virtual
-            polarizer triplets each separated by 60 degrees (Minus [-60],
-            Zero [0], Plus [60]).
-
-        - 4pol: converts input dataframes into a system of virtual polarizer
-            triplets each separated by 45 degrees at -45, 0, 45, 90.
-
-        - Xpol: converts input dataframes into a system of virtual polarizer
-            triplets each separated by X degrees, specified by the optional
-            input separation, which should be input in degrees.
-
-        - BpB: converts input dataframes into two dataframes, B ("unpolarized
-            brightness") parameter and its counterpart pB ("polarized brightness")
+        The polarization state you want to convert your input dataframes to.
+        Must be one of the following strings:
+            - "MZP": Triplet of images taken at -60°, 0°, and +60° polarizing angles.
+            - "BtBr": Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
+            - "Stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
+            - "BpB": Total brightness and ‘excess polarized’ brightness images pair respectively.
+            - "Bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead of a fixed frame of reference of the instrument.
+            - "Bthp": Total brightness, angle and degree of polarization.
+            - "fourpol": For observations taken at sequence of four polarizer angles, i.e. 0°, 45°, 90° and 135°.
+            - "npol": Set of images taken at than three polarizing angles other than MZP
 
     Raises
     ------
@@ -180,7 +118,6 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
     keys = list(input_data)
     wcs = input_data[keys[0]].wcs
     metad = input_data[keys[0]].meta
-    deg2rad = (np.pi * u.radian) / (180 * u.degree)
 
     if len(img_shape) == 2:  # it's an image and not just an array
         alpha = radial_north(img_shape)

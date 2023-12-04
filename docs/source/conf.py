@@ -33,7 +33,9 @@ release = '0.0.1'
 
 extensions = ['autoapi.extension',
               'sphinx.ext.autodoc',
-              'sphinx.ext.napoleon']
+              'sphinx.ext.napoleon',
+              'nbsphinx',
+              'IPython.sphinxext.ipython_console_highlighting']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

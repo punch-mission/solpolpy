@@ -408,5 +408,6 @@ def fourpol_to_stokes(input_cube):
     BStokes_cube.append(("Bi", NDCube(Bi, wcs=input_cube["B0"].wcs, meta=metaI)))
     BStokes_cube.append(("Bq", NDCube(Bq, wcs=input_cube["B0"].wcs, meta=metaQ)))
     BStokes_cube.append(("Bu", NDCube(Bu, wcs=input_cube["B0"].wcs, meta=metaU)))
+    BStokes_cube.append(("Bu", NDCube(Bu, wcs=input_cube["B0"].wcs, meta=metaU)))
 
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")

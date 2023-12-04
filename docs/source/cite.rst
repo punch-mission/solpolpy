@@ -1,3 +1,6 @@
+Cite
+=======
+
 To cite the software::
 
     @software{marcus_hughes_2023_10076327,

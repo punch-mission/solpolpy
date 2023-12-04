@@ -15,7 +15,6 @@ The docs are built using ``sphinx``. First, you must install it and the other do
 
     pip install -r ./docs/requirements.txt
     pip install -r requirements.txt
-    python setup.py build_ext --inplace
 
 Then, navigate to the ``docs`` directory and run ``make html`` to build the docs.
 

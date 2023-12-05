@@ -42,12 +42,17 @@ def npol_to_mzp(input_cube):
 
     mzp_ang = [-60, 0, 60]
     Bmzp = {}
-    for ang in mzp_ang: Bmzp[ang * u.degree] = (1 / 3) * np.sum(
-        [ith_polarizer_brightness * (1 + 2 * np.cos(2 * (ang * u.degree * conv_fact - (ith_angle-offset_angle))))
-         for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0)
+    for ang in mzp_ang:
+        Bmzp[ang * u.degree] = ((1 / 3)
+                                * np.sum([ith_polarizer_brightness
+                                          * (1 + 2 * np.cos(2 * (ang * u.degree * conv_fact
+                                                                 - (ith_angle-offset_angle))))
+                                          for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0))
 
     # todo: update header properly; time info?
-    metaM, metaZ, metaP = copy.copy(input_cube["angle_1"].meta), copy.copy(input_cube["angle_2"].meta), copy.copy(input_cube["angle_3"].meta)
+    metaM, metaZ, metaP = (copy.copy(input_cube["angle_1"].meta),
+                           copy.copy(input_cube["angle_2"].meta),
+                           copy.copy(input_cube["angle_3"].meta))
     metaM.update(POLAR=-60), metaZ.update(POLAR=0), metaP.update(POLAR=60)
     Bmzp_cube = []
     Bmzp_cube.append(("Bm", NDCube(Bmzp[-60 * u.degree], wcs=input_cube["angle_1"].wcs, meta=metaM)))
@@ -55,7 +60,9 @@ def npol_to_mzp(input_cube):
     Bmzp_cube.append(("Bp", NDCube(Bmzp[60 * u.degree], wcs=input_cube["angle_1"].wcs, meta=metaP)))
     for p_angle in in_list:
         if p_angle.lower() == "alpha":
-            Bmzp_cube.append(("alpha", NDCube(input_cube['alpha'].data * u.radian, wcs=input_cube["angle_1"].wcs, meta=metaP)))
+            Bmzp_cube.append(("alpha", NDCube(input_cube['alpha'].data * u.radian,
+                                              wcs=input_cube["angle_1"].wcs,
+                                              meta=metaP)))
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
@@ -113,7 +120,8 @@ def bpb_to_mzp(input_cube):
     B, pB = input_cube["B"].data, input_cube["pB"].data
     mzp_ang = [-60, 0, 60]
     Bmzp = {}
-    for ang in mzp_ang: Bmzp[ang * u.degree] = (1 / 2) * (B - pB * (np.cos(2 * (ang * u.degree - alpha))))
+    for ang in mzp_ang:
+        Bmzp[ang * u.degree] = (1 / 2) * (B - pB * (np.cos(2 * (ang * u.degree - alpha))))
 
     metaM, metaZ, metaP = copy.copy(input_cube["B"].meta), copy.copy(input_cube["B"].meta), copy.copy(
         input_cube["B"].meta)
@@ -307,8 +315,9 @@ def bp3_to_mzp(input_cube):
 
     mzp_ang = [-60, 0, 60] * u.degree
     Bmzp = {}
-    for ang in mzp_ang: Bmzp[ang] = (1 / 2) * (B - np.cos(2 * (ang * conv_fact - alpha)) * pB -
-                                               np.cos(2 * (ang * conv_fact - alpha)) * pBp)
+    for ang in mzp_ang:
+        Bmzp[ang] = (1 / 2) * (B - np.cos(2 * (ang * conv_fact - alpha)) * pB -
+                               np.cos(2 * (ang * conv_fact - alpha)) * pBp)
 
     metaM, metaZ, metaP = copy.copy(input_cube["B"].meta), copy.copy(input_cube["pB"].meta), copy.copy(
         input_cube["pBp"].meta)
@@ -331,11 +340,13 @@ def btbr_to_mzp(input_cube):
         raise ValueError("missing alpha")
 
     alpha = input_cube['alpha'].data * u.radian
-    Bt, Br = input_cube['Bt'].data, input_cube['Br'].data
+    Bt = input_cube['Bt'].data
+    Br = input_cube['Br'].data
 
     mzp_ang = [-60, 0, 60] * u.degree
     Bmzp = {}
-    for ang in mzp_ang: Bmzp[ang] = Bt * (np.sin(ang - alpha)) ** 2 + Br * (np.cos(ang - alpha)) ** 2
+    for ang in mzp_ang:
+        Bmzp[ang] = Bt * (np.sin(ang - alpha)) ** 2 + Br * (np.cos(ang - alpha)) ** 2
 
     metaM, metaZ, metaP = copy.copy(input_cube["Bt"].meta), copy.copy(input_cube["Bt"].meta), copy.copy(
         input_cube["Bt"].meta)
@@ -411,7 +422,9 @@ def fourpol_to_stokes(input_cube):
     Bq = input_cube["B90"].data - input_cube["B0"].data
     Bu = input_cube["B135"].data - input_cube["B45"].data
 
-    metaI, metaQ, metaU = copy.copy(input_cube["B0"].meta), copy.copy(input_cube["B0"].meta), copy.copy(input_cube["B0"].meta)
+    metaI, metaQ, metaU = (copy.copy(input_cube["B0"].meta),
+                           copy.copy(input_cube["B0"].meta),
+                           copy.copy(input_cube["B0"].meta))
     BStokes_cube = []
     BStokes_cube.append(("Bi", NDCube(Bi, wcs=input_cube["B0"].wcs, meta=metaI)))
     BStokes_cube.append(("Bq", NDCube(Bq, wcs=input_cube["B0"].wcs, meta=metaQ)))

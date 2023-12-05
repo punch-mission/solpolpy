@@ -15,7 +15,6 @@ import astropy.units as u
 from solpolpy.core import (determine_input_kind,
                           resolve,
                           )
-# from solpolpy.polarizers import mzp_to_bpb, bpb_to_btbr
 
 
 wcs = astropy.wcs.WCS(naxis=3)

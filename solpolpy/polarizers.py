@@ -1,5 +1,6 @@
-import numpy as np
 import copy
+
+import numpy as np
 import astropy.units as u
 from ndcube import NDCube, NDCollection
 

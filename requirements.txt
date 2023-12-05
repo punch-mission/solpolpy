@@ -1,0 +1,6 @@
+sunpy~=5.0.1
+astropy~=5.3.4
+numpy~1.26.1
+matplotlib~=3.8.1
+networkx~=3.2.1
+ndcube~=2.1.3

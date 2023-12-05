@@ -4,7 +4,6 @@ import astropy.units as u
 import numpy as np
 import networkx as nx
 import solpolpy as sp
-
 from ndcube import NDCube, NDCollection
 
 from solpolpy.constants import VALID_KINDS

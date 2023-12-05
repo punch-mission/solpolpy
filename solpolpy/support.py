@@ -1,7 +1,7 @@
 import warnings
+
 import matplotlib.pyplot as plt
 import numpy as np
-
 from ndcube import NDCube
 from astropy.wcs import WCS
 from astropy.io import fits

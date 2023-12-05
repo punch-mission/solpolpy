@@ -1,20 +1,17 @@
 import warnings
 import matplotlib.pyplot as plt
 import numpy as np
-import astropy.units as u
+
 from ndcube import NDCube
 from astropy.wcs import WCS
 from astropy.io import fits
-from sunpy.map.sources import LASCOMap
 
 
 
 def create_oculter_mask(file_path, 
-                        mask_radii=None, 
-                        color_map=None, 
+                        mask_radii=None,
                         centerpx_x=None,
-                        centerpx_y=None,
-                        solar_radii=None):
+                        centerpx_y=None):
     '''
     create_oculter_mask creates a simple masked dataset for coronagraph data, 
     it applies masks and color maps.
@@ -27,13 +24,9 @@ def create_oculter_mask(file_path,
     mask_radii : specifies the size of the mask in Solar Radii. If input overwrites
         default mask sizes dependent on instruments.
 
-    color_map : specifies color maps to be applied to data
-
     centerpx_x : if defined specifies the x position center of the masked region
 
     centerpx_y : if defined specifies the y position center of the masked region
-
-    solar_radii : specify a solar radii in pixels
 
 
     Output

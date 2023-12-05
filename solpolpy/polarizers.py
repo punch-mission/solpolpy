@@ -1,3 +1,10 @@
+"""
+Polarizer functions for solpolpy.
+Found in:
+DeForest, C. E., Seaton, D. B., & West, M. J. (2022).
+Three-polarizer Treatment of Linear Polarization in Coronagraphs and Heliospheric Imagers.
+The Astrophysical Journal, 927(1), 98.
+"""
 import copy
 
 import numpy as np
@@ -22,9 +29,9 @@ def npol_to_mzp(input_cube):
 
     # constants come from https://www.sciencedirect.com/science/article/pii/S0019103515003620?via%3Dihub
     if input_cube['angle_1'].meta['OBSRVTRY'] == 'STEREO_B':
-        offset_angle = -18 * u.degree # STEREOB
+        offset_angle = -18 * u.degree  # STEREOB
     elif input_cube['angle_1'].meta['OBSRVTRY'] == 'STEREO_A':
-        offset_angle = 45.8 * u.degree # STEREOA
+        offset_angle = 45.8 * u.degree  # STEREOA
     else:
         offset_angle = 0
 

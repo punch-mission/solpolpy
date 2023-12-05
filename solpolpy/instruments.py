@@ -1,3 +1,4 @@
+"""Instrument specific code"""
 from typing import List
 
 from ndcube import NDCube, NDCollection

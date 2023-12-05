@@ -1,4 +1,5 @@
 import warnings
+import typing as t
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,35 +8,31 @@ from astropy.wcs import WCS
 from astropy.io import fits
 
 
+def create_occulter_mask(file_path: str,
+                         mask_radii: t.Optional[float] = None,
+                         center_pix_x: t.Optional[int] = None,
+                         center_pix_y: t.Optional[int] = None) -> NDCube:
+    """Creates a simple masked dataset for coronagraph data
 
-def create_oculter_mask(file_path, 
-                        mask_radii=None,
-                        centerpx_x=None,
-                        centerpx_y=None):
-    '''
-    create_oculter_mask creates a simple masked dataset for coronagraph data, 
-    it applies masks and color maps.
-
-    Input
+    Parameters
     -----
+    file_path : str
+        path to a FITS file to be masked
 
-    file_path : path to a FITS file to be masked
+    mask_radii : Optional[float]
+        specifies the size of the mask in Solar Radii. If provided overwrites default mask sizes dependent on instruments.
 
-    mask_radii : specifies the size of the mask in Solar Radii. If input overwrites
-        default mask sizes dependent on instruments.
+    center_pix_x : Optional[int]
+        if defined specifies the x position center of the masked region. If not provided, uses image center.
 
-    centerpx_x : if defined specifies the x position center of the masked region
+    center_pix_y : Optional[int]
+        if defined specifies the y position center of the masked region. If not provided, uses image center.
 
-    centerpx_y : if defined specifies the y position center of the masked region
-
-
-    Output
+    Returns
     ------
-
-    output_ndcube : returns an ndcube of output data, wcs and mask
-
-    '''
-
+    NDcube
+        An ndcube of output data, wcs and mask
+    """
     file_of_interest = fits.open(file_path)
     file_data = file_of_interest[0].data
     file_meta = file_of_interest[0].header
@@ -43,55 +40,48 @@ def create_oculter_mask(file_path,
     if file_meta['CRPIX1']:
         center_x = file_meta['CRPIX1']
     else:
-        center_x=int(file_data.shape[0]/2)
+        center_x = int(file_data.shape[0]/2)
         warnings.warn("No CRPIX1 found in FITS header, setting CRPIX1 to center pixel")
     
     if file_meta['CRPIX2']:
         center_y = file_meta['CRPIX2']
     else:
-        center_y=int(file_data.shape[1]/2)
+        center_y = int(file_data.shape[1]/2)
         warnings.warn("No CRPIX2 found in FITS header, setting CRPIX2 to center pixel")
 
     if file_meta['CDELT1']:
         R_sun = 960. / file_meta['CDELT1'] # this needs to be fixed with explanation, always the same?
     else: 
-        R_sun=50
+        R_sun = 50
         warnings.warn("No CDELT1 found in FITS header, setting solar_radii to 50")
 
     if file_meta['INSTRUME'] == 'LASCO':
         detector_name = file_meta['DETECTOR']
         if 'C2' in detector_name:
             mask_R = 2.5
-            
         elif 'C3' in detector_name:
             mask_R = 4.0
-
     elif file_meta['INSTRUME'] == 'COSMO K-Coronagraph':
         mask_R = 1.15
-
     elif file_meta['INSTRUME'] == 'SECCHI':
         detector_name = file_meta['DETECTOR']
         if 'COR1' in detector_name:
             mask_R = 1.57
-
         elif 'COR2' in detector_name:
             mask_R = 3.0
-
     else:
         warnings.warn("No INSTRUME found in FITS header, setting mask_radii to 1")
         mask_R=1.0
 
-
     # user defined inputs to overwrite pre-defined inputs
-    if mask_radii != None:
-        mask_R=mask_radii
+    if mask_radii is not None:
+        mask_R = mask_radii
 
-    if centerpx_x != None:
-        center_x=centerpx_x
+    if center_pix_x is not None:
+        center_x = center_pix_x
 
-    if centerpx_y != None:
-        center_y=centerpx_y
-
+    if center_pix_y is not None:
+        center_y = center_pix_y
 
     # obtain array dimensions
     x_shape, y_shape = file_data.shape
@@ -106,7 +96,6 @@ def create_oculter_mask(file_path,
     for j_step in range(y_shape):
         y_array[j_step] = (j_step - center_y) / R_sun
 
-    
     rr = np.max(y_array) * R_sun
     xx, yy = np.ogrid[0:x_shape, 0:y_shape]
     output_mask = np.ones(file_data.shape)  # the final mask array
@@ -115,62 +104,46 @@ def create_oculter_mask(file_path,
     mask = (xx - center_x) ** 2 + (yy - center_y) ** 2 > rr ** 2
     output_mask[mask] = 0
 
-
-    output_ndcube = NDCube(file_data, WCS(file_meta))
-    output_ndcube.mask = output_mask
-    output_ndcube.meta = file_meta
+    return NDCube(data=file_data, wcs=WCS(file_meta), meta=file_meta, mask=output_mask)
 
 
-    return output_ndcube
+def get_colormap_str(file_path: str) -> str:
+    """Retrieve a color map name from an input FITS file
+    Parameters
+    ----------
+    file_path : str
+        path of file to open
 
-
-
-
-def create_color_map_name(file_path):
-    '''
-    A simple wrapper to create a color map name from an input FITS file
-
-    Input
-    -----
-
-    file_path : path to a FITS file to be masked
-
-
-    Output
-    ------
-
-    color_map : returns the colormap string
-
-    '''
-    
+    Returns
+    -------
+    str
+        name of appropriate colormap
+    """
     file_of_interest = fits.open(file_path)
-    file_data = file_of_interest[0].data
     file_meta = file_of_interest[0].header
-
 
     if file_meta['INSTRUME'] == 'LASCO':
         detector_name = file_meta['DETECTOR']
         if 'C2' in detector_name:
-            color_map='soholasco2'
-            
+            color_map = 'soholasco2'
         elif 'C3' in detector_name:
-            color_map='soholasco3'
-
+            color_map = 'soholasco3'
+        else:
+            warnings.warn("No valid instrument found, setting color_map soholasco2")
+            color_map = 'soholasco2'
     elif file_meta['INSTRUME'] == 'COSMO K-Coronagraph':
-        color_map='kcor'
-
+        color_map = 'kcor'
     elif file_meta['INSTRUME'] == 'SECCHI':
         detector_name = file_meta['DETECTOR']
         if 'COR1' in detector_name:
-            color_map='stereocor1'
-
+            color_map = 'stereocor1'
         elif 'COR2' in detector_name:
-            color_map='stereocor2'
-
+            color_map = 'stereocor2'
+        else:
+            warnings.warn("No valid instrument found, setting color_map soholasco2")
+            color_map = 'soholasco2'
     else:
-        warnings.warn("No INSTRUME found in FITS header, setting color_map soholasco2")
-        color_map='soholasco2'
+        warnings.warn("No valid instrument found, setting color_map soholasco2")
+        color_map = 'soholasco2'
 
-    output_color_map = plt.get_cmap(color_map)
-
-    return output_color_map
+    return color_map

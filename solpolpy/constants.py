@@ -1,4 +1,4 @@
-
+"""Constants used in code"""
 VALID_KINDS = {"MZP": [["Bm", "Bz", "Bp", "alpha"], ["Bm", "Bz", "Bp"]],
                "BpB": [["B", "pB", "alpha"], ["B", "pB"]],
                "BtBr": [["Bt", "Br", "alpha"], ["Bt", "Br"]],

@@ -37,7 +37,7 @@ The equations required for the transformations from one system to another can be
 Plotting results
 -----------------
 
-You can plot any input or output collection using the `polt_collection` function provided.
+You can plot any input or output collection using the `plot_collection` function provided.
 
 .. code-block:: python
 

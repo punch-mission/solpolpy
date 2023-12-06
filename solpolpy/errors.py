@@ -4,3 +4,7 @@ class TooFewFilesError(Exception):
 
 class UnsupportedInstrumentError(Exception):
     pass
+
+
+class UnsupportedTransformationError(Exception):
+    pass

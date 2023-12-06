@@ -86,9 +86,9 @@ def construct_mask(inner_radius: float,
         (those with radius less than `inner_radius` or greater than `outer_radius`) as True
     """
     xx, yy = np.ogrid[0:shape[0], 0:shape[1]]
-    mask = np.zeros(shape)
-    mask[(xx - center_x) ** 2 + (yy - center_y) ** 2 < inner_radius] = 1
-    mask[(xx - center_x) ** 2 + (yy - center_y) ** 2 > outer_radius] = 1
+    mask = np.zeros(shape, dtype=bool)
+    mask[(xx - center_x) ** 2 + (yy - center_y) ** 2 < inner_radius] = True
+    mask[(xx - center_x) ** 2 + (yy - center_y) ** 2 > outer_radius] = True
     return mask
 
 

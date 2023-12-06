@@ -9,6 +9,7 @@ from solpolpy.graph import transform_graph
 from solpolpy.alpha import radial_north
 from solpolpy.instruments import load_data
 from solpolpy.polarizers import npol_to_mzp
+from solpolpy.errors import UnsupportedTransformationError
 
 
 def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str) -> NDCollection:
@@ -112,7 +113,7 @@ def get_transform_path(input_kind: str, output_kind: str) -> t.List[str]:
     try:
         path = nx.shortest_path(transform_graph, input_kind, output_kind)
     except nx.exception.NetworkXNoPath:
-        raise RuntimeError(f"Not possible to convert {input_kind} to {output_kind}")  # TODO: make this a custom error
+        raise UnsupportedTransformationError(f"Not possible to convert {input_kind} to {output_kind}")
     return path
 
 

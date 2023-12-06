@@ -18,6 +18,9 @@ The docs are built using ``sphinx``. First, you must install it and the other do
 
 Then, navigate to the ``docs`` directory and run ``make html`` to build the docs.
 
+Note, that this does not rerun the example Jupyter notebook. You must manually execute that if you want those figures
+to update.
+
 Running tests
 -------------
 To run the tests for this package, run ``pytest`` in the repository base directory.

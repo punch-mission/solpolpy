@@ -15,7 +15,8 @@ from ndcube import NDCube, NDCollection
 def conv_polar_from_head(input_cube):
     return int(float(str(input_cube.meta['POLAR']).strip(" Deg")))
 
-#TODO: prepare a config file where the reference angle say of STEREO, KCor etc can be set
+
+# TODO: prepare a config file where the reference angle say of STEREO, KCor etc can be set
 def npol_to_mzp(input_cube):
     """
     Notes

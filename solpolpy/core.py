@@ -25,17 +25,15 @@ def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str) -> 
     out_system : string
         The polarization state you want to convert your input dataframes to.
         Must be one of the following strings:
-            - "MZP": Triplet of images taken at -60°, 0°, and +60° polarizing angles.
-            - "BtBr": Pair of images with polarization along the tangential and radial direction
-                with respect to the Sun respectively.
-            - "Stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q)
-                and polarized brightness along ±45° (U) .
-            - "BpB": Total brightness and ‘excess polarized’ brightness images pair respectively.
-            - "Bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead
-                of a fixed frame of reference of the instrument.
-            - "Bthp": Total brightness, angle and degree of polarization.
-            - "fourpol": For observations taken at sequence of four polarizer angles, i.e. 0°, 45°, 90° and 135°.
-            - "npol": Set of images taken at than three polarizing angles other than MZP
+
+        - "MZP": Triplet of images taken at -60°, 0°, and +60° polarizing angles.
+        - "BtBr": Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
+        - "Stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
+        - "BpB": Total brightness and ‘excess polarized’ brightness images pair respectively.
+        - "Bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead of a fixed frame of reference of the instrument.
+        - "Bthp": Total brightness, angle and degree of polarization.
+        - "fourpol": For observations taken at sequence of four polarizer angles, i.e. 0°, 45°, 90° and 135°.
+        - "npol": Set of images taken at than three polarizing angles other than MZP
 
     Raises
     ------

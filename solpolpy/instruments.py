@@ -7,13 +7,23 @@ from astropy.io import fits
 from astropy.wcs import WCS
 import numpy as np
 
+from solpolpy.errors import TooFewFilesError, UnsupportedInstrumentError
 
-def load_data(path_list: t.List[str]) -> NDCollection:
-    """
+
+def load_data(path_list: t.List[str],
+              mask: t.Optional[np.ndarray] = None,
+              use_instrument_mask: bool = False) -> NDCollection:
+    """Basic loading function. See `load_with_occulter_mask`.
     Parameters
     ----------
     path_list: List[str] 
-        list of paths to be loaded
+        list of paths to FITS files to be loaded
+
+    mask: Optional[np.ndarray]
+        An optional mask to couple with images. Overrides any mask computed when use_instrument_mask=True.
+
+    use_instrument_mask: bool
+        If true, loads an instrument mask for common instruments defined in `get_instrument_mask`.
 
     Returns
     -------
@@ -23,115 +33,109 @@ def load_data(path_list: t.List[str]) -> NDCollection:
     """
     # get length of list to determine how many files to process.
     list_len = len(path_list)
-    assert list_len >= 2, 'requires at least 2 FITS files'
-    
+    if len(path_list) < 2:
+        raise TooFewFilesError("Requires at least 2 FITS files")
+
     data_out = []
     for i, data_path in enumerate(path_list):
         with fits.open(data_path) as hdul:
             wcs = WCS(hdul[0].header)
+
+            if use_instrument_mask and mask is None:
+                mask = get_instrument_mask(hdul[0].header)
+
+            if mask is None:  # make a mask of False if none is provided
+                mask = np.zeros(hdul[0].data.shape, dtype=bool)
+
             data_out.append(("angle_" + str(i+1),
-                             NDCube(hdul[0].data, 
+                             NDCube(hdul[0].data,
+                                    mask=mask,
                                     wcs=wcs, 
                                     meta=hdul[0].header)))
-            
+
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 
-def load_with_occulter_mask(file_path: str,
-                            mask_radii: t.Optional[float] = None,
-                            center_pix_x: t.Optional[int] = None,
-                            center_pix_y: t.Optional[int] = None) -> NDCube:
-    """Creates a simple masked dataset for coronagraph data
+def construct_mask(inner_radius: float,
+                   outer_radius: float,
+                   center_x: int,
+                   center_y: int,
+                   shape: t.Tuple[int, int]) -> np.ndarray:
+    """Constructs a mask where False indicates the pixel is valid and True masks the pixel as invalid.
+
+    Pixels with radial distance between `inner_radius` and `outer_radius` are valid. Every other pixel is invalid.
+    This is a standard coronograph mask.
 
     Parameters
-    -----
-    file_path : str
-        path to a FITS file to be masked
-
-    mask_radii : Optional[float]
-        specifies the size of the mask in Solar Radii.
-            If provided overwrites default mask sizes dependent on instruments.
-
-    center_pix_x : Optional[int]
-        if defined specifies the x position center of the masked region. If not provided, uses image center.
-
-    center_pix_y : Optional[int]
-        if defined specifies the y position center of the masked region. If not provided, uses image center.
+    ----------
+    inner_radius : float
+        inner radius of the mask. pixels closer to the center than this are masked as invalid
+    outer_radius : float
+        outer radius of the mask. pixels farther from the center than this are masked as invalid
+    center_x : int
+        center pixel x coordinate
+    center_y : int
+        center pixel y coordinate
+    shape : Tuple[int, int]
+        the image dimensions
 
     Returns
-    ------
-    NDcube
-        An ndcube of output data, wcs and mask
+    -------
+    np.ndarray
+        a coronograph mask that marks invalid pixels
+        (those with radius less than `inner_radius` or greater than `outer_radius`) as True
     """
-    file_of_interest = fits.open(file_path)
-    file_data = file_of_interest[0].data
-    file_meta = file_of_interest[0].header
+    xx, yy = np.ogrid[0:shape[0], 0:shape[1]]
+    mask = np.zeros(shape)
+    mask[(xx - center_x) ** 2 + (yy - center_y) ** 2 < inner_radius] = 1
+    mask[(xx - center_x) ** 2 + (yy - center_y) ** 2 > outer_radius] = 1
+    return mask
 
-    if file_meta['CRPIX1']:
-        center_x = file_meta['CRPIX1']
+
+def get_instrument_mask(header: fits.Header) -> np.ndarray:
+    """ Gets a coronograph mask for common instruments
+
+    Supports common solar instruments: LASCO, COSMO K, SECCHI
+
+    Parameters
+    ----------
+    header : astropy.io.fits.Header
+        a FITS header for the file in question
+
+    Returns
+    -------
+    np.ndarray
+        a pixel mask where valid pixels are marked False, masked out invalid pixels are flagged as True
+    """
+    x_shape = header['NAXIS1']
+    y_shape = header['NAXIS2']
+
+    center_x = header['CRPIX1']
+    center_y = header['CRPIX2']
+
+    R_sun = 960. / header['CDELT1']  # TODO: clarify where 960. comes from
+
+    radius = 0
+    if header['INSTRUME'] == 'LASCO':
+        if 'C2' in  header['DETECTOR']:
+            radius = 2.5
+        elif 'C3' in header['DETECTOR']:
+            radius = 4.0
+        else:
+            raise UnsupportedInstrumentError("The data in this file is not formatted according to a known instrument.")
+    elif header['INSTRUME'] == 'COSMO K-Coronagraph':
+        radius = 1.15
+    elif header['INSTRUME'] == 'SECCHI':
+        if 'COR1' in header['DETECTOR']:
+            radius = 1.57
+        elif 'COR2' in header['DETECTOR']:
+            radius = 3.0
+        else:
+            raise UnsupportedInstrumentError("The data in this file is not formatted according to a known instrument.")
     else:
-        center_x = int(file_data.shape[0] / 2)
-        warnings.warn("No CRPIX1 found in FITS header, setting CRPIX1 to center pixel")
+        raise UnsupportedInstrumentError("The data in this file is not formatted according to a known instrument.")
 
-    if file_meta['CRPIX2']:
-        center_y = file_meta['CRPIX2']
-    else:
-        center_y = int(file_data.shape[1] / 2)
-        warnings.warn("No CRPIX2 found in FITS header, setting CRPIX2 to center pixel")
+    y_array = [(j_step - center_y) / R_sun for j_step in range(y_shape)]
+    outer_edge = np.max(y_array) * R_sun
 
-    if file_meta['CDELT1']:
-        R_sun = 960. / file_meta['CDELT1']  # this needs to be fixed with explanation, always the same?
-    else:
-        R_sun = 50
-        warnings.warn("No CDELT1 found in FITS header, setting solar_radii to 50")
-
-    if file_meta['INSTRUME'] == 'LASCO':
-        detector_name = file_meta['DETECTOR']
-        if 'C2' in detector_name:
-            mask_R = 2.5
-        elif 'C3' in detector_name:
-            mask_R = 4.0
-    elif file_meta['INSTRUME'] == 'COSMO K-Coronagraph':
-        mask_R = 1.15
-    elif file_meta['INSTRUME'] == 'SECCHI':
-        detector_name = file_meta['DETECTOR']
-        if 'COR1' in detector_name:
-            mask_R = 1.57
-        elif 'COR2' in detector_name:
-            mask_R = 3.0
-    else:
-        warnings.warn("No INSTRUME found in FITS header, setting mask_radii to 1")
-        mask_R = 1.0
-
-    # user defined inputs to overwrite pre-defined inputs
-    if mask_radii is not None:
-        mask_R = mask_radii
-
-    if center_pix_x is not None:
-        center_x = center_pix_x
-
-    if center_pix_y is not None:
-        center_y = center_pix_y
-
-    # obtain array dimensions
-    x_shape, y_shape = file_data.shape
-
-    # Calibrate to solar radius
-    x_array = np.empty(x_shape)
-    y_array = np.empty(y_shape)
-
-    for i_step in range(x_shape):
-        x_array[i_step] = (i_step - center_x) / R_sun
-
-    for j_step in range(y_shape):
-        y_array[j_step] = (j_step - center_y) / R_sun
-
-    rr = np.max(y_array) * R_sun
-    xx, yy = np.ogrid[0:x_shape, 0:y_shape]
-    output_mask = np.ones(file_data.shape)  # the final mask array
-    mask = (xx - center_x) ** 2 + (yy - center_y) ** 2 < (mask_R * R_sun) ** 2
-    output_mask[mask] = 0
-    mask = (xx - center_x) ** 2 + (yy - center_y) ** 2 > rr ** 2
-    output_mask[mask] = 0
-
-    return NDCube(data=file_data, wcs=WCS(file_meta), meta=file_meta, mask=output_mask)
+    return construct_mask((radius * R_sun) ** 2, outer_edge ** 2, center_x, center_y, (x_shape, y_shape))

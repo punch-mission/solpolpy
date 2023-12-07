@@ -1,9 +1,19 @@
+"""Constructs transformation graph"""
 import networkx as nx
 
-from solpolpy.polarizers import npol_to_mzp, bpb_to_mzp, mzp_to_bpb, \
-    bpb_to_btbr, btbr_to_bpb, mzp_to_stokes, stokes_to_mzp, \
-    mzp_to_bp3, bp3_to_mzp, btbr_to_mzp, bp3_to_bthp, btbr_to_npol, \
-    fourpol_to_stokes
+from solpolpy.polarizers import (npol_to_mzp,
+                                 bpb_to_mzp,
+                                 mzp_to_bpb,
+                                 bpb_to_btbr,
+                                 btbr_to_bpb,
+                                 mzp_to_stokes,
+                                 stokes_to_mzp,
+                                 mzp_to_bp3,
+                                 bp3_to_mzp,
+                                 btbr_to_mzp,
+                                 bp3_to_bthp,
+                                 btbr_to_npol,
+                                 fourpol_to_stokes)
 
 
 transform_graph = nx.DiGraph()

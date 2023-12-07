@@ -1,0 +1,974 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Examples &#8212; solpolpy 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'example';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Help" href="help.html" />
+    <link rel="prev" title="Quickstart" href="quickstart.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">solpolpy 0.1.0 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="quickstart.html">
+                        Quickstart
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="help.html">
+                        Help
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="cite.html">
+                        Cite
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="development.html">
+                        Development
+                      </a>
+                    </li>
+                
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="autoapi/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/punch-mission/solpolpy" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="quickstart.html">
+                        Quickstart
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="help.html">
+                        Help
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="cite.html">
+                        Cite
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="development.html">
+                        Development
+                      </a>
+                    </li>
+                
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links-2">
+                    More
+                </button>
+                <ul id="pst-nav-more-links-2" class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="autoapi/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/punch-mission/solpolpy" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Examples</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="Examples">
+<h1>Examples<a class="headerlink" href="#Examples" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">solpolpy</span></code> is a solar polarization resolver based on <a class="reference external" href="https://doi.org/10.3847/1538-4357/ac43b6">Deforest et al. 2022</a>.</p>
+<p>It converts between various polarization formats, e.g. from the native three triple version from observations (also known as the MZP convention) to polarization brightness (pB) and total polarization (B), Stokes I, Q and U, etc. An example of transforming the polarization basis using the LASCO/C2 images is shown in the image below. The images at polarizing angles of -60°, 0° and +60° is shown in the top panel as Bm, Bz and Bp respectively. The bottom panel shows the output of the <code class="docutils literal notranslate"><span class="pre">solpolpy</span></code> to
+convert the initial basis to the Stokes I, Q and U.</p>
+<p>solpolpy is invoked using a simple interface:<code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">=</span> <span class="pre">sp.resolve(input_data,</span> <span class="pre">out_system)</span></code> where the <code class="docutils literal notranslate"><span class="pre">input_data</span></code> parameter is an appropriate NDCollection (a collection of <a class="reference external" href="https://docs.sunpy.org/projects/ndcube/en/stable/">SunPy NDCubes</a>), such as a triplet of polarized images. <code class="docutils literal notranslate"><span class="pre">out_system</span></code> is the desired output polarization state (MZP, BtBr, Stokes, BpB, Bp3, or Bthp). It has a utility function to load data into the expected NDCollection format called <code class="docutils literal notranslate"><span class="pre">load_data</span></code>. There is also a
+plotting utility to plot any collection called <code class="docutils literal notranslate"><span class="pre">plot_collection</span></code>.</p>
+<section id="Polarization-systems-handled-by-solpolpy">
+<h2>Polarization systems handled by solpolpy<a class="headerlink" href="#Polarization-systems-handled-by-solpolpy" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Minus, Zero, Plus (MZP): Triplet of images taken at -60°, 0°, and +60° polarizing angles.</p></li>
+<li><p>Tangential and Radial Brightness (BtBr): Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.</p></li>
+<li><p>Stokes (Stokes): Total (unpolarized) brightness (I), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .</p></li>
+<li><p>Brightness, polarized Brightness (BpB): Total (unpolarized) brightness and ‘excess polarized’ brightness images pair respectively.</p></li>
+<li><p>Brightness, polarized Brightness, polarized Brightness orthogonal (Bp3): Analogous to Stokes I, Q and U, but rotates with α around the Sun unlike the later with fixed frame of reference of the instrument.</p></li>
+<li><p>Brightness, theta, phi (Bthp): System with total (unpolarized) brightness, angle and degree of polarization.</p></li>
+</ul>
+</section>
+<section id="Import-Data">
+<h2>Import Data<a class="headerlink" href="#Import-Data" title="Link to this heading">#</a></h2>
+<p>Import an example STEREO polarzation triplet dataset from 2010-04-03 at 10:10 UT. These can be substituted with any file paths you have.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import packages</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">rcParams</span>
+<span class="kn">from</span> <span class="nn">solpolpy</span> <span class="kn">import</span> <span class="n">resolve</span><span class="p">,</span> <span class="n">load_data</span><span class="p">,</span> <span class="n">plot_collection</span><span class="p">,</span> <span class="n">get_colormap_str</span>
+<span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
+
+<span class="n">stereo_paths</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;data/stereo*.fts&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Use the solpolpy <code class="docutils literal notranslate"><span class="pre">load_data</span></code> function to import data from FITS files. Alternatively, you can pass FITS filenames to the <code class="docutils literal notranslate"><span class="pre">resolve</span></code> method showcased later. However, you have more control and can visualize the inputs if you use <code class="docutils literal notranslate"><span class="pre">load_data</span></code>. In this case, we specify <code class="docutils literal notranslate"><span class="pre">use_instrument_mask=True</span></code> because we want to load the data with the solpolpy-provided instrument mask.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stereo_collection</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">stereo_paths</span><span class="p">,</span> <span class="n">use_instrument_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+WARNING: FITSFixedWarning: CROTA = 7.7105675 /
+keyword looks very much like CROTAn but isn&#39;t. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: &#39;datfix&#39; made the change &#39;Set MJD-OBS to 55289.423090 from DATE-OBS.
+Set MJD-AVG to 55289.423218 from DATE-AVG.
+Set MJD-END to 55289.423345 from DATE-END&#39;. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: CROTA = 7.7106929 /
+keyword looks very much like CROTAn but isn&#39;t. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: &#39;datfix&#39; made the change &#39;Set MJD-OBS to 55289.422743 from DATE-OBS.
+Set MJD-AVG to 55289.422870 from DATE-AVG.
+Set MJD-END to 55289.422998 from DATE-END&#39;. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: CROTA = 7.7109408 /
+keyword looks very much like CROTAn but isn&#39;t. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: &#39;datfix&#39; made the change &#39;Set MJD-OBS to 55289.422396 from DATE-OBS.
+Set MJD-AVG to 55289.422523 from DATE-AVG.
+Set MJD-END to 55289.422651 from DATE-END&#39;. [astropy.wcs.wcs]
+</pre></div></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">stereo_collection</span></code> is an NDCollection. If you’re not familiar with these, please see the NDCube documentation (<a class="reference external" href="http://docs.sunpy.org/projects/ndcube/">http://docs.sunpy.org/projects/ndcube/</a>). They’re essentially data containers that couple multiple aspects of data together, e.g. the world coordinate system (WCS), the data, uncertainty, metadata.</p>
+<p>For any collection, you can use the <code class="docutils literal notranslate"><span class="pre">.keys()</span></code> method to see the keys that solpolpy loaded.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stereo_collection</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+dict_keys([&#39;angle_1&#39;, &#39;angle_2&#39;, &#39;angle_3&#39;])
+</pre></div></div>
+</div>
+<p>In this case, we can see they are numbered angles. If we want to know more, we can look at the appropriate cube:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;angle_1&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;ndcube.ndcube.NDCube object at 0x117d609a0&gt;
+NDCube
+------
+Dimensions: [2048. 2048.] pix
+Physical Types of Axes: [(&#39;custom:pos.helioprojective.lon&#39;, &#39;custom:pos.helioprojective.lat&#39;), (&#39;custom:pos.helioprojective.lon&#39;, &#39;custom:pos.helioprojective.lat&#39;)]
+Unit: None
+Data Type: uint16
+</pre></div></div>
+</div>
+<p>It’s particularly helpful to look at the “POLAR” keyword that solpolpy adds to metadata. That tracks what kind of file we’re looking at. In this case it returns 240.0 because we’re looking at an image with a polarizer of 240.0 degrees.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;angle_1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;POLAR&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+240.0
+</pre></div></div>
+</div>
+<p>You can also inspect the entire FITS header of the file as it was loaded.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;angle_1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>  <span class="c1"># we put [:10] just so we look at the first 10 lines of the meta... it&#39;s long!</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+SIMPLE  =                    T / Written by IDL:  Mon Apr  5 17:12:11 2010
+BITPIX  =                   16 /
+NAXIS   =                    2 /
+NAXIS1  =                 2048 /
+NAXIS2  =                 2048 /
+EXTEND  =                    T /
+DATE-OBS= &#39;2010-04-03T10:09:15.006&#39; /
+FILEORIG= &#39;A4030234.411&#39;       /
+SEB_PROG= &#39;NORMAL  &#39;           /
+SYNC    =                    T /
+</pre></div></div>
+</div>
+</section>
+<section id="View-the-STEREO-triplet-input-data">
+<h2>View the STEREO triplet input data<a class="headerlink" href="#View-the-STEREO-triplet-input-data" title="Link to this heading">#</a></h2>
+<p>solpolpy provides two helpful functions for viewing data: - <code class="docutils literal notranslate"><span class="pre">get_colormap_str</span></code> determines the appropriate colormap string to use for the dataset. - <code class="docutils literal notranslate"><span class="pre">plot_collection</span></code> visualizes the collection. There are many optional arguments to this function. We suggest you look at the documentation’s help to see them all.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">plot_collection</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Help on function plot_collection in module solpolpy.plotting:
+
+plot_collection(collection: ndcube.ndcollection.NDCollection, figsize=(8, 8), show_colorbar=False, lat_ticks=None, lon_ticks=None, major_formatter=&#39;dd&#39;, xlabel=&#39;HP Longitude&#39;, ylabel=&#39;HP Latitude&#39;, vmin=None, vmax=None, cmap=&#39;Greys_r&#39;, ignore_alpha=True, fontsize=18)
+    Plot a solpolpy NDCollection input or output
+
+    Parameters
+    ----------
+    collection : NDCollection
+        collection to visualize
+    figsize : Tuple[float, float]
+        figure size according to Matplotlib
+    show_colorbar : bool
+        whether to show a colorbar
+    lat_ticks : Optional[np.ndarray]
+        if provided, shows as the tick marks for latitude. default values used otherwise.
+    lon_ticks : Optional[np.ndarray]
+        if provided, shows as the tick marks for longitude. default values used otherwise.
+    major_formatter : str
+        the formatter for major tickmarks as specified by Matplotlib
+    xlabel : str
+        label for plot x axes
+    ylabel : str
+        label for plot y axes
+    vmin : float, list of floats, or None
+        minimum values of the plots. if a list is provided, they are applied left to right to each plot
+    vmax : float, list of floats, or None
+        maximum values of the plots. if a list is provided, they are applied left to right to each plot
+    cmap : str or Matplotlib colormap
+        a Matplotlib accepted colormap or colormap string
+    ignore_alpha : bool
+        whether to plot the alpha array. defaults to True as it is not normally helpful to visualize.
+    fontsize : int
+        font size for some aspects of the plot
+
+    Returns
+    -------
+    Matplotlib figure and axes
+        the plotted figure and axes are returned for any additional edits
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cmap</span> <span class="o">=</span> <span class="n">get_colormap_str</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;angle_1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
+<span class="n">plot_collection</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">,</span>
+                <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+                <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">vmax</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+                <span class="n">show_colorbar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/example_16_0.png" src="_images/example_16_0.png" />
+</div>
+</div>
+</section>
+<section id="1.-Resolve-STEREO-triplet-into-a-Brightness-and-Polarized-Brightness-pair">
+<h2>1. Resolve STEREO triplet into a Brightness and Polarized Brightness pair<a class="headerlink" href="#1.-Resolve-STEREO-triplet-into-a-Brightness-and-Polarized-Brightness-pair" title="Link to this heading">#</a></h2>
+<p>The native polarization system (MZP) for STEREO is not all that directly helpful for solar physics science. Instead, we convert the data into a different polarization system, namely the total brightness (B) and polarized brightness (pB) system. We use solpolpy’s <code class="docutils literal notranslate"><span class="pre">resolve</span></code> method to do this and just pass in our collection and the string <code class="docutils literal notranslate"><span class="pre">&quot;BpB&quot;</span></code> indicating that’s our desired output system.</p>
+<p>Alternatively, you can pass the FITS filenames in as a list. This avoids having to manually load them first.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_bpb</span> <span class="o">=</span> <span class="n">resolve</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">,</span> <span class="s1">&#39;BpB&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>As noted earlier, we can look at any collection’s keys.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_bpb</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+dict_keys([&#39;B&#39;, &#39;pB&#39;, &#39;alpha&#39;])
+</pre></div></div>
+</div>
+<p>In this example we have converted the STEREO image triplet into a brightness - polarized brightness (BpB) pair. We see three keys are present in the output NDcollection, the brightness ‘B’, and, the polarized brightness ‘pB’ array, as well as the alpha array used to produce the pair. More information on the alpha parameter can be found in <a class="reference external" href="https://doi.org/10.3847/1538-4357/ac43b6">Deforest et al. 2022</a></p>
+<p>To do science on the resulting data, you can access it directly.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_bpb</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[4118.66666667, 4117.33333333, 4116.        , ..., 4118.66666667,
+        4118.66666667, 4117.33333333],
+       [4122.66666667, 4121.33333333, 4117.33333333, ..., 4118.66666667,
+        4120.        , 4118.66666667],
+       [4125.33333333, 4121.33333333, 4117.33333333, ..., 4118.66666667,
+        4120.        , 4118.66666667],
+       ...,
+       [4120.        , 4116.        , 4113.33333333, ..., 4114.66666667,
+        4117.33333333, 4117.33333333],
+       [4121.33333333, 4118.66666667, 4116.        , ..., 4118.66666667,
+        4118.66666667, 4117.33333333],
+       [4124.        , 4121.33333333, 4118.66666667, ..., 4121.33333333,
+        4120.        , 4118.66666667]])
+</pre></div></div>
+</div>
+<p>An important note is that the “POLAR” keyword is now “B”. This can be helpful if you forget what data you’re dealing with.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_bpb</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;POLAR&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;B&#39;
+</pre></div></div>
+</div>
+<p>We can look at this resolved data the same way we looked at the inputs by using <code class="docutils literal notranslate"><span class="pre">plot_collection</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_collection</span><span class="p">(</span><span class="n">output_bpb</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="p">[</span><span class="mi">20000</span><span class="p">,</span> <span class="mi">200</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/example_27_0.png" src="_images/example_27_0.png" />
+</div>
+</div>
+</section>
+<section id="2.-Resolve-STEREO-brightness-and-polarized-brightness-pair-into-a-Stokes-triplet">
+<h2>2. Resolve STEREO brightness and polarized brightness pair into a Stokes triplet<a class="headerlink" href="#2.-Resolve-STEREO-brightness-and-polarized-brightness-pair-into-a-Stokes-triplet" title="Link to this heading">#</a></h2>
+<p>We could convert this data to the Stokes system now if we wanted.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_stokes</span> <span class="o">=</span> <span class="n">resolve</span><span class="p">(</span><span class="n">output_bpb</span><span class="p">,</span> <span class="s1">&#39;Stokes&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Once again we can look at the keys in the output NDcollection.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_stokes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+dict_keys([&#39;Bi&#39;, &#39;Bq&#39;, &#39;Bu&#39;])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cmap</span> <span class="o">=</span> <span class="n">get_colormap_str</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;angle_1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
+<span class="n">plot_collection</span><span class="p">(</span><span class="n">output_stokes</span><span class="p">,</span>
+                <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+                <span class="n">vmin</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="o">-</span><span class="mi">200</span><span class="p">],</span>
+                <span class="n">vmax</span><span class="o">=</span><span class="p">[</span><span class="mi">20000</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">],</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+                <span class="n">show_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/example_32_0.png" src="_images/example_32_0.png" />
+</div>
+</div>
+</section>
+<section id="3.-Taking-the-shortcut">
+<h2>3. Taking the shortcut<a class="headerlink" href="#3.-Taking-the-shortcut" title="Link to this heading">#</a></h2>
+<p>Instead of having to convert from STEREO’s native MZP to BpB and then to Stokes, we can ask solpolpy to resolve from MZP directly to Stokes as well! We’ll run the <code class="docutils literal notranslate"><span class="pre">resolve</span></code> command with the original STEREO data and convert directly to Stokes. solpolpy figures out how to do this conversion behind the scenes. If you ever ask for an impossible transformation, it’ll let you know.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_stokes</span> <span class="o">=</span> <span class="n">resolve</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">,</span> <span class="s1">&#39;Stokes&#39;</span><span class="p">)</span>
+
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">get_colormap_str</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;angle_1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
+<span class="n">plot_collection</span><span class="p">(</span><span class="n">output_stokes</span><span class="p">,</span>
+                <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+                <span class="n">vmin</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="o">-</span><span class="mi">200</span><span class="p">],</span>
+                <span class="n">vmax</span><span class="o">=</span><span class="p">[</span><span class="mi">20000</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">],</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+                <span class="n">show_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/example_34_0.png" src="_images/example_34_0.png" />
+</div>
+</div>
+<p>Our results are the same either way!</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="quickstart.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Quickstart</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="help.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Help</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Polarization-systems-handled-by-solpolpy">Polarization systems handled by solpolpy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Import-Data">Import Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#View-the-STEREO-triplet-input-data">View the STEREO triplet input data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#1.-Resolve-STEREO-triplet-into-a-Brightness-and-Polarized-Brightness-pair">1. Resolve STEREO triplet into a Brightness and Polarized Brightness pair</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#2.-Resolve-STEREO-brightness-and-polarized-brightness-pair-into-a-Stokes-triplet">2. Resolve STEREO brightness and polarized brightness pair into a Stokes triplet</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#3.-Taking-the-shortcut">3. Taking the shortcut</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/punch-mission/solpolpy/edit/main/docs/source/example.ipynb">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, PUNCH Science Operations Center.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,65 @@
+:py:mod:`solpolpy.plotting`
+===========================
+
+.. py:module:: solpolpy.plotting
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   solpolpy.plotting.plot_collection
+   solpolpy.plotting.get_colormap_str
+
+
+
+.. py:function:: plot_collection(collection: ndcube.NDCollection, figsize=(8, 8), show_colorbar=False, lat_ticks=None, lon_ticks=None, major_formatter='dd', xlabel='HP Longitude', ylabel='HP Latitude', vmin=None, vmax=None, cmap='Greys_r', ignore_alpha=True, fontsize=18)
+
+   Plot a solpolpy NDCollection input or output
+
+   :param collection: collection to visualize
+   :type collection: NDCollection
+   :param figsize: figure size according to Matplotlib
+   :type figsize: Tuple[float, float]
+   :param show_colorbar: whether to show a colorbar
+   :type show_colorbar: bool
+   :param lat_ticks: if provided, shows as the tick marks for latitude. default values used otherwise.
+   :type lat_ticks: Optional[np.ndarray]
+   :param lon_ticks: if provided, shows as the tick marks for longitude. default values used otherwise.
+   :type lon_ticks: Optional[np.ndarray]
+   :param major_formatter: the formatter for major tickmarks as specified by Matplotlib
+   :type major_formatter: str
+   :param xlabel: label for plot x axes
+   :type xlabel: str
+   :param ylabel: label for plot y axes
+   :type ylabel: str
+   :param vmin: minimum values of the plots. if a list is provided, they are applied left to right to each plot
+   :type vmin: float, list of floats, or None
+   :param vmax: maximum values of the plots. if a list is provided, they are applied left to right to each plot
+   :type vmax: float, list of floats, or None
+   :param cmap: a Matplotlib accepted colormap or colormap string
+   :type cmap: str or Matplotlib colormap
+   :param ignore_alpha: whether to plot the alpha array. defaults to True as it is not normally helpful to visualize.
+   :type ignore_alpha: bool
+   :param fontsize: font size for some aspects of the plot
+   :type fontsize: int
+
+   :returns: the plotted figure and axes are returned for any additional edits
+   :rtype: Matplotlib figure and axes
+
+
+.. py:function:: get_colormap_str(meta: astropy.io.fits.Header) -> str
+
+   Retrieve a color map name from an input FITS file
+   :param meta: header of the data
+   :type meta: fits.Header
+
+   :returns: name of appropriate colormap
+   :rtype: str
+
+

@@ -1,0 +1,77 @@
+:py:mod:`solpolpy.instruments`
+==============================
+
+.. py:module:: solpolpy.instruments
+
+.. autoapi-nested-parse::
+
+   Instrument specific code
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   solpolpy.instruments.load_data
+   solpolpy.instruments.construct_mask
+   solpolpy.instruments.get_instrument_mask
+
+
+
+.. py:function:: load_data(path_list: List[str], mask: Optional[numpy.ndarray] = None, use_instrument_mask: bool = False) -> ndcube.NDCollection
+
+   Basic loading function. See `load_with_occulter_mask`.
+   :param path_list: list of paths to FITS files to be loaded
+   :type path_list: List[str]
+   :param mask: An optional mask to couple with images. Overrides any mask computed when use_instrument_mask=True.
+   :type mask: Optional[np.ndarray]
+   :param use_instrument_mask: If true, loads an instrument mask for common instruments defined in `get_instrument_mask`.
+   :type use_instrument_mask: bool
+
+   :returns: The data are loaded as NDCollection object with WCS and header information available.
+             The keys are labeled as 'angle_1', 'angle_2, 'angle_3', ...
+   :rtype: NDCollection
+
+
+.. py:function:: construct_mask(inner_radius: float, outer_radius: float, center_x: int, center_y: int, shape: Tuple[int, int]) -> numpy.ndarray
+
+   Constructs a mask where False indicates the pixel is valid and True masks the pixel as invalid.
+
+   Pixels with radial distance between `inner_radius` and `outer_radius` are valid. Every other pixel is invalid.
+   This is a standard coronograph mask.
+
+   :param inner_radius: inner radius of the mask. pixels closer to the center than this are masked as invalid
+   :type inner_radius: float
+   :param outer_radius: outer radius of the mask. pixels farther from the center than this are masked as invalid
+   :type outer_radius: float
+   :param center_x: center pixel x coordinate
+   :type center_x: int
+   :param center_y: center pixel y coordinate
+   :type center_y: int
+   :param shape: the image dimensions
+   :type shape: Tuple[int, int]
+
+   :returns: a coronograph mask that marks invalid pixels
+             (those with radius less than `inner_radius` or greater than `outer_radius`) as True
+   :rtype: np.ndarray
+
+
+.. py:function:: get_instrument_mask(header: astropy.io.fits.Header) -> numpy.ndarray
+
+   Gets a coronograph mask for common instruments
+
+   Supports common solar instruments: LASCO, COSMO K, SECCHI
+
+   :param header: a FITS header for the file in question
+   :type header: astropy.io.fits.Header
+
+   :returns: a pixel mask where valid pixels are marked False, masked out invalid pixels are flagged as True
+   :rtype: np.ndarray
+
+

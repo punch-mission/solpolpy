@@ -1,0 +1,33 @@
+:py:mod:`solpolpy.errors`
+=========================
+
+.. py:module:: solpolpy.errors
+
+
+Module Contents
+---------------
+
+.. py:exception:: TooFewFilesError
+
+
+   Bases: :py:obj:`Exception`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: UnsupportedInstrumentError
+
+
+   Bases: :py:obj:`Exception`
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: UnsupportedTransformationError
+
+
+   Bases: :py:obj:`Exception`
+
+   Common base class for all non-exit exceptions.
+
+

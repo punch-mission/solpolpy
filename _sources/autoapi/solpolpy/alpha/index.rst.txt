@@ -1,0 +1,54 @@
+:py:mod:`solpolpy.alpha`
+========================
+
+.. py:module:: solpolpy.alpha
+
+.. autoapi-nested-parse::
+
+   Functions related to constructing an alpha array for transformation
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   solpolpy.alpha.radial_north
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   solpolpy.alpha.ALPHA_FUNCTIONS
+
+
+.. py:function:: radial_north(shape)
+
+   An alpha array oriented west
+
+   :param shape: how big the array should be
+   :type shape: tuple[int, int]
+
+   :returns: alpha array used in calculations
+   :rtype: np.ndarray
+
+   .. rubric:: Notes
+
+   - assumes solar north is up
+   - assumes polarizer 0 is along solar north axis
+   - creates radial polarization map
+   - angles increase in counterclockwise direction
+
+
+.. py:data:: ALPHA_FUNCTIONS
+
+   
+

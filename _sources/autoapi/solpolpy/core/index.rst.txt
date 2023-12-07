@@ -1,0 +1,156 @@
+:py:mod:`solpolpy.core`
+=======================
+
+.. py:module:: solpolpy.core
+
+.. autoapi-nested-parse::
+
+   Core transformation functions for solpolpy
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   solpolpy.core.resolve
+   solpolpy.core.determine_input_kind
+   solpolpy.core.get_transform_path
+   solpolpy.core.get_transform_equation
+   solpolpy.core.check_alpha_requirement
+   solpolpy.core._determine_image_shape
+   solpolpy.core.add_alpha
+   solpolpy.core._compose2
+   solpolpy.core.identity
+
+
+
+.. py:function:: resolve(input_data: Union[List[str], ndcube.NDCollection], out_system: str) -> ndcube.NDCollection
+
+   Apply - apply a polarization transformation to a set of input
+   dataframes.
+
+   :param input_data: Either: 1) a collection where each member NDCube has an expected name or 2) a list of paths to FITS files.
+                      We recommend option 2.
+   :type input_data: NDCollection or List[str]
+   :param out_system: The polarization state you want to convert your input dataframes to.
+                      Must be one of the following strings:
+
+                      - "MZP": Triplet of images taken at -60°, 0°, and +60° polarizing angles.
+                      - "BtBr": Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
+                      - "Stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
+                      - "BpB": Total brightness and ‘excess polarized’ brightness images pair respectively.
+                      - "Bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead of a fixed frame of reference of the instrument.
+                      - "Bthp": Total brightness, angle and degree of polarization.
+                      - "fourpol": For observations taken at sequence of four polarizer angles, i.e. 0°, 45°, 90° and 135°.
+                      - "npol": Set of images taken at than three polarizing angles other than MZP
+   :type out_system: string
+
+   :raises AssertionError: This gets raised if the data cannot be converted or polarization
+       transformation cannot be calculated due to a discontinuity or infinity.
+
+   :returns: The transformed data are returned as a NDcollection.  Most
+             Transforms maintain the dimensionality of the source vectors.  Some
+             embed (increase dimensionality of the vectors) or project (decrease
+             dimensionality of the vectors); additional input dimensions, if
+             present, are still appended to the output vectors in all any case.
+   :rtype: NDCollection
+
+
+.. py:function:: determine_input_kind(input_data: ndcube.NDCollection) -> str
+
+   Determine what kind of data was input in the NDCollection
+
+   :param input_data: data to evaluate kind of
+   :type input_data: NDCollection
+
+   :returns: a valid input kind, see documentation of `resolve` for the full list under `out_system`
+   :rtype: str
+
+
+.. py:function:: get_transform_path(input_kind: str, output_kind: str) -> List[str]
+
+   Given an input and output system type, determine the require path of transforms from the transform graph
+
+   :param input_kind: starting point for transformations
+   :type input_kind: str
+   :param output_kind: ending point for transformations
+   :type output_kind: str
+
+   :returns: a list of transformation identifiers used to convert from `input_kind` to `output_kind`
+   :rtype: List[str]
+
+
+.. py:function:: get_transform_equation(path: List[str]) -> Callable
+
+   Given a transform path, compose the equation, i.e. the composed function of transforms that executes that path
+
+   :param path: a list of transform identifiers from the path
+   :type path: List[str]
+
+   :returns: a function that executes the transformation
+   :rtype: Callable
+
+
+.. py:function:: check_alpha_requirement(path: List[str]) -> bool
+
+   Determine if an alpha array is required for this transformation path
+
+   :param path: a path through the transform graph
+   :type path: List[str]
+
+   :returns: whether alpha array is required for transformation
+   :rtype: bool
+
+
+.. py:function:: _determine_image_shape(input_collection: ndcube.NDCollection) -> Tuple[int, int]
+
+   Evaluates the shape of the image in the input NDCollection
+
+   :param input_collection: collection to determine image shape for
+   :type input_collection: NDCollection
+
+   :returns: shape of image data
+   :rtype: Tuple[int, int]
+
+
+.. py:function:: add_alpha(input_data: ndcube.NDCollection) -> ndcube.NDCollection
+
+   Adds an alpha array to an image NDCollection
+
+   :param input_data: dataset to append alpha to
+   :type input_data: NDCollection
+
+   :returns: dataset with alpha array appended
+   :rtype: NDCollection
+
+
+.. py:function:: _compose2(f: Callable, g: Callable) -> Callable
+
+   Compose 2 functions together, i.e. f(g(x))
+
+   :param f: outer function
+   :type f: Callable
+   :param g: inner function
+   :type g: Callable
+
+   :returns: composed function
+   :rtype: Callable
+
+
+.. py:function:: identity(x: Any) -> Any
+
+   Identity function that returns the input
+
+   :param x: value
+   :type x: Any
+
+   :returns: input value returned back
+   :rtype: Any
+
+

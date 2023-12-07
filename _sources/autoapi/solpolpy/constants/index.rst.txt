@@ -1,0 +1,18 @@
+:py:mod:`solpolpy.constants`
+============================
+
+.. py:module:: solpolpy.constants
+
+.. autoapi-nested-parse::
+
+   Constants used in code
+
+
+
+Module Contents
+---------------
+
+.. py:data:: VALID_KINDS
+
+   
+

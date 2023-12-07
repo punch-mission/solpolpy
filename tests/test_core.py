@@ -12,10 +12,8 @@ import os
 
 import astropy.units as u
 
-from solpolpy.core import (determine_input_kind,
-                          resolve,
-                          )
-# from solpolpy.polarizers import mzp_to_bpb, bpb_to_btbr
+from solpolpy.core import (determine_input_kind, resolve, add_alpha, get_transform_path, _determine_image_shape)
+from solpolpy.errors import UnsupportedTransformationError
 
 
 wcs = astropy.wcs.WCS(naxis=3)
@@ -133,6 +131,23 @@ def example_fail():
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 
+def test_determine_image_shape():
+    data_out = []
+    data_out.append(("B", NDCube(np.zeros((20, 20)), wcs=wcs, meta={'POLAR': 'B'})))
+    collection = NDCollection(data_out, meta={}, aligned_axes="all")
+    assert _determine_image_shape(collection) == (20, 20)
+
+
+def test_add_alpha(bpb_ones_no_alpha):
+    data_out = []
+    data_out.append(("B", NDCube(np.zeros((10, 10)), wcs=wcs, meta={'POLAR': 'B'})))
+    data_out.append(("pB", NDCube(np.zeros((10, 10)), wcs=wcs, meta={'POLAR': 'pB'})))
+    collection = NDCollection(data_out, meta={}, aligned_axes="all")
+    assert "alpha" not in collection
+    out = add_alpha(collection)
+    assert "alpha" in out
+
+
 '''
     Tests to determine_input_kind
 '''
@@ -141,38 +156,50 @@ def example_fail():
 def test_determine_input_kind_npol(npol_ones):
     assert determine_input_kind(npol_ones), "npol"
 
+
 def test_determine_input_kind_fourpol(four_pol_ones):
     assert determine_input_kind(four_pol_ones), "fourpol"
+
 
 def test_determine_input_kind_mzp(mzp_ones):
     assert determine_input_kind(mzp_ones), "MZP"
 
+
 def test_determine_input_kind_mzp_alpha(mzp_ones_alpha):
     assert determine_input_kind(mzp_ones_alpha), "MZP"
+
 
 def test_determine_input_kind_bpb(bpb_ones):
     assert determine_input_kind(bpb_ones), "BpB"
 
+
 def test_determine_input_kind_bpb_noa(bpb_ones_no_alpha):
     assert determine_input_kind(bpb_ones_no_alpha), "BpB"
+
 
 def test_determine_input_kind_btbr(btbr_ones):
     assert determine_input_kind(btbr_ones), "BtBr"
 
+
 def test_determine_input_kind_btbr_noa(btbr_ones_no_alpha):
     assert determine_input_kind(btbr_ones_no_alpha), "BtBr"
+
 
 def test_determine_input_kind_stokes(stokes_ones):
     assert determine_input_kind(stokes_ones), "Stokes"
 
+
 def test_determine_input_kind_bp3(bp3_ones):
     assert determine_input_kind(bp3_ones), "Bp3"
+
 
 def test_determine_input_kind_bp3_noa(bp3_ones_no_alpha):
     assert determine_input_kind(bp3_ones_no_alpha), "Bp3"
 
+
 def test_determine_input_kind_bthp(bthp_ones):
     assert determine_input_kind(bthp_ones), "Bthp"
+
 
 def test_determine_input_kind_fail(example_fail):
     with pytest.raises(ValueError):
@@ -183,46 +210,59 @@ def test_determine_input_kind_fail(example_fail):
     Tests to check the resolve
 '''
 
+
 def test_npol_to_mzp(npol_ones):
     result = resolve(npol_ones, "MZP")
     assert isinstance(result, NDCollection)
+
 
 def test_mzp_to_bpb(mzp_ones_alpha):
     result = resolve(mzp_ones_alpha, "BpB")
     assert isinstance(result, NDCollection)
 
+
 def test_bpb_to_mzp(bpb_ones):
     result = resolve(bpb_ones, "MZP")
     assert isinstance(result, NDCollection)
+
 
 def test_bpb_to_btbr(bpb_ones):
     result = resolve(bpb_ones, "BtBr")
     assert isinstance(result, NDCollection)
 
+
 def test_btbr_to_bpb(btbr_ones):
     result = resolve(btbr_ones, "BpB")
     assert isinstance(result, NDCollection)
+
 
 def test_mzp_to_stokes(mzp_ones):
     result = resolve(mzp_ones, "Stokes")
     assert isinstance(result, NDCollection)
 
+
 def test_stokes_to_mzp(stokes_ones):
     result = resolve(stokes_ones, "MZP")
     assert isinstance(result, NDCollection)
+
 
 def test_mzp_to_bp3(mzp_ones_alpha):
     result = resolve(mzp_ones_alpha, "Bp3")
     assert isinstance(result, NDCollection)
 
+
 def test_bp3_to_mzp(bp3_ones):
     result = resolve(bp3_ones, "MZP")
     assert isinstance(result, NDCollection)
+
 
 def test_btbr_to_mzp(btbr_ones):
     result = resolve(btbr_ones, "MZP")
     assert isinstance(result, NDCollection)
 
+
 def test_bp3_to_bthp(bp3_ones):
     result = resolve(bp3_ones, "Bthp")
     assert isinstance(result, NDCollection)
+
+

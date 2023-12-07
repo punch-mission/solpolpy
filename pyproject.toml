@@ -1,10 +1,11 @@
 [project]
 name = "solpolpy"
-version = "0.0.1"
+version = "0.1.0"
 authors = [
-    { name="Bryce M. Walbridge", email="bmw39@calvin.edu" },
     { name="J. Marcus Hughes", email="mhughes@boulder.swri.edu"},
-    { name="Matthew J. West", email="mwest@boulder.swri.edu"}
+    { name="Matthew J. West", email="mwest@boulder.swri.edu"},
+    { name="Ritesh Patel", email="ritesh.patel@swri.org"},
+    { name="Bryce M. Walbridge", email="bmw39@calvin.edu" },
 ]
 description = "Solar polarization resolver for any instrument"
 readme = "README.md"
@@ -37,3 +38,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ['solpolpy']
+
+[tool.ruff]
+line-length = 120
+ignore-init-module-imports = true

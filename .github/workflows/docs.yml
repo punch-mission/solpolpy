@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - uses: docker://pandoc/core:2.9
 
     # Install dependencies
     - name: Set up Python 3.10

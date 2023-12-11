@@ -1,9 +1,10 @@
 import os
-from ndcube import NDCollection
-import pytest
 
-from solpolpy.instruments import load_data, get_instrument_mask
+import pytest
+from ndcube import NDCollection
+
 from solpolpy.errors import TooFewFilesError
+from solpolpy.instruments import get_instrument_mask, load_data
 
 
 def test_load_data():
@@ -22,7 +23,7 @@ def test_load_data_fails_with_one_file():
     file_list=[path_to_test_files+"stereo_0.fts"]
     with pytest.raises(TooFewFilesError):
         out = load_data(file_list)
-
+        return out
 
 def test_get_instrument_mask():
     TESTDATA_DIR = os.path.dirname(__file__)
@@ -48,4 +49,3 @@ def test_use_instrument_mask_overrides_in_load():
 
     assert out['angle_1'].mask.dtype == bool
     assert out['angle_1'].mask.shape == (2048, 2048)
-

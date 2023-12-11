@@ -77,4 +77,3 @@ html_context = {
 
 
 autoapi_dirs = ['../../solpolpy']
-

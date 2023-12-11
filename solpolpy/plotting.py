@@ -1,11 +1,10 @@
 import warnings
 
-import numpy as np
-from astropy.io import fits
 import astropy.units as u
 import matplotlib.pyplot as plt
+import numpy as np
+from astropy.io import fits
 from ndcube import NDCollection
-import sunpy.visualization.colormaps as cm
 
 
 def plot_collection(collection: NDCollection,

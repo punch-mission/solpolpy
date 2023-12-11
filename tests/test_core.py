@@ -3,18 +3,14 @@
 pytest test suite for the polarizers module of solpolpy
 """
 
+import astropy.units as u
+import astropy.wcs
 import numpy as np
 import pytest
-from pytest import fixture
-import astropy.wcs
 from ndcube import NDCollection, NDCube
-import os
+from pytest import fixture
 
-import astropy.units as u
-
-from solpolpy.core import (determine_input_kind, resolve, add_alpha, get_transform_path, _determine_image_shape)
-from solpolpy.errors import UnsupportedTransformationError
-
+from solpolpy.core import _determine_image_shape, add_alpha, determine_input_kind, resolve
 
 wcs = astropy.wcs.WCS(naxis=3)
 wcs.ctype = 'WAVE', 'HPLT-TAN', 'HPLN-TAN'
@@ -264,5 +260,3 @@ def test_btbr_to_mzp(btbr_ones):
 def test_bp3_to_bthp(bp3_ones):
     result = resolve(bp3_ones, "Bthp")
     assert isinstance(result, NDCollection)
-
-

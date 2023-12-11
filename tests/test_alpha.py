@@ -1,6 +1,6 @@
+import astropy.units as u
 import numpy as np
 import pytest
-import astropy.units as u
 
 from solpolpy.alpha import radial_north
 

@@ -1,7 +1,7 @@
 import os
 
-from solpolpy.plotting import get_colormap_str, plot_collection
 from solpolpy.instruments import load_data
+from solpolpy.plotting import get_colormap_str, plot_collection
 
 
 def test_get_colormap_str_stereo():

@@ -1,11 +1,10 @@
 """Instrument specific code"""
-import warnings
 import typing as t
 
-from ndcube import NDCube, NDCollection
+import numpy as np
 from astropy.io import fits
 from astropy.wcs import WCS
-import numpy as np
+from ndcube import NDCollection, NDCube
 
 from solpolpy.errors import TooFewFilesError, UnsupportedInstrumentError
 
@@ -16,7 +15,7 @@ def load_data(path_list: t.List[str],
     """Basic loading function. See `load_with_occulter_mask`.
     Parameters
     ----------
-    path_list: List[str] 
+    path_list: List[str]
         list of paths to FITS files to be loaded
 
     mask: Optional[np.ndarray]
@@ -32,7 +31,6 @@ def load_data(path_list: t.List[str],
         The keys are labeled as 'angle_1', 'angle_2, 'angle_3', ...
     """
     # get length of list to determine how many files to process.
-    list_len = len(path_list)
     if len(path_list) < 2:
         raise TooFewFilesError("Requires at least 2 FITS files")
 
@@ -50,7 +48,7 @@ def load_data(path_list: t.List[str],
             data_out.append(("angle_" + str(i+1),
                              NDCube(hdul[0].data,
                                     mask=mask,
-                                    wcs=wcs, 
+                                    wcs=wcs,
                                     meta=hdul[0].header)))
 
     return NDCollection(data_out, meta={}, aligned_axes="all")

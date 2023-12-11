@@ -2,14 +2,14 @@
 import typing as t
 
 import networkx as nx
-from ndcube import NDCube, NDCollection
+from ndcube import NDCollection, NDCube
 
-from solpolpy.constants import VALID_KINDS
-from solpolpy.graph import transform_graph
 from solpolpy.alpha import radial_north
+from solpolpy.constants import VALID_KINDS
+from solpolpy.errors import UnsupportedTransformationError
+from solpolpy.graph import transform_graph
 from solpolpy.instruments import load_data
 from solpolpy.polarizers import npol_to_mzp
-from solpolpy.errors import UnsupportedTransformationError
 
 
 def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str) -> NDCollection:

@@ -1,8 +1,7 @@
 """ Functions related to constructing an alpha array for transformation"""
-import typing as t
 
-import numpy as np
 import astropy.units as u
+import numpy as np
 
 
 def radial_north(shape):

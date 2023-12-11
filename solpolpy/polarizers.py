@@ -7,9 +7,9 @@ The Astrophysical Journal, 927(1), 98.
 """
 import copy
 
-import numpy as np
 import astropy.units as u
-from ndcube import NDCube, NDCollection
+import numpy as np
+from ndcube import NDCollection, NDCube
 
 
 def conv_polar_from_head(input_cube):
@@ -272,7 +272,7 @@ def mzp_to_bp3(input_collection):
         if p_angle == "alpha":
             break
         input_dict[(input_collection[p_angle].meta['POLAR'] * u.degree * conv_fact)] = input_collection[p_angle].data
-        
+
     alpha = input_collection['alpha'].data * u.radian
     B = (2 / 3) * (np.sum([ith_polarizer_brightness for ith_angle, ith_polarizer_brightness
                            in input_dict.items() if ith_angle != "alpha"], axis=0))

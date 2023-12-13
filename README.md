@@ -42,7 +42,7 @@ Or you can submit a pull request.
 [Access here](CODE_OF_CONDUCT.md)
 
 ## Citing
-To cite the software please cite the version you used with [the Zenodo citation](https://zenodo.org/records/10289143). 
+To cite the software please cite the version you used with [the Zenodo citation](https://zenodo.org/records/10289143).
 
 ## Origin of the Name
 `solpolpy` is just a combination of `sol` for solar, `pol` for polarization, and `py` for Python.

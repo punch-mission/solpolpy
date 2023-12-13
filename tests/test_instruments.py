@@ -14,6 +14,9 @@ def test_load_data():
                path_to_test_files+"stereo_120.fts",
                path_to_test_files+"stereo_240.fts"]
     out = load_data(file_list)
+    actual_keys = list(out)
+    expected_keys = ["angle_1", "angle_2", "angle_3"]
+    assert actual_keys == expected_keys
     assert isinstance(out, NDCollection)
 
 

@@ -143,19 +143,12 @@ def bpb_to_btbr(input_collection):
     ------
     Equation 1 and 2 in DeForest et al. 2022.
     """
-    input_dict = {}
-    in_list = list(input_collection)
 
     if "alpha" not in input_collection:
         raise ValueError("missing alpha")
 
-    for p_angle in in_list:
-        if p_angle == "alpha":
-            break
-        input_dict[(input_collection[p_angle].meta['POLAR'])] = input_collection[p_angle].data
-
     alpha = input_collection['alpha'].data * u.radian
-    B, pB = input_dict['B'], input_dict['pB']
+    B, pB = input_collection['B'].data, input_collection['pB'].data
     Br = (B - pB) / 2
     Bt = (B + pB) / 2
 
@@ -177,19 +170,12 @@ def btbr_to_bpb(input_collection):
     ------
     Equation in Table 1 in DeForest et al. 2022.
     """
-    input_dict = {}
-    in_list = list(input_collection)
 
     if "alpha" not in input_collection:
         raise ValueError("missing alpha")
 
-    for p_angle in in_list:
-        if p_angle == "alpha":
-            break
-        input_dict[(input_collection[p_angle].meta['POLAR'])] = input_collection[p_angle].data
-
     alpha = input_collection['alpha'].data * u.radian
-    Bt, Br = input_dict['Bt'], input_dict['Br']
+    Bt, Br = input_collection['Bt'].data, input_collection['Br'].data
     pB = (Bt - Br)
     B = (Bt + Br)
 

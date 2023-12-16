@@ -202,6 +202,13 @@ def test_btbr_bpb_ones(btbr_ones):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
 
+def test_btbr_mzp_ways(btbr_ones):
+    actual_mzp_direct = pol.btbr_to_mzp(btbr_ones)
+    actual_bpb = pol.btbr_to_bpb(btbr_ones)
+    actual_mzp_indirect = pol.bpb_to_mzp(actual_bpb)
+    for k in list(actual_mzp_direct):
+        assert np.allclose(actual_mzp_direct[str(k)].data, actual_mzp_indirect[str(k)].data)
+
 def test_mzp_stokes_ones(mzp_ones):
     actual = pol.mzp_to_stokes(mzp_ones)
     expected_data = []

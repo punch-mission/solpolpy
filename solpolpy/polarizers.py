@@ -55,7 +55,7 @@ def npol_to_mzp(input_collection):
                            copy.copy(input_collection["angle_2"].meta),
                            copy.copy(input_collection["angle_3"].meta))
     metaM.update(POLAR=-60), metaZ.update(POLAR=0), metaP.update(POLAR=60)
-    mask = input_collection["angle_1"].mask
+    mask = input_collection["angle_1"].mask or input_collection["angle_2"].mask or input_collection["angle_3"].mask
     Bmzp_cube = []
     Bmzp_cube.append(("Bm", NDCube(Bmzp[-60 * u.degree], wcs=input_collection["angle_1"].wcs, mask=mask,  meta=metaM)))
     Bmzp_cube.append(("Bz", NDCube(Bmzp[0 * u.degree], wcs=input_collection["angle_1"].wcs, mask=mask,  meta=metaZ)))
@@ -98,7 +98,7 @@ def mzp_to_bpb(input_collection):
     # todo: update header properly
     metaB, metapB = copy.copy(input_collection["Bm"].meta), copy.copy(input_collection["Bm"].meta)
     metaB.update(Polar='B'), metapB.update(Polar='pB')
-    mask = input_collection["Bm"].mask
+    mask = input_collection["Bm"].mask or input_collection["Bz"].mask or input_collection["Bp"].mask
     BpB_cube = []
     BpB_cube.append(("B", NDCube(B, wcs=input_collection["Bm"].wcs, mask=mask,  meta=metaB)))
     BpB_cube.append(("pB", NDCube(pB, wcs=input_collection["Bm"].wcs, mask=mask,  meta=metapB)))
@@ -128,7 +128,7 @@ def bpb_to_mzp(input_collection):
     metaM, metaZ, metaP = copy.copy(input_collection["B"].meta), copy.copy(input_collection["B"].meta), copy.copy(
         input_collection["B"].meta)
     metaM.update(Polar=-60), metaZ.update(Polar=0), metaP.update(Polar=60)
-    mask = input_collection["B"].mask
+    mask = input_collection["B"].mask or input_collection["pB"].mask
     Bmzp_cube = []
     Bmzp_cube.append(("Bm", NDCube(Bmzp[-60 * u.degree], wcs=input_collection["B"].wcs, mask=mask,  meta=metaM)))
     Bmzp_cube.append(("Bz", NDCube(Bmzp[0 * u.degree], wcs=input_collection["B"].wcs, mask=mask,  meta=metaZ)))
@@ -156,7 +156,7 @@ def bpb_to_btbr(input_collection):
 
     metaBr, metaBt = copy.copy(input_collection["B"].meta), copy.copy(input_collection["B"].meta)
     metaBr.update(Polar='Br'), metaBt.update(Polar='Bt')
-    mask = input_collection["B"].mask
+    mask = input_collection["B"].mask or input_collection["pB"].mask
     BtBr_cube = []
     BtBr_cube.append(("Bt", NDCube(Bt, wcs=input_collection["B"].wcs, mask=mask,  meta=metaBt)))
     BtBr_cube.append(("Br", NDCube(Br, wcs=input_collection["B"].wcs, mask=mask,  meta=metaBr)))
@@ -183,7 +183,7 @@ def btbr_to_bpb(input_collection):
 
     metaB, metapB = copy.copy(input_collection["Bt"].meta), copy.copy(input_collection["Bt"].meta)
     metaB.update(Polar='B'), metapB.update(Polar='pB')
-    mask = input_collection["Bt"].mask
+    mask = input_collection["Bt"].mask or input_collection["Br"].mask
     BpB_cube = []
     BpB_cube.append(("B", NDCube(B, wcs=input_collection["Bt"].wcs, mask=mask,  meta=metaB)))
     BpB_cube.append(("pB", NDCube(pB, wcs=input_collection["Bt"].wcs, mask=mask,  meta=metapB)))
@@ -210,7 +210,7 @@ def mzp_to_stokes(input_collection):
     metaI, metaQ, metaU = copy.copy(input_collection["Bm"].meta), copy.copy(input_collection["Bz"].meta), copy.copy(
         input_collection["Bp"].meta)
     metaI.update(Polar='Stokes I'), metaQ.update(Polar='Stokes Q'), metaU.update(Polar='Stokes U')
-    mask = input_collection["Bm"].mask
+    mask = input_collection["Bm"].mask or input_collection["Bz"].mask or input_collection["Bp"].mask
     BStokes_cube = []
     BStokes_cube.append(("Bi", NDCube(Bi, wcs=input_collection["Bm"].wcs, mask=mask,  meta=metaI)))
     BStokes_cube.append(("Bq", NDCube(Bq, wcs=input_collection["Bm"].wcs, mask=mask,  meta=metaQ)))
@@ -239,7 +239,7 @@ def stokes_to_mzp(input_collection):
     metaM, metaZ, metaP = copy.copy(input_collection["Bi"].meta), copy.copy(input_collection["Bq"].meta), copy.copy(
         input_collection["Bu"].meta)
     metaM.update(Polar=-60), metaZ.update(Polar=0), metaP.update(Polar=60)
-    mask = input_collection["Bi"].mask
+    mask = input_collection["Bi"].mask or input_collection["Bq"].mask or input_collection["Bu"].mask
     Bmzp_cube = []
     Bmzp_cube.append(("Bm", NDCube(Bm, wcs=input_collection["Bi"].wcs, mask=mask,  meta=metaM)))
     Bmzp_cube.append(("Bz", NDCube(Bz, wcs=input_collection["Bi"].wcs, mask=mask,  meta=metaZ)))
@@ -279,7 +279,7 @@ def mzp_to_bp3(input_collection):
     metaB, metapB, metapBp = copy.copy(input_collection["Bm"].meta), copy.copy(input_collection["Bm"].meta), copy.copy(
         input_collection["Bm"].meta)
     metaB.update(Polar='B'), metapB.update(Polar='pB'), metapBp.update(Polar='pB-prime')
-    mask = input_collection["Bm"].mask
+    mask = input_collection["Bm"].mask or input_collection["Bz"].mask or input_collection["Bp"].mask
     Bp3_cube = []
     Bp3_cube.append(("B", NDCube(B, wcs=input_collection["Bm"].wcs, mask=mask,  meta=metaB)))
     Bp3_cube.append(("pB", NDCube(pB, wcs=input_collection["Bm"].wcs, mask=mask,  meta=metapB)))
@@ -313,7 +313,7 @@ def bp3_to_mzp(input_collection):
     metaM, metaZ, metaP = copy.copy(input_collection["B"].meta), copy.copy(input_collection["pB"].meta), copy.copy(
         input_collection["pBp"].meta)
     metaM.update(Polar=-60), metaZ.update(Polar=0), metaP.update(Polar=60)
-    mask = input_collection["B"].mask
+    mask = input_collection["B"].mask or input_collection["pB"].mask or input_collection["pBp"].mask
     Bmzp_cube = []
     Bmzp_cube.append(("Bm", NDCube(Bmzp[-60 * u.degree], wcs=input_collection["B"].wcs, mask=mask,  meta=metaM)))
     Bmzp_cube.append(("Bz", NDCube(Bmzp[0 * u.degree], wcs=input_collection["B"].wcs, mask=mask,  meta=metaZ)))
@@ -343,7 +343,7 @@ def btbr_to_mzp(input_collection):
     metaM, metaZ, metaP = copy.copy(input_collection["Bt"].meta), copy.copy(input_collection["Bt"].meta), copy.copy(
         input_collection["Bt"].meta)
     metaM.update(Polar=-60), metaZ.update(Polar=0), metaP.update(Polar=60)
-    mask = input_collection["Bt"].mask
+    mask = input_collection["Bt"].mask or input_collection["Br"].mask
     Bmzp_cube = []
     Bmzp_cube.append(("Bm", NDCube(Bmzp[-60 * u.degree], wcs=input_collection["Bt"].wcs, mask=mask,  meta=metaM)))
     Bmzp_cube.append(("Bz", NDCube(Bmzp[0 * u.degree], wcs=input_collection["Bt"].wcs, mask=mask,  meta=metaZ)))
@@ -369,7 +369,7 @@ def bp3_to_bthp(input_collection):
 
     metaTh, metaP = copy.copy(input_collection["B"].meta), copy.copy(input_collection["pB"].meta)
     metaTh.update(Polar='Theta'), metaP.update(Polar='Degree of Polarization')
-    mask = input_collection["B"].mask
+    mask = input_collection["B"].mask or input_collection["pB"].mask or input_collection["pBp"].mask
     Bthp_cube = []
     Bthp_cube.append(("B", NDCube(B, wcs=input_collection["B"].wcs, mask=mask,  meta=input_collection['B'].meta)))
     Bthp_cube.append(("theta", NDCube(theta_mx, wcs=input_collection["B"].wcs, mask=mask,  meta=metaTh)))
@@ -394,7 +394,7 @@ def btbr_to_npol(input_collection, angles):
     npol_ang = angles
     Bnpol = {}
     Bnpol_cube = []
-    mask = input_collection["Bt"].mask
+    mask = input_collection["Bt"].mask or input_collection["Br"].mask
     for ang in npol_ang:
         Bnpol[ang] = Bt * (np.sin(ang * u.degree - alpha)) ** 2 + Br * (np.cos(ang * u.degree - alpha)) ** 2
         meta_tmp = copy.copy(input_collection["Bt"].meta)
@@ -419,7 +419,7 @@ def fourpol_to_stokes(input_collection):
     metaI, metaQ, metaU = (copy.copy(input_collection["B0"].meta),
                            copy.copy(input_collection["B0"].meta),
                            copy.copy(input_collection["B0"].meta))
-    mask = input_collection["B0"].mask
+    mask = input_collection["B0"].mask or input_collection["B45"].mask or input_collection["B90"].mask or input_collection["B135"].mask
     BStokes_cube = []
     BStokes_cube.append(("Bi", NDCube(Bi, wcs=input_collection["B0"].wcs, mask=mask,  meta=metaI)))
     BStokes_cube.append(("Bq", NDCube(Bq, wcs=input_collection["B0"].wcs, mask=mask,  meta=metaQ)))

@@ -36,6 +36,7 @@ Functions
    solpolpy.polarizers.bp3_to_bthp
    solpolpy.polarizers.btbr_to_npol
    solpolpy.polarizers.fourpol_to_stokes
+   solpolpy.polarizers.combine_masks
 
 
 
@@ -132,5 +133,13 @@ Functions
    .. rubric:: Notes
 
    Table 1 in DeForest et al. 2022.
+
+
+.. py:function:: combine_masks(*args)
+
+   Combines masks
+
+   If any of the masks are None, the result is None.
+   Otherwise, when combining any value that is masked in any of the input args, gets masked, i.e. it does a logical or.
 
 

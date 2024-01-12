@@ -95,7 +95,6 @@ def mzp_to_bpb(input_collection):
                              * np.cos(2 * (ith_angle - alpha))
                              for ith_angle, ith_polarizer_brightness
                              in input_dict.items() if ith_angle != "alpha"], axis=0))
-    # todo: update header properly
     metaB, metapB = copy.copy(input_collection["Bm"].meta), copy.copy(input_collection["Bm"].meta)
     metaB.update(Polar='B'), metapB.update(Polar='pB')
     mask = input_collection["Bm"].mask or input_collection["Bz"].mask or input_collection["Bp"].mask

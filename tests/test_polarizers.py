@@ -343,3 +343,102 @@ def test_fourpol_to_stokes_ones(fourpol_ones):
     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
+
+
+def test_mask_propagation_works_when_none_provided(fourpol_ones):
+    actual = pol.fourpol_to_stokes(fourpol_ones)
+    expected_data = []
+    expected_data.append(("Bi", NDCube(np.array([2]), wcs=wcs, mask=None)))
+    expected_data.append(("Bq", NDCube(np.array([0]), wcs=wcs,  mask=None)))
+    expected_data.append(("Bu", NDCube(np.array([0]), wcs=wcs,  mask=None)))
+    expected = NDCollection(expected_data, meta={}, aligned_axes="all")
+    for k in list(expected):
+        assert np.allclose(actual[str(k)].data, expected[str(k)].data)
+        assert actual[str(k)].mask is None
+
+
+def test_mask_propagation_works_mixed_normal_case():
+    # set up some data with mixed masks
+    wcs = astropy.wcs.WCS(naxis=1)
+    wcs.ctype = 'ONE'
+    wcs.cunit = 'deg'
+    wcs.cdelt = 0.1
+    wcs.crpix = 0
+    wcs.crval = 0
+    wcs.cname = 'ONE'
+
+    data_out = []
+    data_out.append(("B0", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 0}, mask=np.zeros(1, dtype=bool))))
+    data_out.append(("B45", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 45}, mask=np.ones(1, dtype=bool))))
+    data_out.append(("B90", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 90}, mask=np.zeros(1, dtype=bool))))
+    data_out.append(("B135", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 135}, mask=np.zeros(1, dtype=bool))))
+    fourpol_ones = NDCollection(key_data_pairs=data_out, meta={}, aligned_axes='all')
+
+    actual = pol.fourpol_to_stokes(fourpol_ones)
+
+    expected_data = []
+    expected_data.append(("Bi", NDCube(np.array([2]), wcs=wcs, mask=np.ones(1, dtype=bool))))
+    expected_data.append(("Bq", NDCube(np.array([0]), wcs=wcs,  mask=np.ones(1, dtype=bool))))
+    expected_data.append(("Bu", NDCube(np.array([0]), wcs=wcs,  mask=np.ones(1, dtype=bool))))
+    expected = NDCollection(expected_data, meta={}, aligned_axes="all")
+    for k in list(expected):
+        assert np.allclose(actual[str(k)].data, expected[str(k)].data)
+        assert np.equal(actual[str(k)].mask, expected[str(k)].mask)
+
+
+def test_mask_propagation_works_all_false_normal_case():
+    # set up some data with mixed masks
+    wcs = astropy.wcs.WCS(naxis=1)
+    wcs.ctype = 'ONE'
+    wcs.cunit = 'deg'
+    wcs.cdelt = 0.1
+    wcs.crpix = 0
+    wcs.crval = 0
+    wcs.cname = 'ONE'
+
+    data_out = []
+    data_out.append(("B0", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 0}, mask=np.zeros(1, dtype=bool))))
+    data_out.append(("B45", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 45}, mask=np.zeros(1, dtype=bool))))
+    data_out.append(("B90", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 90}, mask=np.zeros(1, dtype=bool))))
+    data_out.append(("B135", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 135}, mask=np.zeros(1, dtype=bool))))
+    fourpol_ones = NDCollection(key_data_pairs=data_out, meta={}, aligned_axes='all')
+
+    actual = pol.fourpol_to_stokes(fourpol_ones)
+
+    expected_data = []
+    expected_data.append(("Bi", NDCube(np.array([2]), wcs=wcs, mask=np.zeros(1, dtype=bool))))
+    expected_data.append(("Bq", NDCube(np.array([0]), wcs=wcs, mask=np.zeros(1, dtype=bool))))
+    expected_data.append(("Bu", NDCube(np.array([0]), wcs=wcs, mask=np.zeros(1, dtype=bool))))
+    expected = NDCollection(expected_data, meta={}, aligned_axes="all")
+    for k in list(expected):
+        assert np.allclose(actual[str(k)].data, expected[str(k)].data)
+        assert np.equal(actual[str(k)].mask, expected[str(k)].mask)
+
+
+def test_mask_propagation_works_when_not_all_specified(fourpol_ones):
+    # set up some data with mixed masks
+    wcs = astropy.wcs.WCS(naxis=1)
+    wcs.ctype = 'ONE'
+    wcs.cunit = 'deg'
+    wcs.cdelt = 0.1
+    wcs.crpix = 0
+    wcs.crval = 0
+    wcs.cname = 'ONE'
+
+    data_out = []
+    data_out.append(("B0", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 0})))
+    data_out.append(("B45", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 45}, mask=np.ones(1, dtype=bool))))
+    data_out.append(("B90", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 90}, mask=np.zeros(1, dtype=bool))))
+    data_out.append(("B135", NDCube(data=np.array([1]), wcs=wcs, meta={'POLAR': 135}, mask=np.zeros(1, dtype=bool))))
+    fourpol_ones = NDCollection(key_data_pairs=data_out, meta={}, aligned_axes='all')
+
+    actual = pol.fourpol_to_stokes(fourpol_ones)
+
+    expected_data = []
+    expected_data.append(("Bi", NDCube(np.array([2]), wcs=wcs, mask=np.ones(1, dtype=bool))))
+    expected_data.append(("Bq", NDCube(np.array([0]), wcs=wcs, mask=np.ones(1, dtype=bool))))
+    expected_data.append(("Bu", NDCube(np.array([0]), wcs=wcs, mask=np.ones(1, dtype=bool))))
+    expected = NDCollection(expected_data, meta={}, aligned_axes="all")
+    for k in list(expected):
+        assert np.allclose(actual[str(k)].data, expected[str(k)].data)
+        assert np.equal(actual[str(k)].mask, expected[str(k)].mask)

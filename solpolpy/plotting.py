@@ -3,6 +3,7 @@ import warnings
 import astropy.units as u
 import matplotlib.pyplot as plt
 import numpy as np
+import sunpy.visualization.colormaps as cm  # noqa: F401
 from astropy.io import fits
 from ndcube import NDCollection
 

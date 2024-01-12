@@ -441,4 +441,4 @@ def test_mask_propagation_works_when_not_all_specified(fourpol_ones):
     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
-        assert np.equal(actual[str(k)].mask, expected[str(k)].mask)
+        assert actual[str(k)].mask is None

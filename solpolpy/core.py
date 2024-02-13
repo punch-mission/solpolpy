@@ -16,7 +16,7 @@ from solpolpy.polarizers import npol_to_mzp
 
 def generate_imax_matrix(arrayshape) -> np.ndarray:
     """
-    Define an A matrix with which to convert MZP' (camera coords) = A x MZP (solar coords)
+    Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords)
 
     Parameters
     -------
@@ -60,7 +60,7 @@ def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
     for i, key in enumerate(input_data.keys()):
         if i == 0:
             data_shape = input_data[key].data.shape
-            data_mzp_camera = np.zeros([data_shape[0],data_shape[1],3,1])
+            data_mzp_camera = np.zeros([data_shape[0], data_shape[1], 3, 1])
         data_mzp_camera[:, :, i, 0] = input_data[key].data
 
     imax_matrix = generate_imax_matrix(data_shape)
@@ -69,7 +69,7 @@ def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
     data_mzp_solar = np.matmul(imax_matrix_inv, data_mzp_camera)
 
     for i, key in enumerate(input_data.keys()):
-        input_data[key].data[:,:] = data_mzp_solar[:,:,i,0]
+        input_data[key].data[:, :] = data_mzp_solar[:, :, i, 0]
 
     return input_data
 

@@ -14,66 +14,6 @@ from solpolpy.instruments import load_data
 from solpolpy.polarizers import npol_to_mzp
 
 
-def generate_imax_matrix(arrayshape) -> np.ndarray:
-    """
-    Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords)
-
-    Parameters
-    -------
-    arrayshape
-        Defined input WCS array shape for matrix generation
-
-    Returns
-    -------
-    ndarray
-        Output A matrix used in converting between camera coordinates and solar coordinates
-
-    """
-
-    # Ideal MZP wrt Solar North
-    thmzp = [-60, 0, 60] * u.degree
-
-    long_arr, lat_arr = np.meshgrid(np.linspace(-20, 20, arrayshape[0]), np.linspace(-20, 20, arrayshape[1]))
-
-    # Foreshortening (IMAX) effect on polarizer angle
-    phi_m = np.arctan2(np.tan(thmzp[0]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)) * 180 * u.degree / (
-            np.pi * u.radian)
-    phi_z = np.arctan2(np.tan(thmzp[1]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)) * 180 * u.degree / (
-            np.pi * u.radian)
-    phi_p = np.arctan2(np.tan(thmzp[2]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)) * 180 * u.degree / (
-            np.pi * u.radian)
-
-    phi = np.stack([phi_m, phi_z, phi_p])
-
-    # Define the A matrix
-    mat_a = np.empty((arrayshape[0], arrayshape[1], 3, 3))
-
-    for i in range(3):
-        for j in range(3):
-            mat_a[:, :, i, j] = (4 * np.cos(phi[i] - thmzp[j]) ** 2 - 1) / 3
-
-    return mat_a
-
-
-def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
-
-    for i, key in enumerate(input_data.keys()):
-        if i == 0:
-            data_shape = input_data[key].data.shape
-            data_mzp_camera = np.zeros([data_shape[0], data_shape[1], 3, 1])
-        data_mzp_camera[:, :, i, 0] = input_data[key].data
-
-    imax_matrix = generate_imax_matrix(data_shape)
-    imax_matrix_inv = np.linalg.inv(imax_matrix)
-
-    data_mzp_solar = np.matmul(imax_matrix_inv, data_mzp_camera)
-
-    for i, key in enumerate(input_data.keys()):
-        input_data[key].data[:, :] = data_mzp_solar[:, :, i, 0]
-
-    return input_data
-
-
 def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str, imax_effect: bool = False) -> NDCollection:
     """
     Apply - apply a polarization transformation to a set of input
@@ -226,6 +166,63 @@ def check_alpha_requirement(path: t.List[str]) -> bool:
         step_end = path[i + 1]
         requires_alpha = transform_graph.get_edge_data(step_start, step_end)['requires_alpha'] or requires_alpha
     return requires_alpha
+
+
+def generate_imax_matrix(arrayshape) -> np.ndarray:
+    """
+    Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords)
+
+    Parameters
+    -------
+    arrayshape
+        Defined input WCS array shape for matrix generation
+
+    Returns
+    -------
+    ndarray
+        Output A matrix used in converting between camera coordinates and solar coordinates
+
+    """
+
+    # Ideal MZP wrt Solar North
+    thmzp = [-60, 0, 60] * u.degree
+
+    long_arr, lat_arr = np.meshgrid(np.linspace(-20, 20, arrayshape[0]), np.linspace(-20, 20, arrayshape[1]))
+
+    # Foreshortening (IMAX) effect on polarizer angle
+    phi_m = np.arctan2(np.tan(thmzp[0]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
+    phi_z = np.arctan2(np.tan(thmzp[1]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
+    phi_p = np.arctan2(np.tan(thmzp[2]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
+
+    phi = np.stack([phi_m, phi_z, phi_p])
+
+    # Define the A matrix
+    mat_a = np.empty((arrayshape[0], arrayshape[1], 3, 3))
+
+    for i in range(3):
+        for j in range(3):
+            mat_a[:, :, i, j] = (4 * np.cos(phi[i] - thmzp[j]) ** 2 - 1) / 3
+
+    return mat_a
+
+
+def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
+
+    for i, key in enumerate(input_data.keys()):
+        if i == 0:
+            data_shape = input_data[key].data.shape
+            data_mzp_camera = np.zeros([data_shape[0], data_shape[1], 3, 1])
+        data_mzp_camera[:, :, i, 0] = input_data[key].data
+
+    imax_matrix = generate_imax_matrix(data_shape)
+    imax_matrix_inv = np.linalg.inv(imax_matrix)
+
+    data_mzp_solar = np.matmul(imax_matrix_inv, data_mzp_camera)
+
+    for i, key in enumerate(input_data.keys()):
+        input_data[key].data[:, :] = data_mzp_solar[:, :, i, 0]
+
+    return input_data
 
 
 def _determine_image_shape(input_collection: NDCollection) -> t.Tuple[int, int]:

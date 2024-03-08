@@ -11,6 +11,7 @@ from ndcube import NDCollection, NDCube
 from pytest import fixture
 
 from solpolpy.core import _determine_image_shape, add_alpha, determine_input_kind, resolve
+from solpolpy.errors import UnsupportedTransformationError
 
 wcs = astropy.wcs.WCS(naxis=3)
 wcs.ctype = 'WAVE', 'HPLT-TAN', 'HPLN-TAN'
@@ -43,6 +44,22 @@ def mzp_ones():
     data_out.append(("Bz", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 0})))
     data_out.append(("Bm", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': -60})))
     return NDCollection(data_out, meta={}, aligned_axes="all")
+
+@fixture
+def mzp_data():
+    data_out = []
+    data_out.append(("Bp", NDCube(np.random.random([50,50]), wcs=wcs, meta={'POLAR': 60})))
+    data_out.append(("Bz", NDCube(np.random.random([50,50]), wcs=wcs, meta={'POLAR': 0})))
+    data_out.append(("Bm", NDCube(np.random.random([50,50]), wcs=wcs, meta={'POLAR': -60})))
+    return NDCollection(data_out, meta={}, aligned_axes="all")
+
+@fixture
+def bpb_data():
+    data_out = []
+    data_out.append(("B", NDCube(np.random.random([50,50]), wcs=wcs, meta={'POLAR': 'B'})))
+    data_out.append(("pB", NDCube(np.random.random([50,50]), wcs=wcs, meta={'POLAR': 'pB'})))
+    return NDCollection(data_out, meta={}, aligned_axes="all")
+
 @fixture
 def mzp_ones_alpha():
     data_out = []
@@ -260,3 +277,22 @@ def test_btbr_to_mzp(btbr_ones):
 def test_bp3_to_bthp(bp3_ones):
     result = resolve(bp3_ones, "Bthp")
     assert isinstance(result, NDCollection)
+
+
+def test_imax_effect(mzp_data):
+    result = resolve(mzp_data, "MZP", imax_effect=True)
+    assert isinstance(result, NDCollection)
+    for key in result.keys():
+        assert np.sum(result[key].data * mzp_data[key].data) != 0
+
+
+def test_imax_effect_unsupported_transformation_output(mzp_data):
+    with pytest.raises(UnsupportedTransformationError):
+        result = resolve(mzp_data, "BpB", imax_effect=True)
+        assert isinstance(result, NDCollection)
+
+
+def test_imax_effect_unsupported_transformation_input(bpb_data):
+    with pytest.raises(UnsupportedTransformationError):
+        result = resolve(bpb_data, "MZP", imax_effect=True)
+        assert isinstance(result, NDCollection)

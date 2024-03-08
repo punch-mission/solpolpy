@@ -1,11 +1,12 @@
 [project]
 name = "solpolpy"
-version = "0.1.1"
+version = "0.1.2"
 authors = [
     { name="J. Marcus Hughes", email="mhughes@boulder.swri.edu"},
     { name="Matthew J. West", email="mwest@boulder.swri.edu"},
     { name="Ritesh Patel", email="ritesh.patel@swri.org"},
     { name="Bryce M. Walbridge", email="bmw39@calvin.edu" },
+    { name="Chris Lowder", email="chris.lowder@swri.org"}
 ]
 description = "Solar polarization resolver for any instrument"
 readme = "README.md"

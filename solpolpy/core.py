@@ -74,7 +74,7 @@ def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str, ima
     requires_alpha = check_alpha_requirement(transform_path)
 
     if imax_effect:
-        if out_system == 'MZP':
+        if (input_kind == 'MZP') and (out_system == 'MZP'):
             input_data = resolve_imax_effect(input_data)
         else:
             raise UnsupportedTransformationError('IMAX effect applies only for MZP->MZP solpolpy transformations')
@@ -238,7 +238,7 @@ def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
         if 'Singular matrix' in str(err):
             raise ValueError('Singular IMAX effect matrix is degenerate')
         else:
-            raise
+            raise err
 
     data_mzp_solar = np.matmul(imax_matrix_inv, data_mzp_camera)
 

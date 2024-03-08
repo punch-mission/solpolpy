@@ -54,6 +54,13 @@ def mzp_data():
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 @fixture
+def bpb_data():
+    data_out = []
+    data_out.append(("B", NDCube(np.random.random([50,50]), wcs=wcs, meta={'POLAR': 'B'})))
+    data_out.append(("pB", NDCube(np.random.random([50,50]), wcs=wcs, meta={'POLAR': 'pB'})))
+    return NDCollection(data_out, meta={}, aligned_axes="all")
+
+@fixture
 def mzp_ones_alpha():
     data_out = []
     data_out.append(("Bp", NDCube(np.array([1]), wcs=wcs, meta={'POLAR': 60})))
@@ -276,11 +283,16 @@ def test_imax_effect(mzp_data):
     result = resolve(mzp_data, "MZP", imax_effect=True)
     assert isinstance(result, NDCollection)
     for key in result.keys():
-        print(np.sum(result[key].data * mzp_data[key].data))
         assert np.sum(result[key].data * mzp_data[key].data) != 0
 
 
-def test_imax_effect_unsupported_transformation(mzp_data):
+def test_imax_effect_unsupported_transformation_output(mzp_data):
     with pytest.raises(UnsupportedTransformationError):
         result = resolve(mzp_data, "BpB", imax_effect=True)
+        assert isinstance(result, NDCollection)
+
+
+def test_imax_effect_unsupported_transformation_input(bpb_data):
+    with pytest.raises(UnsupportedTransformationError):
+        result = resolve(bpb_data, "MZP", imax_effect=True)
         assert isinstance(result, NDCollection)

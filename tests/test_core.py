@@ -11,6 +11,7 @@ from ndcube import NDCollection, NDCube
 from pytest import fixture
 
 from solpolpy.core import _determine_image_shape, add_alpha, determine_input_kind, resolve
+from solpolpy.errors import UnsupportedTransformationError
 
 wcs = astropy.wcs.WCS(naxis=3)
 wcs.ctype = 'WAVE', 'HPLT-TAN', 'HPLN-TAN'
@@ -273,8 +274,13 @@ def test_bp3_to_bthp(bp3_ones):
 
 def test_imax_effect(mzp_data):
     result = resolve(mzp_data, "MZP", imax_effect=True)
-    # Should this be verified manually within the test - generate the appropriate matrix and apply?
     assert isinstance(result, NDCollection)
     for key in result.keys():
         print(np.sum(result[key].data * mzp_data[key].data))
         assert np.sum(result[key].data * mzp_data[key].data) != 0
+
+
+def test_imax_effect_unsupported_transformation(mzp_data):
+    with pytest.raises(UnsupportedTransformationError):
+        result = resolve(mzp_data, "BpB", imax_effect=True)
+        assert isinstance(result, NDCollection)

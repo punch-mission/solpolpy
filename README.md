@@ -31,7 +31,7 @@ Please open a discussion or issue for help.
 - [ ] quantification and propagation of error
 - [ ] additional plotting utilities
 - [ ] more comprehensive support for 4-polarizer systems
-- [ ] functions to deal with the IMAX effect in wide-field imagers
+- [x] functions to deal with the IMAX effect in wide-field imagers
 
 ## Contributing
 We encourage all contributions.

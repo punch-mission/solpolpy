@@ -39,7 +39,9 @@ def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str, ima
         - "npol": Set of images taken at than three polarizing angles other than MZP
 
     imax_effect : Boolean
-        If True, applies the IMAX effect for wide field imagers as part of the resolution process
+        The 'IMAX effect' describes the change in apparent measured polarization angle as an result of foreshortening effects.
+        This effect becomes more pronounced for wide field polarized imagers - see Patel et al (2024, in preparation)
+        If True, applies the IMAX effect for wide field imagers as part of the resolution process.
 
     Raises
     ------
@@ -71,10 +73,11 @@ def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str, ima
     equation = get_transform_equation(transform_path)
     requires_alpha = check_alpha_requirement(transform_path)
 
-    # TODO - Does this apply for all transformations, or only within MZP->MZP correction?
-    # TODO - If so, should this result in an error when trying to use it outside of this scope?
     if imax_effect:
-        input_data = resolve_imax_effect(input_data)
+        if out_system == 'MZP':
+            input_data = resolve_imax_effect(input_data)
+        else:
+            raise UnsupportedTransformationError('IMAX effect applies only for MZP->MZP solpolpy transformations')
 
     if requires_alpha and "alpha" not in input_key:
         input_data = add_alpha(input_data)
@@ -207,15 +210,35 @@ def generate_imax_matrix(arrayshape) -> np.ndarray:
 
 
 def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
+    """
+    Resolves the IMAX effect for provided input data, correcting measured polarization angles for wide FOV imagers.
 
-    for i, key in enumerate(input_data.keys()):
-        if i == 0:
-            data_shape = input_data[key].data.shape
-            data_mzp_camera = np.zeros([data_shape[0], data_shape[1], 3, 1])
+    Parameters
+    -------
+    input_data : NDCollection
+        Input data on which to correct foreshortened polarization angles
+
+    Returns
+    -------
+    NDCollection
+        Output data with corrected polarization angles
+
+    """
+
+    data_shape = input_data['Bm'].data.shape
+    data_mzp_camera = np.zeros([data_shape[0], data_shape[1], 3, 1])
+
+    for i, key in enumerate(['Bm', 'Bz', 'Bp']):
         data_mzp_camera[:, :, i, 0] = input_data[key].data
 
     imax_matrix = generate_imax_matrix(data_shape)
-    imax_matrix_inv = np.linalg.inv(imax_matrix)
+    try:
+        imax_matrix_inv = np.linalg.inv(imax_matrix)
+    except np.linalg.LinAlgError as err:
+        if 'Singular matrix' in str(err):
+            raise ValueError('Singular IMAX effect matrix is degenerate')
+        else:
+            raise
 
     data_mzp_solar = np.matmul(imax_matrix_inv, data_mzp_camera)
 

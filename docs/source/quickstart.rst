@@ -34,6 +34,21 @@ Valid polarization systems are described in the documentation.
 
 The equations required for the transformations from one system to another can be found in `Deforest et al. 2022`_.
 
+IMAX Effect
+-------------
+
+Wide field polarizing imager such as Wide Field Imager (WFI) of PUNCH suffers from
+foreshortening of polarizer angle across its field of view (FOV). Each location in the
+FOV perceives the incoming signal at angles deviated from the ideal ± 60° based on their
+spatial location in sky. The foreshortening effect draws parallels with IMAX 3D
+presentation which are based on linear polarizer system and a wide screen.
+IMAX effect is corrected in input data using equation 44 from `Deforest et al. 2022`_.
+Details about IMAX effect on WFI data will be soon published as a research
+article.
+
+solpolpy supports this feature using the 'imax_effect' keyword which if true corrects for the IMAX
+effect and converts the apparent non-ideal angle to ideal MZP configuration.
+
 Plotting results
 -----------------
 

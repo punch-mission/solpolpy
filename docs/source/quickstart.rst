@@ -38,8 +38,8 @@ IMAX Effect
 -------------
 
 Wide field polarizing imagers such as the Wide Field Imager (WFI) of PUNCH suffer from
-foreshortening of the polarizer angle across their field of view (FOV). The observed polarization angles 
-deviate from the ideal based on their spatial location. 
+foreshortening of the polarizer angle across their field of view (FOV). The observed polarization angles
+deviate from the ideal based on their spatial location.
 The foreshortening effect draws parallels with IMAX 3D
 presentation which use linear polarizer systems and a wide screen.
 In ``solpolpy``, the IMAX effect is corrected in input data using equation 44 from `Deforest et al. 2022`_.

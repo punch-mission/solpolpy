@@ -453,6 +453,18 @@ You can find a detailed description of these systems with their equations in <a 
 Valid polarization systems are described in the documentation.</p>
 <p>The equations required for the transformations from one system to another can be found in <a class="reference external" href="https://iopscience.iop.org/article/10.3847/1538-4357/ac43b6">Deforest et al. 2022</a>.</p>
 </section>
+<section id="imax-effect">
+<h2>IMAX Effect<a class="headerlink" href="#imax-effect" title="Link to this heading">#</a></h2>
+<p>Wide field polarizing imagers such as the Wide Field Imager (WFI) of PUNCH suffer from
+foreshortening of the polarizer angle across their field of view (FOV). The observed polarization angles
+deviate from the ideal based on their spatial location.
+The foreshortening effect draws parallels with IMAX 3D
+presentation which use linear polarizer systems and a wide screen.
+In <code class="docutils literal notranslate"><span class="pre">solpolpy</span></code>, the IMAX effect is corrected in input data using equation 44 from <a class="reference external" href="https://iopscience.iop.org/article/10.3847/1538-4357/ac43b6">Deforest et al. 2022</a>.
+Details about IMAX effect on WFI data will be soon published as a research article.</p>
+<p>solpolpy supports this correction with the <code class="docutils literal notranslate"><span class="pre">imax_effect</span></code> keyword on the <cite>~solpolpy.resolve</cite> function.
+If set to true, it corrects for the IMAX effect and converts the apparent non-ideal angle to ideal MZP configuration.</p>
+</section>
 <section id="plotting-results">
 <h2>Plotting results<a class="headerlink" href="#plotting-results" title="Link to this heading">#</a></h2>
 <p>You can plot any input or output collection using the <cite>plot_collection</cite> function provided.</p>
@@ -512,6 +524,7 @@ Valid polarization systems are described in the documentation.</p>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resolve-between-systems">Resolve between systems</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imax-effect">IMAX Effect</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-results">Plotting results</a></li>
 </ul>
   </nav></div>

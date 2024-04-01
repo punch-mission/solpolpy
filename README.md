@@ -38,7 +38,7 @@ We encourage all contributions.
 If you have a problem with the code or would like to see a new feature, please open an issue.
 Or you can submit a pull request.
 
-If you're contributing code, please see [this package's deveopment guide](https://punch-mission.github.io/solpolpy/development.html). 
+If you're contributing code, please see [this package's deveopment guide](https://punch-mission.github.io/solpolpy/development.html).
 
 ## Code of Conduct
 [Access here](CODE_OF_CONDUCT.md)

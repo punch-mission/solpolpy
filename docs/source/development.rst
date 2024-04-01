@@ -1,6 +1,7 @@
 Development
 ============
 We encourage all contributions. Please see our `contribution guide first <https://github.com/punch-mission/punch-mission/blob/main/contributing.md>`_.
+If you're contributing code, we recommend reading `our project-wide evelopment guide <https://github.com/punch-mission/punch-mission/blob/main/development.md>`_.
 
 
 We recommend working in a virtual environment.

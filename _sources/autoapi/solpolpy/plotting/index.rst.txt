@@ -1,15 +1,11 @@
-:py:mod:`solpolpy.plotting`
-===========================
+solpolpy.plotting
+=================
 
 .. py:module:: solpolpy.plotting
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -17,6 +13,8 @@ Functions
    solpolpy.plotting.get_colormap_str
 
 
+Module Contents
+---------------
 
 .. py:function:: plot_collection(collection: ndcube.NDCollection, figsize=(8, 8), show_colorbar=False, lat_ticks=None, lon_ticks=None, major_formatter='dd', xlabel='HP Longitude', ylabel='HP Latitude', vmin=None, vmax=None, cmap='Greys_r', ignore_alpha=True, fontsize=18)
 

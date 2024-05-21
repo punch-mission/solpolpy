@@ -374,15 +374,15 @@ document.write(`
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../alpha/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.alpha</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../constants/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.constants</span></code></a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.core</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../errors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.errors</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../graph/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.graph</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../instruments/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.instruments</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../plotting/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.plotting</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../polarizers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.polarizers</span></code></a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">solpolpy</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../alpha/index.html">solpolpy.alpha</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constants/index.html">solpolpy.constants</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">solpolpy.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../errors/index.html">solpolpy.errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/index.html">solpolpy.graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../instruments/index.html">solpolpy.instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../plotting/index.html">solpolpy.plotting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../polarizers/index.html">solpolpy.polarizers</a></li>
 </ul>
 </li>
 </ul>
@@ -426,9 +426,9 @@ document.write(`
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">API Reference</a></li>
     
     
-    <li class="breadcrumb-item"><a href="../index.html" class="nav-link"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy</span></code></a></li>
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">solpolpy</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><code...</li>
+    <li class="breadcrumb-item active" aria-current="page">solpolpy.core</li>
   </ul>
 </nav>
 </div>
@@ -446,49 +446,152 @@ document.write(`
                 <article class="bd-article">
                   
   <section id="module-solpolpy.core">
-<span id="solpolpy-core"></span><h1><a class="reference internal" href="#module-solpolpy.core" title="solpolpy.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.core</span></code></a><a class="headerlink" href="#module-solpolpy.core" title="Link to this heading">#</a></h1>
+<span id="solpolpy-core"></span><h1>solpolpy.core<a class="headerlink" href="#module-solpolpy.core" title="Link to this heading">#</a></h1>
 <p>Core transformation functions for solpolpy</p>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
-<section id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.resolve" title="solpolpy.core.resolve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve</span></code></a>(→ ndcube.NDCollection)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.VALID_KINDS" title="solpolpy.core.VALID_KINDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VALID_KINDS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.transform_graph" title="solpolpy.core.transform_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_graph</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading">#</a></h2>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.UnsupportedTransformationError" title="solpolpy.core.UnsupportedTransformationError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnsupportedTransformationError</span></code></a></p></td>
+<td><p>Common base class for all non-exit exceptions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.radial_north" title="solpolpy.core.radial_north"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radial_north</span></code></a>(shape)</p></td>
+<td><p>An alpha array oriented west</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.load_data" title="solpolpy.core.load_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_data</span></code></a>(→ ndcube.NDCollection)</p></td>
+<td><p>Basic loading function. See <cite>load_with_occulter_mask</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.npol_to_mzp" title="solpolpy.core.npol_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">npol_to_mzp</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.resolve" title="solpolpy.core.resolve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve</span></code></a>(→ ndcube.NDCollection)</p></td>
 <td><p>Apply - apply a polarization transformation to a set of input</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.determine_input_kind" title="solpolpy.core.determine_input_kind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_input_kind</span></code></a>(→ str)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.determine_input_kind" title="solpolpy.core.determine_input_kind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_input_kind</span></code></a>(→ str)</p></td>
 <td><p>Determine what kind of data was input in the NDCollection</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.get_transform_path" title="solpolpy.core.get_transform_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_transform_path</span></code></a>(→ List[str])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.get_transform_path" title="solpolpy.core.get_transform_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_transform_path</span></code></a>(→ List[str])</p></td>
 <td><p>Given an input and output system type, determine the require path of transforms from the transform graph</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.get_transform_equation" title="solpolpy.core.get_transform_equation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_transform_equation</span></code></a>(→ Callable)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.get_transform_equation" title="solpolpy.core.get_transform_equation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_transform_equation</span></code></a>(→ Callable)</p></td>
 <td><p>Given a transform path, compose the equation, i.e. the composed function of transforms that executes that path</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.check_alpha_requirement" title="solpolpy.core.check_alpha_requirement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_alpha_requirement</span></code></a>(→ bool)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.check_alpha_requirement" title="solpolpy.core.check_alpha_requirement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_alpha_requirement</span></code></a>(→ bool)</p></td>
 <td><p>Determine if an alpha array is required for this transformation path</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.generate_imax_matrix" title="solpolpy.core.generate_imax_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_imax_matrix</span></code></a>(→ numpy.ndarray)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.generate_imax_matrix" title="solpolpy.core.generate_imax_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_imax_matrix</span></code></a>(→ numpy.ndarray)</p></td>
 <td><p>Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords)</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.resolve_imax_effect" title="solpolpy.core.resolve_imax_effect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_imax_effect</span></code></a>(→ ndcube.NDCollection)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.resolve_imax_effect" title="solpolpy.core.resolve_imax_effect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_imax_effect</span></code></a>(→ ndcube.NDCollection)</p></td>
 <td><p>Resolves the IMAX effect for provided input data, correcting measured polarization angles for wide FOV imagers.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core._determine_image_shape" title="solpolpy.core._determine_image_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_determine_image_shape</span></code></a>(→ Tuple[int, int])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core._determine_image_shape" title="solpolpy.core._determine_image_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_determine_image_shape</span></code></a>(→ Tuple[int, int])</p></td>
 <td><p>Evaluates the shape of the image in the input NDCollection</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.add_alpha" title="solpolpy.core.add_alpha"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_alpha</span></code></a>(→ ndcube.NDCollection)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.add_alpha" title="solpolpy.core.add_alpha"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_alpha</span></code></a>(→ ndcube.NDCollection)</p></td>
 <td><p>Adds an alpha array to an image NDCollection</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core._compose2" title="solpolpy.core._compose2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compose2</span></code></a>(→ Callable)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core._compose2" title="solpolpy.core._compose2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compose2</span></code></a>(→ Callable)</p></td>
 <td><p>Compose 2 functions together, i.e. f(g(x))</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.identity" title="solpolpy.core.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(→ Any)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.identity" title="solpolpy.core.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(→ Any)</p></td>
 <td><p>Identity function that returns the input</p></td>
 </tr>
 </tbody>
 </table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.core.radial_north">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">radial_north</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.core.radial_north" title="Link to this definition">#</a></dt>
+<dd><p>An alpha array oriented west</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>shape</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – how big the array should be</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>alpha array used in calculations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>assumes solar north is up</p></li>
+<li><p>assumes polarizer 0 is along solar north axis</p></li>
+<li><p>creates radial polarization map</p></li>
+<li><p>angles increase in counterclockwise direction</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="solpolpy.core.VALID_KINDS">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">VALID_KINDS</span></span><a class="headerlink" href="#solpolpy.core.VALID_KINDS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="solpolpy.core.UnsupportedTransformationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">UnsupportedTransformationError</span></span><a class="headerlink" href="#solpolpy.core.UnsupportedTransformationError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Common base class for all non-exit exceptions.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="solpolpy.core.transform_graph">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">transform_graph</span></span><a class="headerlink" href="#solpolpy.core.transform_graph" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.core.load_data">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_instrument_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndcube.NDCollection</span></span></span><a class="headerlink" href="#solpolpy.core.load_data" title="Link to this definition">#</a></dt>
+<dd><p>Basic loading function. See <cite>load_with_occulter_mask</cite>.
+:param path_list: list of paths to FITS files to be loaded
+:type path_list: List[str]
+:param mask: An optional mask to couple with images. Overrides any mask computed when use_instrument_mask=True.
+:type mask: Optional[np.ndarray]
+:param use_instrument_mask: If true, loads an instrument mask for common instruments defined in <cite>get_instrument_mask</cite>.
+:type use_instrument_mask: bool</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The data are loaded as NDCollection object with WCS and header information available.
+The keys are labeled as ‘angle_1’, ‘angle_2, ‘angle_3’, …</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>NDCollection</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.core.npol_to_mzp">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">npol_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.core.npol_to_mzp" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 44 in DeForest et al. 2022.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.core.resolve">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndcube.NDCollection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_system</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imax_effect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndcube.NDCollection</span></span></span><a class="headerlink" href="#solpolpy.core.resolve" title="Link to this definition">#</a></dt>
@@ -712,7 +815,6 @@ present, are still appended to the output vectors in all any case.</p>
 
 </section>
 </section>
-</section>
 
 
                 </article>
@@ -730,7 +832,7 @@ present, are still appended to the output vectors in all any case.</p>
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.constants</span></code></p>
+        <p class="prev-next-title">solpolpy.constants</p>
       </div>
     </a>
     <a class="right-next"
@@ -738,7 +840,7 @@ present, are still appended to the output vectors in all any case.</p>
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.errors</span></code></p>
+        <p class="prev-next-title">solpolpy.errors</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -760,21 +862,27 @@ present, are still appended to the output vectors in all any case.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exceptions">Exceptions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.resolve"><code class="docutils literal notranslate"><span class="pre">resolve()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.determine_input_kind"><code class="docutils literal notranslate"><span class="pre">determine_input_kind()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.get_transform_path"><code class="docutils literal notranslate"><span class="pre">get_transform_path()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.get_transform_equation"><code class="docutils literal notranslate"><span class="pre">get_transform_equation()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.check_alpha_requirement"><code class="docutils literal notranslate"><span class="pre">check_alpha_requirement()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.generate_imax_matrix"><code class="docutils literal notranslate"><span class="pre">generate_imax_matrix()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.resolve_imax_effect"><code class="docutils literal notranslate"><span class="pre">resolve_imax_effect()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core._determine_image_shape"><code class="docutils literal notranslate"><span class="pre">_determine_image_shape()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.add_alpha"><code class="docutils literal notranslate"><span class="pre">add_alpha()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core._compose2"><code class="docutils literal notranslate"><span class="pre">_compose2()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.radial_north"><code class="docutils literal notranslate"><span class="pre">radial_north()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.VALID_KINDS"><code class="docutils literal notranslate"><span class="pre">VALID_KINDS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.UnsupportedTransformationError"><code class="docutils literal notranslate"><span class="pre">UnsupportedTransformationError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.transform_graph"><code class="docutils literal notranslate"><span class="pre">transform_graph</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.load_data"><code class="docutils literal notranslate"><span class="pre">load_data()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.npol_to_mzp"><code class="docutils literal notranslate"><span class="pre">npol_to_mzp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.resolve"><code class="docutils literal notranslate"><span class="pre">resolve()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.determine_input_kind"><code class="docutils literal notranslate"><span class="pre">determine_input_kind()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.get_transform_path"><code class="docutils literal notranslate"><span class="pre">get_transform_path()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.get_transform_equation"><code class="docutils literal notranslate"><span class="pre">get_transform_equation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.check_alpha_requirement"><code class="docutils literal notranslate"><span class="pre">check_alpha_requirement()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.generate_imax_matrix"><code class="docutils literal notranslate"><span class="pre">generate_imax_matrix()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.resolve_imax_effect"><code class="docutils literal notranslate"><span class="pre">resolve_imax_effect()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core._determine_image_shape"><code class="docutils literal notranslate"><span class="pre">_determine_image_shape()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.add_alpha"><code class="docutils literal notranslate"><span class="pre">add_alpha()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core._compose2"><code class="docutils literal notranslate"><span class="pre">_compose2()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
 </ul>
 </li>
 </ul>

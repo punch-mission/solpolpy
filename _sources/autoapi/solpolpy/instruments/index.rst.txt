@@ -1,5 +1,5 @@
-:py:mod:`solpolpy.instruments`
-==============================
+solpolpy.instruments
+====================
 
 .. py:module:: solpolpy.instruments
 
@@ -9,12 +9,17 @@
 
 
 
-Module Contents
----------------
+Exceptions
+----------
+
+.. autoapisummary::
+
+   solpolpy.instruments.TooFewFilesError
+   solpolpy.instruments.UnsupportedInstrumentError
 
 
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -22,6 +27,24 @@ Functions
    solpolpy.instruments.construct_mask
    solpolpy.instruments.get_instrument_mask
 
+
+Module Contents
+---------------
+
+.. py:exception:: TooFewFilesError
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: UnsupportedInstrumentError
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
 
 
 .. py:function:: load_data(path_list: List[str], mask: Optional[numpy.ndarray] = None, use_instrument_mask: bool = False) -> ndcube.NDCollection

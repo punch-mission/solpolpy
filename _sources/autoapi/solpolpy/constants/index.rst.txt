@@ -1,5 +1,5 @@
-:py:mod:`solpolpy.constants`
-============================
+solpolpy.constants
+==================
 
 .. py:module:: solpolpy.constants
 
@@ -9,10 +9,16 @@
 
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   solpolpy.constants.VALID_KINDS
+
+
 Module Contents
 ---------------
 
 .. py:data:: VALID_KINDS
-
-   
 

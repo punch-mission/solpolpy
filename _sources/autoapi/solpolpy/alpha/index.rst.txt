@@ -1,5 +1,5 @@
-:py:mod:`solpolpy.alpha`
-========================
+solpolpy.alpha
+==============
 
 .. py:module:: solpolpy.alpha
 
@@ -9,26 +9,24 @@
 
 
 
-Module Contents
----------------
+Attributes
+----------
+
+.. autoapisummary::
+
+   solpolpy.alpha.ALPHA_FUNCTIONS
 
 
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
    solpolpy.alpha.radial_north
 
 
-
-Attributes
-~~~~~~~~~~
-
-.. autoapisummary::
-
-   solpolpy.alpha.ALPHA_FUNCTIONS
-
+Module Contents
+---------------
 
 .. py:function:: radial_north(shape)
 
@@ -49,6 +47,4 @@ Attributes
 
 
 .. py:data:: ALPHA_FUNCTIONS
-
-   
 

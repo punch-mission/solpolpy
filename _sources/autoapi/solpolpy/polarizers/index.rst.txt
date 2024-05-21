@@ -1,5 +1,5 @@
-:py:mod:`solpolpy.polarizers`
-=============================
+solpolpy.polarizers
+===================
 
 .. py:module:: solpolpy.polarizers
 
@@ -13,12 +13,8 @@
 
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -39,9 +35,10 @@ Functions
    solpolpy.polarizers.combine_masks
 
 
+Module Contents
+---------------
 
 .. py:function:: conv_polar_from_head(input_cube)
-
 
 .. py:function:: npol_to_mzp(input_collection)
 

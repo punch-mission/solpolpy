@@ -374,15 +374,15 @@ document.write(`
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy</span></code></a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../alpha/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.alpha</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../constants/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.constants</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../core/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.core</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../errors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.errors</span></code></a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.graph</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../instruments/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.instruments</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../plotting/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.plotting</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../polarizers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.polarizers</span></code></a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">solpolpy</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../alpha/index.html">solpolpy.alpha</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constants/index.html">solpolpy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core/index.html">solpolpy.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../errors/index.html">solpolpy.errors</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">solpolpy.graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../instruments/index.html">solpolpy.instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../plotting/index.html">solpolpy.plotting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../polarizers/index.html">solpolpy.polarizers</a></li>
 </ul>
 </li>
 </ul>
@@ -426,9 +426,9 @@ document.write(`
     <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">API Reference</a></li>
     
     
-    <li class="breadcrumb-item"><a href="../index.html" class="nav-link"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy</span></code></a></li>
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">solpolpy</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><code...</li>
+    <li class="breadcrumb-item active" aria-current="page">solpolpy.graph</li>
   </ul>
 </nav>
 </div>
@@ -446,10 +446,171 @@ document.write(`
                 <article class="bd-article">
                   
   <section id="module-solpolpy.graph">
-<span id="solpolpy-graph"></span><h1><a class="reference internal" href="#module-solpolpy.graph" title="solpolpy.graph"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.graph</span></code></a><a class="headerlink" href="#module-solpolpy.graph" title="Link to this heading">#</a></h1>
+<span id="solpolpy-graph"></span><h1>solpolpy.graph<a class="headerlink" href="#module-solpolpy.graph" title="Link to this heading">#</a></h1>
 <p>Constructs transformation graph</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.graph.transform_graph" title="solpolpy.graph.transform_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_graph</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.graph.bp3_to_bthp" title="solpolpy.graph.bp3_to_bthp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bp3_to_bthp</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.graph.bp3_to_mzp" title="solpolpy.graph.bp3_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bp3_to_mzp</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.graph.bpb_to_btbr" title="solpolpy.graph.bpb_to_btbr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bpb_to_btbr</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.graph.bpb_to_mzp" title="solpolpy.graph.bpb_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bpb_to_mzp</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.graph.btbr_to_bpb" title="solpolpy.graph.btbr_to_bpb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">btbr_to_bpb</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.graph.btbr_to_mzp" title="solpolpy.graph.btbr_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">btbr_to_mzp</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.graph.btbr_to_npol" title="solpolpy.graph.btbr_to_npol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">btbr_to_npol</span></code></a>(input_collection, angles)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.graph.fourpol_to_stokes" title="solpolpy.graph.fourpol_to_stokes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fourpol_to_stokes</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.graph.mzp_to_bp3" title="solpolpy.graph.mzp_to_bp3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mzp_to_bp3</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.graph.mzp_to_bpb" title="solpolpy.graph.mzp_to_bpb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mzp_to_bpb</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.graph.mzp_to_stokes" title="solpolpy.graph.mzp_to_stokes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mzp_to_stokes</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.graph.npol_to_mzp" title="solpolpy.graph.npol_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">npol_to_mzp</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.graph.stokes_to_mzp" title="solpolpy.graph.stokes_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stokes_to_mzp</span></code></a>(input_collection)</p></td>
+<td><p><p class="rubric">Notes</p>
+</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.bp3_to_bthp">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">bp3_to_bthp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.bp3_to_bthp" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equations 9, 15, 16 in DeForest et al. 2022.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.bp3_to_mzp">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">bp3_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.bp3_to_mzp" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 11 in DeForest et al. 2022.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.bpb_to_btbr">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">bpb_to_btbr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.bpb_to_btbr" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 1 and 2 in DeForest et al. 2022.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.bpb_to_mzp">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">bpb_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.bpb_to_mzp" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 4 in DeForest et al. 2022.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.btbr_to_bpb">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">btbr_to_bpb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.btbr_to_bpb" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation in Table 1 in DeForest et al. 2022.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.btbr_to_mzp">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">btbr_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.btbr_to_mzp" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 3 in DeForest et al. 2022.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.btbr_to_npol">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">btbr_to_npol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.btbr_to_npol" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 3 in DeForest et al. 2022.
+angles: list of input angles in degree</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.fourpol_to_stokes">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">fourpol_to_stokes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.fourpol_to_stokes" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Table 1 in DeForest et al. 2022.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.mzp_to_bp3">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">mzp_to_bp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.mzp_to_bp3" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 7, 9 and 10 in DeForest et al. 2022.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.mzp_to_bpb">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">mzp_to_bpb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.mzp_to_bpb" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 7 and 9 in DeForest et al. 2022.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.mzp_to_stokes">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">mzp_to_stokes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.mzp_to_stokes" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 9, 12 and 13 in DeForest et al. 2022.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.npol_to_mzp">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">npol_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.npol_to_mzp" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 44 in DeForest et al. 2022.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.graph.stokes_to_mzp">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">stokes_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.graph.stokes_to_mzp" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 11 in DeForest et al. 2022. with alpha = np.pi/2</p>
+</dd></dl>
+
 <dl class="py data">
 <dt class="sig sig-object py" id="solpolpy.graph.transform_graph">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">transform_graph</span></span><a class="headerlink" href="#solpolpy.graph.transform_graph" title="Link to this definition">#</a></dt>
@@ -474,7 +635,7 @@ document.write(`
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.errors</span></code></p>
+        <p class="prev-next-title">solpolpy.errors</p>
       </div>
     </a>
     <a class="right-next"
@@ -482,7 +643,7 @@ document.write(`
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">solpolpy.instruments</span></code></p>
+        <p class="prev-next-title">solpolpy.instruments</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -504,7 +665,22 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.bp3_to_bthp"><code class="docutils literal notranslate"><span class="pre">bp3_to_bthp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.bp3_to_mzp"><code class="docutils literal notranslate"><span class="pre">bp3_to_mzp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.bpb_to_btbr"><code class="docutils literal notranslate"><span class="pre">bpb_to_btbr()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.bpb_to_mzp"><code class="docutils literal notranslate"><span class="pre">bpb_to_mzp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.btbr_to_bpb"><code class="docutils literal notranslate"><span class="pre">btbr_to_bpb()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.btbr_to_mzp"><code class="docutils literal notranslate"><span class="pre">btbr_to_mzp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.btbr_to_npol"><code class="docutils literal notranslate"><span class="pre">btbr_to_npol()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.fourpol_to_stokes"><code class="docutils literal notranslate"><span class="pre">fourpol_to_stokes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.mzp_to_bp3"><code class="docutils literal notranslate"><span class="pre">mzp_to_bp3()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.mzp_to_bpb"><code class="docutils literal notranslate"><span class="pre">mzp_to_bpb()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.mzp_to_stokes"><code class="docutils literal notranslate"><span class="pre">mzp_to_stokes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.npol_to_mzp"><code class="docutils literal notranslate"><span class="pre">npol_to_mzp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.stokes_to_mzp"><code class="docutils literal notranslate"><span class="pre">stokes_to_mzp()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.transform_graph"><code class="docutils literal notranslate"><span class="pre">transform_graph</span></code></a></li>
 </ul>
 </li>

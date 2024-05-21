@@ -1,22 +1,22 @@
-:py:mod:`solpolpy`
-==================
+solpolpy
+========
 
 .. py:module:: solpolpy
 
 
 Submodules
 ----------
+
 .. toctree::
-   :titlesonly:
    :maxdepth: 1
 
-   alpha/index.rst
-   constants/index.rst
-   core/index.rst
-   errors/index.rst
-   graph/index.rst
-   instruments/index.rst
-   plotting/index.rst
-   polarizers/index.rst
+   /autoapi/solpolpy/alpha/index
+   /autoapi/solpolpy/constants/index
+   /autoapi/solpolpy/core/index
+   /autoapi/solpolpy/errors/index
+   /autoapi/solpolpy/graph/index
+   /autoapi/solpolpy/instruments/index
+   /autoapi/solpolpy/plotting/index
+   /autoapi/solpolpy/polarizers/index
 
 

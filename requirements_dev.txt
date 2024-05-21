@@ -1,5 +1,5 @@
 sunpy~=5.1
-astropy~=6.0
+astropy~=6.1
 numpy~=1.26
 matplotlib~=3.9
 networkx~=3.3

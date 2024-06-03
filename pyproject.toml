@@ -30,7 +30,8 @@ dependencies = [
 test = [
     'pytest',
     'coverage',
-    'pytest-cov'
+    'pytest-cov',
+    'ruff'
 ]
 
 [build-system]

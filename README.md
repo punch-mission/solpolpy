@@ -4,8 +4,6 @@
 [![PyPI version](https://badge.fury.io/py/solpolpy.svg)](https://badge.fury.io/py/solpolpy)
 [![DOI](https://zenodo.org/badge/498801276.svg)](https://zenodo.org/doi/10.5281/zenodo.10076326)
 
-🚧🚧🚧 **UNDER DEVELOPMENT** 🚧🚧🚧
-
 `solpolpy` is a solar polarization resolver based on [Deforest et al. 2022](https://doi.org/10.3847/1538-4357/ac43b6).
 It converts between various polarization formats, e.g. from the native three triple version from observations
 (also known as the MZP convention) to polarization brightness (pB) and total polarization (B), Stokes I, Q and U, etc.

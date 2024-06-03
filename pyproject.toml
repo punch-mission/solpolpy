@@ -1,6 +1,6 @@
 [project]
 name = "solpolpy"
-version = "0.1.2"
+version = "0.1.3"
 authors = [
     { name="J. Marcus Hughes", email="mhughes@boulder.swri.edu"},
     { name="Matthew J. West", email="mwest@boulder.swri.edu"},

@@ -9,31 +9,11 @@ solpolpy.core
 
 
 
-Attributes
-----------
-
-.. autoapisummary::
-
-   solpolpy.core.VALID_KINDS
-   solpolpy.core.transform_graph
-
-
-Exceptions
-----------
-
-.. autoapisummary::
-
-   solpolpy.core.UnsupportedTransformationError
-
-
 Functions
 ---------
 
 .. autoapisummary::
 
-   solpolpy.core.radial_north
-   solpolpy.core.load_data
-   solpolpy.core.npol_to_mzp
    solpolpy.core.resolve
    solpolpy.core.determine_input_kind
    solpolpy.core.get_transform_path
@@ -49,58 +29,6 @@ Functions
 
 Module Contents
 ---------------
-
-.. py:function:: radial_north(shape)
-
-   An alpha array oriented west
-
-   :param shape: how big the array should be
-   :type shape: tuple[int, int]
-
-   :returns: alpha array used in calculations
-   :rtype: np.ndarray
-
-   .. rubric:: Notes
-
-   - assumes solar north is up
-   - assumes polarizer 0 is along solar north axis
-   - creates radial polarization map
-   - angles increase in counterclockwise direction
-
-
-.. py:data:: VALID_KINDS
-
-.. py:exception:: UnsupportedTransformationError
-
-   Bases: :py:obj:`Exception`
-
-
-   Common base class for all non-exit exceptions.
-
-
-.. py:data:: transform_graph
-
-.. py:function:: load_data(path_list: List[str], mask: Optional[numpy.ndarray] = None, use_instrument_mask: bool = False) -> ndcube.NDCollection
-
-   Basic loading function. See `load_with_occulter_mask`.
-   :param path_list: list of paths to FITS files to be loaded
-   :type path_list: List[str]
-   :param mask: An optional mask to couple with images. Overrides any mask computed when use_instrument_mask=True.
-   :type mask: Optional[np.ndarray]
-   :param use_instrument_mask: If true, loads an instrument mask for common instruments defined in `get_instrument_mask`.
-   :type use_instrument_mask: bool
-
-   :returns: The data are loaded as NDCollection object with WCS and header information available.
-             The keys are labeled as 'angle_1', 'angle_2, 'angle_3', ...
-   :rtype: NDCollection
-
-
-.. py:function:: npol_to_mzp(input_collection)
-
-   .. rubric:: Notes
-
-   Equation 44 in DeForest et al. 2022.
-
 
 .. py:function:: resolve(input_data: Union[List[str], ndcube.NDCollection], out_system: str, imax_effect: bool = False) -> ndcube.NDCollection
 

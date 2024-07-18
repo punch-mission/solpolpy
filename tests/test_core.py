@@ -284,6 +284,11 @@ def test_btbr_to_npol(btbr_ones):
     assert isinstance(result, NDCollection)
 
 
+def test_btbr_to_npol_missing_out_angles(btbr_ones):
+    with pytest.raises(ValueError):
+        resolve(btbr_ones, "npol")
+
+
 def test_imax_effect(mzp_data):
     result = resolve(mzp_data, "MZP", imax_effect=True)
     assert isinstance(result, NDCollection)

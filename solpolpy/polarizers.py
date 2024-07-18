@@ -17,7 +17,7 @@ def conv_polar_from_head(input_cube):
 
 
 # TODO: prepare a config file where the reference angle say of STEREO, KCor etc can be set
-def npol_to_mzp(input_collection):
+def npol_to_mzp(input_collection, **kwargs):
     """
     Notes
     ------
@@ -70,7 +70,7 @@ def npol_to_mzp(input_collection):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-def mzp_to_bpb(input_collection):
+def mzp_to_bpb(input_collection, **kwargs):
     """
     Notes
     ------
@@ -109,7 +109,7 @@ def mzp_to_bpb(input_collection):
     return NDCollection(BpB_cube, meta={}, aligned_axes="all")
 
 
-def bpb_to_mzp(input_collection):
+def bpb_to_mzp(input_collection, **kwargs):
     """
     Notes
     ------
@@ -140,7 +140,7 @@ def bpb_to_mzp(input_collection):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-def bpb_to_btbr(input_collection):
+def bpb_to_btbr(input_collection, **kwargs):
     """
     Notes
     ------
@@ -167,7 +167,7 @@ def bpb_to_btbr(input_collection):
     return NDCollection(BtBr_cube, meta={}, aligned_axes="all")
 
 
-def btbr_to_bpb(input_collection):
+def btbr_to_bpb(input_collection, **kwargs):
     """
     Notes
     ------
@@ -194,7 +194,7 @@ def btbr_to_bpb(input_collection):
     return NDCollection(BpB_cube, meta={}, aligned_axes="all")
 
 
-def mzp_to_stokes(input_collection):
+def mzp_to_stokes(input_collection, **kwargs):
     """
     Notes
     ------
@@ -219,7 +219,7 @@ def mzp_to_stokes(input_collection):
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")
 
 
-def stokes_to_mzp(input_collection):
+def stokes_to_mzp(input_collection, **kwargs):
     """
     Notes
     ------
@@ -249,7 +249,7 @@ def stokes_to_mzp(input_collection):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-def mzp_to_bp3(input_collection):
+def mzp_to_bp3(input_collection, **kwargs):
     """
     Notes
     ------
@@ -291,7 +291,7 @@ def mzp_to_bp3(input_collection):
     return NDCollection(Bp3_cube, meta={}, aligned_axes="all")
 
 
-def bp3_to_mzp(input_collection):
+def bp3_to_mzp(input_collection, **kwargs):
     """
     Notes
     ------
@@ -323,7 +323,7 @@ def bp3_to_mzp(input_collection):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-def btbr_to_mzp(input_collection):
+def btbr_to_mzp(input_collection, **kwargs):
     """
     Notes
     ------
@@ -353,7 +353,7 @@ def btbr_to_mzp(input_collection):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-def bp3_to_bthp(input_collection):
+def bp3_to_bthp(input_collection, **kwargs):
     """
     Notes
     ------
@@ -379,7 +379,7 @@ def bp3_to_bthp(input_collection):
     return NDCollection(Bthp_cube, meta={}, aligned_axes="all")
 
 
-def btbr_to_npol(input_collection, angles):
+def btbr_to_npol(input_collection, out_angles=None, **kwargs):
     """
     Notes
     ------
@@ -389,10 +389,13 @@ def btbr_to_npol(input_collection, angles):
     if "alpha" not in input_collection:
         raise ValueError("missing alpha")
 
+    if out_angles is None:
+        raise ValueError("out_angles must be defined as a list of floats")
+
     alpha = input_collection['alpha'].data * u.radian
     Bt, Br = input_collection['Bt'].data, input_collection['Br'].data
 
-    npol_ang = angles
+    npol_ang = out_angles
     Bnpol = {}
     Bnpol_cube = []
     mask = combine_masks(input_collection["Bt"].mask, input_collection["Br"].mask)
@@ -406,7 +409,7 @@ def btbr_to_npol(input_collection, angles):
     return NDCollection(Bnpol_cube, meta={}, aligned_axes="all")
 
 
-def fourpol_to_stokes(input_collection):
+def fourpol_to_stokes(input_collection, **kwargs):
     """
     Notes
     ------

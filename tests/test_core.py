@@ -279,6 +279,11 @@ def test_bp3_to_bthp(bp3_ones):
     assert isinstance(result, NDCollection)
 
 
+def test_btbr_to_npol(btbr_ones):
+    result = resolve(btbr_ones, "npol", out_angles=[5.1, 30.5, 80.5])
+    assert isinstance(result, NDCollection)
+
+
 def test_imax_effect(mzp_data):
     result = resolve(mzp_data, "MZP", imax_effect=True)
     assert isinstance(result, NDCollection)

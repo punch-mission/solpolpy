@@ -14,7 +14,10 @@ from solpolpy.instruments import load_data
 from solpolpy.polarizers import npol_to_mzp
 
 
-def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str, imax_effect: bool = False) -> NDCollection:
+def resolve(input_data: t.Union[t.List[str], NDCollection],
+            out_system: str,
+            imax_effect: bool = False,
+            out_angles: t.Optional[t.List[float]] = None) -> NDCollection:
     """
     Apply - apply a polarization transformation to a set of input
     dataframes.
@@ -74,14 +77,15 @@ def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str, ima
     requires_alpha = check_alpha_requirement(transform_path)
 
     if imax_effect:
-        if (input_kind == 'MZP') and (out_system == 'MZP'):
+        if input_kind == 'MZP' and out_system == 'MZP':
             input_data = resolve_imax_effect(input_data)
         else:
             raise UnsupportedTransformationError('IMAX effect applies only for MZP->MZP solpolpy transformations')
 
     if requires_alpha and "alpha" not in input_key:
         input_data = add_alpha(input_data)
-    result = equation(input_data)
+
+    result = equation(input_data, out_angles=out_angles)
 
     return result
 
@@ -171,13 +175,13 @@ def check_alpha_requirement(path: t.List[str]) -> bool:
     return requires_alpha
 
 
-def generate_imax_matrix(arrayshape) -> np.ndarray:
+def generate_imax_matrix(array_shape) -> np.ndarray:
     """
     Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords)
 
     Parameters
     -------
-    arrayshape
+    array_shape
         Defined input WCS array shape for matrix generation
 
     Returns
@@ -190,7 +194,7 @@ def generate_imax_matrix(arrayshape) -> np.ndarray:
     # Ideal MZP wrt Solar North
     thmzp = [-60, 0, 60] * u.degree
 
-    long_arr, lat_arr = np.meshgrid(np.linspace(-20, 20, arrayshape[0]), np.linspace(-20, 20, arrayshape[1]))
+    long_arr, lat_arr = np.meshgrid(np.linspace(-20, 20, array_shape[0]), np.linspace(-20, 20, array_shape[1]))
 
     # Foreshortening (IMAX) effect on polarizer angle
     phi_m = np.arctan2(np.tan(thmzp[0]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
@@ -200,7 +204,7 @@ def generate_imax_matrix(arrayshape) -> np.ndarray:
     phi = np.stack([phi_m, phi_z, phi_p])
 
     # Define the A matrix
-    mat_a = np.empty((arrayshape[0], arrayshape[1], 3, 3))
+    mat_a = np.empty((array_shape[0], array_shape[1], 3, 3))
 
     for i in range(3):
         for j in range(3):
@@ -309,10 +313,10 @@ def _compose2(f: t.Callable, g: t.Callable) -> t.Callable:
     Callable
         composed function
     """
-    return lambda *a, **kw: f(g(*a, **kw))
+    return lambda *a, **kw: f(g(*a, **kw), **kw)
 
 
-def identity(x: t.Any) -> t.Any:
+def identity(x: t.Any, **kwargs) -> t.Any:
     """Identity function that returns the input
 
     Parameters

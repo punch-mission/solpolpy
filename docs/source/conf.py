@@ -16,13 +16,14 @@
 
 
 # -- Project information -----------------------------------------------------
+from solpolpy import __version__
 
 project = 'solpolpy'
 copyright = '2023, PUNCH Science Operations Center'
 author = 'PUNCH Science Operations Center'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.2'
+release = __version__
 
 
 # -- General configuration ---------------------------------------------------

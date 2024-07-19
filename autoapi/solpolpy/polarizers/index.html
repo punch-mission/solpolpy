@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>solpolpy.polarizers &#8212; solpolpy 0.1.2 documentation</title>
+    <title>solpolpy.polarizers &#8212; solpolpy 0.2.0 documentation</title>
   
   
   
@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=92734c54"></script>
+    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -119,7 +119,7 @@
   
   
   
-    <p class="title logo__title">solpolpy 0.1.2 documentation</p>
+    <p class="title logo__title">solpolpy 0.2.0 documentation</p>
   
 </a></div>
     
@@ -456,46 +456,49 @@ The Astrophysical Journal, 927(1), 98.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.conv_polar_from_head" title="solpolpy.polarizers.conv_polar_from_head"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conv_polar_from_head</span></code></a>(input_cube)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.npol_to_mzp" title="solpolpy.polarizers.npol_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">npol_to_mzp</span></code></a>(input_collection)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.npol_to_mzp" title="solpolpy.polarizers.npol_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">npol_to_mzp</span></code></a>(input_collection[, offset_angle])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.mzp_to_bpb" title="solpolpy.polarizers.mzp_to_bpb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mzp_to_bpb</span></code></a>(input_collection)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.mzp_to_bpb" title="solpolpy.polarizers.mzp_to_bpb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mzp_to_bpb</span></code></a>(input_collection, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.bpb_to_mzp" title="solpolpy.polarizers.bpb_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bpb_to_mzp</span></code></a>(input_collection)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.bpb_to_mzp" title="solpolpy.polarizers.bpb_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bpb_to_mzp</span></code></a>(input_collection, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.bpb_to_btbr" title="solpolpy.polarizers.bpb_to_btbr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bpb_to_btbr</span></code></a>(input_collection)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.bpb_to_btbr" title="solpolpy.polarizers.bpb_to_btbr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bpb_to_btbr</span></code></a>(input_collection, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.btbr_to_bpb" title="solpolpy.polarizers.btbr_to_bpb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">btbr_to_bpb</span></code></a>(input_collection)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.btbr_to_bpb" title="solpolpy.polarizers.btbr_to_bpb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">btbr_to_bpb</span></code></a>(input_collection, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.mzp_to_stokes" title="solpolpy.polarizers.mzp_to_stokes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mzp_to_stokes</span></code></a>(input_collection)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.mzp_to_stokes" title="solpolpy.polarizers.mzp_to_stokes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mzp_to_stokes</span></code></a>(input_collection, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.stokes_to_mzp" title="solpolpy.polarizers.stokes_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stokes_to_mzp</span></code></a>(input_collection)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.stokes_to_mzp" title="solpolpy.polarizers.stokes_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stokes_to_mzp</span></code></a>(input_collection, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.mzp_to_bp3" title="solpolpy.polarizers.mzp_to_bp3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mzp_to_bp3</span></code></a>(input_collection)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.mzp_to_bp3" title="solpolpy.polarizers.mzp_to_bp3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mzp_to_bp3</span></code></a>(input_collection, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.bp3_to_mzp" title="solpolpy.polarizers.bp3_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bp3_to_mzp</span></code></a>(input_collection)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.bp3_to_mzp" title="solpolpy.polarizers.bp3_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bp3_to_mzp</span></code></a>(input_collection, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.btbr_to_mzp" title="solpolpy.polarizers.btbr_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">btbr_to_mzp</span></code></a>(input_collection)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.btbr_to_mzp" title="solpolpy.polarizers.btbr_to_mzp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">btbr_to_mzp</span></code></a>(input_collection, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.bp3_to_bthp" title="solpolpy.polarizers.bp3_to_bthp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bp3_to_bthp</span></code></a>(input_collection)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.bp3_to_bthp" title="solpolpy.polarizers.bp3_to_bthp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bp3_to_bthp</span></code></a>(input_collection, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.btbr_to_npol" title="solpolpy.polarizers.btbr_to_npol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">btbr_to_npol</span></code></a>(input_collection, angles)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.btbr_to_npol" title="solpolpy.polarizers.btbr_to_npol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">btbr_to_npol</span></code></a>(input_collection[, out_angles])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.fourpol_to_stokes" title="solpolpy.polarizers.fourpol_to_stokes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fourpol_to_stokes</span></code></a>(input_collection)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.mzp_to_npol" title="solpolpy.polarizers.mzp_to_npol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mzp_to_npol</span></code></a>(input_collection[, out_angles, offset_angle])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.combine_masks" title="solpolpy.polarizers.combine_masks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_masks</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.polarizers.fourpol_to_stokes" title="solpolpy.polarizers.fourpol_to_stokes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fourpol_to_stokes</span></code></a>(input_collection, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.polarizers.combine_masks" title="solpolpy.polarizers.combine_masks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_masks</span></code></a>(*args)</p></td>
 <td><p>Combines masks</p></td>
 </tr>
 </tbody>
@@ -511,92 +514,100 @@ The Astrophysical Journal, 927(1), 98.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.npol_to_mzp">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">npol_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.npol_to_mzp" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">npol_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.npol_to_mzp" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equation 44 in DeForest et al. 2022.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.mzp_to_bpb">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">mzp_to_bpb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.mzp_to_bpb" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">mzp_to_bpb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.mzp_to_bpb" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equation 7 and 9 in DeForest et al. 2022.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.bpb_to_mzp">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">bpb_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.bpb_to_mzp" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">bpb_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.bpb_to_mzp" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equation 4 in DeForest et al. 2022.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.bpb_to_btbr">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">bpb_to_btbr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.bpb_to_btbr" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">bpb_to_btbr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.bpb_to_btbr" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equation 1 and 2 in DeForest et al. 2022.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.btbr_to_bpb">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">btbr_to_bpb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.btbr_to_bpb" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">btbr_to_bpb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.btbr_to_bpb" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equation in Table 1 in DeForest et al. 2022.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.mzp_to_stokes">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">mzp_to_stokes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.mzp_to_stokes" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">mzp_to_stokes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.mzp_to_stokes" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equation 9, 12 and 13 in DeForest et al. 2022.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.stokes_to_mzp">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">stokes_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.stokes_to_mzp" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">stokes_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.stokes_to_mzp" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equation 11 in DeForest et al. 2022. with alpha = np.pi/2</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.mzp_to_bp3">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">mzp_to_bp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.mzp_to_bp3" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">mzp_to_bp3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.mzp_to_bp3" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equation 7, 9 and 10 in DeForest et al. 2022.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.bp3_to_mzp">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">bp3_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.bp3_to_mzp" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">bp3_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.bp3_to_mzp" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equation 11 in DeForest et al. 2022.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.btbr_to_mzp">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">btbr_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.btbr_to_mzp" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">btbr_to_mzp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.btbr_to_mzp" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equation 3 in DeForest et al. 2022.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.bp3_to_bthp">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">bp3_to_bthp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.bp3_to_bthp" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">bp3_to_bthp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.bp3_to_bthp" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equations 9, 15, 16 in DeForest et al. 2022.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.btbr_to_npol">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">btbr_to_npol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.btbr_to_npol" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">btbr_to_npol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.btbr_to_npol" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Equation 3 in DeForest et al. 2022.
 angles: list of input angles in degree</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="solpolpy.polarizers.mzp_to_npol">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">mzp_to_npol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.mzp_to_npol" title="Link to this definition">#</a></dt>
+<dd><p class="rubric">Notes</p>
+<p>Equation 45 in DeForest et al. 2022.
+angles: list of input angles in degree</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.polarizers.fourpol_to_stokes">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">fourpol_to_stokes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.fourpol_to_stokes" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.polarizers.</span></span><span class="sig-name descname"><span class="pre">fourpol_to_stokes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.polarizers.fourpol_to_stokes" title="Link to this definition">#</a></dt>
 <dd><p class="rubric">Notes</p>
 <p>Table 1 in DeForest et al. 2022.</p>
 </dd></dl>
@@ -664,6 +675,7 @@ Otherwise, when combining any value that is masked in any of the input args, get
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.polarizers.btbr_to_mzp"><code class="docutils literal notranslate"><span class="pre">btbr_to_mzp()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.polarizers.bp3_to_bthp"><code class="docutils literal notranslate"><span class="pre">bp3_to_bthp()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.polarizers.btbr_to_npol"><code class="docutils literal notranslate"><span class="pre">btbr_to_npol()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.polarizers.mzp_to_npol"><code class="docutils literal notranslate"><span class="pre">mzp_to_npol()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.polarizers.fourpol_to_stokes"><code class="docutils literal notranslate"><span class="pre">fourpol_to_stokes()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.polarizers.combine_masks"><code class="docutils literal notranslate"><span class="pre">combine_masks()</span></code></a></li>
 </ul>
@@ -721,7 +733,7 @@ Otherwise, when combining any value that is masked in any of the input args, get
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.5.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.6.
     <br/>
   </p>
 </div>

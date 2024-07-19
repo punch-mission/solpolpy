@@ -15,6 +15,7 @@ Functions
 .. autoapisummary::
 
    solpolpy.core.resolve
+   solpolpy.core.determine_offset_angle
    solpolpy.core.determine_input_kind
    solpolpy.core.get_transform_path
    solpolpy.core.get_transform_equation
@@ -30,10 +31,9 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: resolve(input_data: Union[List[str], ndcube.NDCollection], out_system: str, imax_effect: bool = False) -> ndcube.NDCollection
+.. py:function:: resolve(input_data: Union[List[str], ndcube.NDCollection], out_system: str, imax_effect: bool = False, out_angles: Optional[List[float]] = None) -> ndcube.NDCollection
 
-   Apply - apply a polarization transformation to a set of input
-   dataframes.
+   Apply a polarization transformation to a set of input dataframes.
 
    :param input_data: Either: 1) a collection where each member NDCube has an expected name or 2) a list of paths to FITS files.
                       We recommend option 2.
@@ -41,29 +41,29 @@ Module Contents
    :param out_system: The polarization state you want to convert your input dataframes to.
                       Must be one of the following strings:
 
-                      - "MZP": Triplet of images taken at -60°, 0°, and +60° polarizing angles.
-                      - "BtBr": Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
-                      - "Stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
-                      - "BpB": Total brightness and ‘excess polarized’ brightness images pair respectively.
-                      - "Bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead of a fixed frame of reference of the instrument.
-                      - "Bthp": Total brightness, angle and degree of polarization.
+                      - "mzp": Triplet of images taken at -60°, 0°, and +60° polarizing angles.
+                      - "btbr": Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
+                      - "stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
+                      - "bpb": Total brightness and ‘excess polarized’ brightness images pair respectively.
+                      - "bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead of a fixed frame of reference of the instrument.
+                      - "bthp": Total brightness, angle and degree of polarization.
                       - "fourpol": For observations taken at sequence of four polarizer angles, i.e. 0°, 45°, 90° and 135°.
-                      - "npol": Set of images taken at than three polarizing angles other than MZP
+                      - "npol": Set of images taken at than arbitrary polarizing angles other than MZP
    :type out_system: string
    :param imax_effect: The 'IMAX effect' describes the change in apparent measured polarization angle as an result of foreshortening effects.
                        This effect becomes more pronounced for wide field polarized imagers - see Patel et al (2024, in preparation)
                        If True, applies the IMAX effect for wide field imagers as part of the resolution process.
    :type imax_effect: Boolean
+   :param out_angles: Angles to use (in degrees) when converting to npol or some arbitrary system
+   :type out_angles: List[float]
 
-   :raises AssertionError: This gets raised if the data cannot be converted or polarization
-       transformation cannot be calculated due to a discontinuity or infinity.
-
-   :returns: The transformed data are returned as a NDcollection.  Most
-             Transforms maintain the dimensionality of the source vectors.  Some
-             embed (increase dimensionality of the vectors) or project (decrease
-             dimensionality of the vectors); additional input dimensions, if
-             present, are still appended to the output vectors in all any case.
+   :returns: The transformed data are returned as a NDCollection.
    :rtype: NDCollection
+
+
+.. py:function:: determine_offset_angle(input_collection: ndcube.NDCollection) -> float
+
+   Get the instrument specific offset angle
 
 
 .. py:function:: determine_input_kind(input_data: ndcube.NDCollection) -> str
@@ -112,11 +112,11 @@ Module Contents
    :rtype: bool
 
 
-.. py:function:: generate_imax_matrix(arrayshape) -> numpy.ndarray
+.. py:function:: generate_imax_matrix(array_shape) -> numpy.ndarray
 
    Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords)
 
-   :param arrayshape: Defined input WCS array shape for matrix generation
+   :param array_shape: Defined input WCS array shape for matrix generation
 
    :returns: Output A matrix used in converting between camera coordinates and solar coordinates
    :rtype: ndarray
@@ -168,7 +168,7 @@ Module Contents
    :rtype: Callable
 
 
-.. py:function:: identity(x: Any) -> Any
+.. py:function:: identity(x: Any, **kwargs) -> Any
 
    Identity function that returns the input
 

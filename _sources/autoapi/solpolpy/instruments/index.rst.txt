@@ -14,6 +14,7 @@ Functions
 
 .. autoapisummary::
 
+   solpolpy.instruments.get_data_angle
    solpolpy.instruments.load_data
    solpolpy.instruments.construct_mask
    solpolpy.instruments.get_instrument_mask
@@ -21,6 +22,8 @@ Functions
 
 Module Contents
 ---------------
+
+.. py:function:: get_data_angle(header)
 
 .. py:function:: load_data(path_list: List[str], mask: Optional[numpy.ndarray] = None, use_instrument_mask: bool = False) -> ndcube.NDCollection
 

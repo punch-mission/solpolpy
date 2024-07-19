@@ -31,6 +31,7 @@ Functions
    solpolpy.polarizers.btbr_to_mzp
    solpolpy.polarizers.bp3_to_bthp
    solpolpy.polarizers.btbr_to_npol
+   solpolpy.polarizers.mzp_to_npol
    solpolpy.polarizers.fourpol_to_stokes
    solpolpy.polarizers.combine_masks
 
@@ -40,84 +41,84 @@ Module Contents
 
 .. py:function:: conv_polar_from_head(input_cube)
 
-.. py:function:: npol_to_mzp(input_collection)
+.. py:function:: npol_to_mzp(input_collection, offset_angle=0, **kwargs)
 
    .. rubric:: Notes
 
    Equation 44 in DeForest et al. 2022.
 
 
-.. py:function:: mzp_to_bpb(input_collection)
+.. py:function:: mzp_to_bpb(input_collection, **kwargs)
 
    .. rubric:: Notes
 
    Equation 7 and 9 in DeForest et al. 2022.
 
 
-.. py:function:: bpb_to_mzp(input_collection)
+.. py:function:: bpb_to_mzp(input_collection, **kwargs)
 
    .. rubric:: Notes
 
    Equation 4 in DeForest et al. 2022.
 
 
-.. py:function:: bpb_to_btbr(input_collection)
+.. py:function:: bpb_to_btbr(input_collection, **kwargs)
 
    .. rubric:: Notes
 
    Equation 1 and 2 in DeForest et al. 2022.
 
 
-.. py:function:: btbr_to_bpb(input_collection)
+.. py:function:: btbr_to_bpb(input_collection, **kwargs)
 
    .. rubric:: Notes
 
    Equation in Table 1 in DeForest et al. 2022.
 
 
-.. py:function:: mzp_to_stokes(input_collection)
+.. py:function:: mzp_to_stokes(input_collection, **kwargs)
 
    .. rubric:: Notes
 
    Equation 9, 12 and 13 in DeForest et al. 2022.
 
 
-.. py:function:: stokes_to_mzp(input_collection)
+.. py:function:: stokes_to_mzp(input_collection, **kwargs)
 
    .. rubric:: Notes
 
    Equation 11 in DeForest et al. 2022. with alpha = np.pi/2
 
 
-.. py:function:: mzp_to_bp3(input_collection)
+.. py:function:: mzp_to_bp3(input_collection, **kwargs)
 
    .. rubric:: Notes
 
    Equation 7, 9 and 10 in DeForest et al. 2022.
 
 
-.. py:function:: bp3_to_mzp(input_collection)
+.. py:function:: bp3_to_mzp(input_collection, **kwargs)
 
    .. rubric:: Notes
 
    Equation 11 in DeForest et al. 2022.
 
 
-.. py:function:: btbr_to_mzp(input_collection)
+.. py:function:: btbr_to_mzp(input_collection, **kwargs)
 
    .. rubric:: Notes
 
    Equation 3 in DeForest et al. 2022.
 
 
-.. py:function:: bp3_to_bthp(input_collection)
+.. py:function:: bp3_to_bthp(input_collection, **kwargs)
 
    .. rubric:: Notes
 
    Equations 9, 15, 16 in DeForest et al. 2022.
 
 
-.. py:function:: btbr_to_npol(input_collection, angles)
+.. py:function:: btbr_to_npol(input_collection, out_angles=None, **kwargs)
 
    .. rubric:: Notes
 
@@ -125,7 +126,15 @@ Module Contents
    angles: list of input angles in degree
 
 
-.. py:function:: fourpol_to_stokes(input_collection)
+.. py:function:: mzp_to_npol(input_collection, out_angles=None, offset_angle=0, **kwargs)
+
+   .. rubric:: Notes
+
+   Equation 45 in DeForest et al. 2022.
+   angles: list of input angles in degree
+
+
+.. py:function:: fourpol_to_stokes(input_collection, **kwargs)
 
    .. rubric:: Notes
 

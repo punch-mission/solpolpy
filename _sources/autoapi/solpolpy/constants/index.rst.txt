@@ -15,10 +15,16 @@ Attributes
 .. autoapisummary::
 
    solpolpy.constants.VALID_KINDS
+   solpolpy.constants.STEREOA_OFFSET_ANGLE
+   solpolpy.constants.STEREOB_OFFSET_ANGLE
 
 
 Module Contents
 ---------------
 
 .. py:data:: VALID_KINDS
+
+.. py:data:: STEREOA_OFFSET_ANGLE
+
+.. py:data:: STEREOB_OFFSET_ANGLE
 

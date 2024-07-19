@@ -7,17 +7,17 @@ import numpy as np
 from ndcube import NDCollection, NDCube
 
 from solpolpy.alpha import radial_north
-from solpolpy.constants import VALID_KINDS
+from solpolpy.constants import STEREOA_OFFSET_ANGLE, STEREOB_OFFSET_ANGLE, VALID_KINDS
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.graph import transform_graph
 from solpolpy.instruments import load_data
-from solpolpy.polarizers import npol_to_mzp
 
 
-def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str, imax_effect: bool = False) -> NDCollection:
-    """
-    Apply - apply a polarization transformation to a set of input
-    dataframes.
+def resolve(input_data: t.Union[t.List[str], NDCollection],
+            out_system: str,
+            imax_effect: bool = False,
+            out_angles: t.Optional[t.List[float]] = None) -> NDCollection:
+    """ Apply a polarization transformation to a set of input dataframes.
 
     Parameters
     ----------
@@ -29,44 +29,35 @@ def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str, ima
         The polarization state you want to convert your input dataframes to.
         Must be one of the following strings:
 
-        - "MZP": Triplet of images taken at -60°, 0°, and +60° polarizing angles.
-        - "BtBr": Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
-        - "Stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
-        - "BpB": Total brightness and ‘excess polarized’ brightness images pair respectively.
-        - "Bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead of a fixed frame of reference of the instrument.
-        - "Bthp": Total brightness, angle and degree of polarization.
+        - "mzp": Triplet of images taken at -60°, 0°, and +60° polarizing angles.
+        - "btbr": Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
+        - "stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
+        - "bpb": Total brightness and ‘excess polarized’ brightness images pair respectively.
+        - "bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead of a fixed frame of reference of the instrument.
+        - "bthp": Total brightness, angle and degree of polarization.
         - "fourpol": For observations taken at sequence of four polarizer angles, i.e. 0°, 45°, 90° and 135°.
-        - "npol": Set of images taken at than three polarizing angles other than MZP
+        - "npol": Set of images taken at than arbitrary polarizing angles other than MZP
 
     imax_effect : Boolean
         The 'IMAX effect' describes the change in apparent measured polarization angle as an result of foreshortening effects.
         This effect becomes more pronounced for wide field polarized imagers - see Patel et al (2024, in preparation)
         If True, applies the IMAX effect for wide field imagers as part of the resolution process.
 
-    Raises
-    ------
-    AssertionError
-      This gets raised if the data cannot be converted or polarization
-      transformation cannot be calculated due to a discontinuity or infinity.
+    out_angles : List[float]
+        Angles to use (in degrees) when converting to npol or some arbitrary system
 
     Returns
     -------
     NDCollection
-        The transformed data are returned as a NDcollection.  Most
-        Transforms maintain the dimensionality of the source vectors.  Some
-        embed (increase dimensionality of the vectors) or project (decrease
-        dimensionality of the vectors); additional input dimensions, if
-        present, are still appended to the output vectors in all any case.
+        The transformed data are returned as a NDCollection.
     """
+    # standardize out_system to all lowercase
+    out_system = out_system.lower()
+
     if isinstance(input_data, list):
         input_data = load_data(input_data)
 
     input_kind = determine_input_kind(input_data)
-
-    # if it's npol we immediately standardize to MZP
-    if input_kind == "npol":
-        input_data = npol_to_mzp(input_data)
-        input_kind = "MZP"
 
     input_key = list(input_data)
     transform_path = get_transform_path(input_kind, out_system)
@@ -74,16 +65,35 @@ def resolve(input_data: t.Union[t.List[str], NDCollection], out_system: str, ima
     requires_alpha = check_alpha_requirement(transform_path)
 
     if imax_effect:
-        if (input_kind == 'MZP') and (out_system == 'MZP'):
+        if input_kind == 'mzp' and out_system == 'mzp':
             input_data = resolve_imax_effect(input_data)
         else:
             raise UnsupportedTransformationError('IMAX effect applies only for MZP->MZP solpolpy transformations')
 
     if requires_alpha and "alpha" not in input_key:
         input_data = add_alpha(input_data)
-    result = equation(input_data)
+
+    result = equation(input_data,
+                      offset_angle=determine_offset_angle(input_data),
+                      out_angles=out_angles)
 
     return result
+
+
+def determine_offset_angle(input_collection: NDCollection) -> float:
+    """Get the instrument specific offset angle"""
+    if 'B0.0' in input_collection:
+        match input_collection['B0.0'].meta.get('OBSRVTRY', 'BLANK'):
+            case 'STEREO_A':
+                offset_angle = STEREOA_OFFSET_ANGLE
+            case 'STEREO_B':
+                offset_angle = STEREOB_OFFSET_ANGLE
+            case _:
+                offset_angle = 0 * u.degree
+    else:
+        offset_angle = 0 * u.degree
+
+    return offset_angle
 
 
 def determine_input_kind(input_data: NDCollection) -> str:
@@ -101,9 +111,19 @@ def determine_input_kind(input_data: NDCollection) -> str:
     """
     input_keys = list(input_data)
     for valid_kind, param_list in VALID_KINDS.items():
-        for param_option in param_list:
-            if set(input_keys) == set(param_option):
-                return valid_kind
+        if valid_kind == "npol":
+            try:
+                key_angles = [float(k[1:]) for k in set(input_keys) if k != "alpha"]
+            except ValueError:
+                msg = "npol polarization system keys must be like BANG where ANG is any angle in degrees, e.g. B30.4"
+                raise ValueError(msg)
+            else:
+                if len(key_angles) >= 1:  # must be at least one angle
+                    return "npol"
+        else:
+            for param_option in param_list:
+                if set(input_keys) == set(param_option):
+                    return valid_kind
     raise ValueError("Unidentified Polarization System.")
 
 
@@ -171,13 +191,13 @@ def check_alpha_requirement(path: t.List[str]) -> bool:
     return requires_alpha
 
 
-def generate_imax_matrix(arrayshape) -> np.ndarray:
+def generate_imax_matrix(array_shape) -> np.ndarray:
     """
     Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords)
 
     Parameters
     -------
-    arrayshape
+    array_shape
         Defined input WCS array shape for matrix generation
 
     Returns
@@ -190,7 +210,7 @@ def generate_imax_matrix(arrayshape) -> np.ndarray:
     # Ideal MZP wrt Solar North
     thmzp = [-60, 0, 60] * u.degree
 
-    long_arr, lat_arr = np.meshgrid(np.linspace(-20, 20, arrayshape[0]), np.linspace(-20, 20, arrayshape[1]))
+    long_arr, lat_arr = np.meshgrid(np.linspace(-20, 20, array_shape[0]), np.linspace(-20, 20, array_shape[1]))
 
     # Foreshortening (IMAX) effect on polarizer angle
     phi_m = np.arctan2(np.tan(thmzp[0]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
@@ -200,7 +220,7 @@ def generate_imax_matrix(arrayshape) -> np.ndarray:
     phi = np.stack([phi_m, phi_z, phi_p])
 
     # Define the A matrix
-    mat_a = np.empty((arrayshape[0], arrayshape[1], 3, 3))
+    mat_a = np.empty((array_shape[0], array_shape[1], 3, 3))
 
     for i in range(3):
         for j in range(3):
@@ -309,10 +329,10 @@ def _compose2(f: t.Callable, g: t.Callable) -> t.Callable:
     Callable
         composed function
     """
-    return lambda *a, **kw: f(g(*a, **kw))
+    return lambda *a, **kw: f(g(*a, **kw), **kw)
 
 
-def identity(x: t.Any) -> t.Any:
+def identity(x: t.Any, **kwargs) -> t.Any:
     """Identity function that returns the input
 
     Parameters

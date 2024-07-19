@@ -11,7 +11,7 @@ def test_get_colormap_str_stereo():
                path_to_test_files+"stereo_120.fts",
                path_to_test_files+"stereo_240.fts"]
     out = load_data(file_list)
-    found = get_colormap_str(out['angle_1'].meta)
+    found = get_colormap_str(out['B0.0'].meta)
 
     assert found == "stereocor2"
 
@@ -23,7 +23,7 @@ def test_get_colormap_str_lasco():
                path_to_test_files+"lasco_-60.fts",
                path_to_test_files+"lasco_+60.fts"]
     out = load_data(file_list)
-    found = get_colormap_str(out['angle_1'].meta)
+    found = get_colormap_str(out['B0.0'].meta)
 
     assert found == "soholasco2"
 

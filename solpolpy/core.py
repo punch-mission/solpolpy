@@ -7,11 +7,10 @@ import numpy as np
 from ndcube import NDCollection, NDCube
 
 from solpolpy.alpha import radial_north
-from solpolpy.constants import VALID_KINDS
+from solpolpy.constants import STEREOA_OFFSET_ANGLE, STEREOB_OFFSET_ANGLE, VALID_KINDS
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.graph import transform_graph
 from solpolpy.instruments import load_data
-from solpolpy.polarizers import npol_to_mzp
 
 
 def resolve(input_data: t.Union[t.List[str], NDCollection],
@@ -61,15 +60,13 @@ def resolve(input_data: t.Union[t.List[str], NDCollection],
         dimensionality of the vectors); additional input dimensions, if
         present, are still appended to the output vectors in all any case.
     """
+    # standardize out system to all lower
+    out_system = out_system.lower()
+
     if isinstance(input_data, list):
         input_data = load_data(input_data)
 
     input_kind = determine_input_kind(input_data)
-
-    # if it's npol we immediately standardize to MZP
-    if input_kind == "npol":
-        input_data = npol_to_mzp(input_data)
-        input_kind = "MZP"
 
     input_key = list(input_data)
     transform_path = get_transform_path(input_kind, out_system)
@@ -77,7 +74,7 @@ def resolve(input_data: t.Union[t.List[str], NDCollection],
     requires_alpha = check_alpha_requirement(transform_path)
 
     if imax_effect:
-        if input_kind == 'MZP' and out_system == 'MZP':
+        if input_kind == 'mzp' and out_system == 'mzp':
             input_data = resolve_imax_effect(input_data)
         else:
             raise UnsupportedTransformationError('IMAX effect applies only for MZP->MZP solpolpy transformations')
@@ -85,9 +82,27 @@ def resolve(input_data: t.Union[t.List[str], NDCollection],
     if requires_alpha and "alpha" not in input_key:
         input_data = add_alpha(input_data)
 
-    result = equation(input_data, out_angles=out_angles)
+    result = equation(input_data,
+                      offset_angle=determine_offset_angle(input_data),
+                      out_angles=out_angles)
 
     return result
+
+
+def determine_offset_angle(input_collection: NDCollection) -> float:
+    """Get the instrument specific offset angle"""
+    if 'angle_1' in input_collection:
+        match input_collection['B0'].meta.get('OBSRVTRY', 'BLANK'):
+            case 'STEREO_A':
+                offset_angle = STEREOA_OFFSET_ANGLE
+            case 'STEREO_B':
+                offset_angle = STEREOB_OFFSET_ANGLE
+            case _:
+                offset_angle = 0 * u.degree
+    else:
+        offset_angle = 0 * u.degree
+
+    return offset_angle
 
 
 def determine_input_kind(input_data: NDCollection) -> str:
@@ -105,9 +120,19 @@ def determine_input_kind(input_data: NDCollection) -> str:
     """
     input_keys = list(input_data)
     for valid_kind, param_list in VALID_KINDS.items():
-        for param_option in param_list:
-            if set(input_keys) == set(param_option):
-                return valid_kind
+        if valid_kind == "npol":
+            try:
+                key_angles = [float(k[1:]) for k in set(input_keys) if k != "alpha"]
+            except ValueError:
+                msg = "npol polarization system keys must be like BANG where ANG is any angle in degrees, e.g. B30.4"
+                raise ValueError(msg)
+            else:
+                if len(key_angles) >= 1:  # must be at least one angle
+                    return "npol"
+        else:
+            for param_option in param_list:
+                if set(input_keys) == set(param_option):
+                    return valid_kind
     raise ValueError("Unidentified Polarization System.")
 
 

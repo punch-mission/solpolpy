@@ -33,14 +33,11 @@ def npol_to_mzp(input_collection, offset_angle=0, **kwargs):
             break
         input_dict[(conv_polar_from_head(input_collection[p_angle])) * u.degree] = input_collection[p_angle].data
 
-    mzp_ang = [-60, 0, 60]
+    mzp_ang = [-60 * u.degree, 0 * u.degree, 60 * u.degree]
     Bmzp = {}
     for ang in mzp_ang:
-        Bmzp[ang * u.degree] = ((1 / 3)
-                                * np.sum([ith_polarizer_brightness
-                                          * (1 + 2 * np.cos(2 * (ang * u.degree
-                                                                 - (ith_angle-offset_angle))))
-                                          for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0))
+        Bmzp[ang] = ((1 / 3) * np.sum([ith_polarizer_brightness * (1 + 2 * np.cos(2 * (ang - (ith_angle-offset_angle))))
+                                       for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0))
 
     # todo: update header properly; time info?
     metaM, metaZ, metaP = (copy.copy(input_collection[input_keys[0]].meta),
@@ -73,12 +70,11 @@ def mzp_to_bpb(input_collection, **kwargs):
     # TODO: need to check if separated appropriately if not create quality warning.
     input_dict = {}
     in_list = list(input_collection)
-    conv_fact = (np.pi * u.radian) / (180 * u.degree)
 
     for p_angle in in_list:
         if p_angle == "alpha":
             break
-        input_dict[(input_collection[p_angle].meta['POLAR']) * u.degree * conv_fact] = input_collection[p_angle].data
+        input_dict[(input_collection[p_angle].meta['POLAR']) * u.degree] = input_collection[p_angle].data
 
     alpha = input_collection['alpha'].data * u.radian
     B = (2 / 3) * (np.sum([ith_polarizer_brightness
@@ -252,7 +248,6 @@ def mzp_to_bp3(input_collection, **kwargs):
     """""
     input_dict = {}
     in_list = list(input_collection)
-    # conv_fact = (np.pi * u.radian) / (180 * u.degree)
 
     for p_angle in in_list:
         if p_angle == "alpha":
@@ -292,7 +287,6 @@ def bp3_to_mzp(input_collection, **kwargs):
     ------
     Equation 11 in DeForest et al. 2022.
     """""
-    conv_fact = (np.pi * u.radian) / (180 * u.degree)
 
     if "alpha" not in input_collection:
         raise ValueError("missing alpha")
@@ -303,8 +297,8 @@ def bp3_to_mzp(input_collection, **kwargs):
     mzp_ang = [-60, 0, 60] * u.degree
     Bmzp = {}
     for ang in mzp_ang:
-        Bmzp[ang] = (1 / 2) * (B - np.cos(2 * (ang * conv_fact - alpha)) * pB -
-                               np.cos(2 * (ang * conv_fact - alpha)) * pBp)
+        Bmzp[ang] = (1 / 2) * (B - np.cos(2 * (ang - alpha)) * pB -
+                               np.cos(2 * (ang - alpha)) * pBp)
 
     metaM, metaZ, metaP = copy.copy(input_collection["B"].meta), copy.copy(input_collection["pB"].meta), copy.copy(
         input_collection["pBp"].meta)

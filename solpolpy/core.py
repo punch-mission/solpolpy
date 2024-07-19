@@ -29,36 +29,29 @@ def resolve(input_data: t.Union[t.List[str], NDCollection],
         The polarization state you want to convert your input dataframes to.
         Must be one of the following strings:
 
-        - "MZP": Triplet of images taken at -60°, 0°, and +60° polarizing angles.
-        - "BtBr": Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
-        - "Stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
-        - "BpB": Total brightness and ‘excess polarized’ brightness images pair respectively.
-        - "Bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead of a fixed frame of reference of the instrument.
-        - "Bthp": Total brightness, angle and degree of polarization.
+        - "mzp": Triplet of images taken at -60°, 0°, and +60° polarizing angles.
+        - "btbr": Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
+        - "stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
+        - "bpb": Total brightness and ‘excess polarized’ brightness images pair respectively.
+        - "bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead of a fixed frame of reference of the instrument.
+        - "bthp": Total brightness, angle and degree of polarization.
         - "fourpol": For observations taken at sequence of four polarizer angles, i.e. 0°, 45°, 90° and 135°.
-        - "npol": Set of images taken at than three polarizing angles other than MZP
+        - "npol": Set of images taken at than arbitrary polarizing angles other than MZP
 
     imax_effect : Boolean
         The 'IMAX effect' describes the change in apparent measured polarization angle as an result of foreshortening effects.
         This effect becomes more pronounced for wide field polarized imagers - see Patel et al (2024, in preparation)
         If True, applies the IMAX effect for wide field imagers as part of the resolution process.
 
-    Raises
-    ------
-    AssertionError
-      This gets raised if the data cannot be converted or polarization
-      transformation cannot be calculated due to a discontinuity or infinity.
+    out_angles : List[float]
+        Angles to use (in degrees) when converting to npol or some arbitrary system
 
     Returns
     -------
     NDCollection
-        The transformed data are returned as a NDcollection.  Most
-        Transforms maintain the dimensionality of the source vectors.  Some
-        embed (increase dimensionality of the vectors) or project (decrease
-        dimensionality of the vectors); additional input dimensions, if
-        present, are still appended to the output vectors in all any case.
+        The transformed data are returned as a NDCollection.
     """
-    # standardize out system to all lower
+    # standardize out_system to all lowercase
     out_system = out_system.lower()
 
     if isinstance(input_data, list):
@@ -89,8 +82,8 @@ def resolve(input_data: t.Union[t.List[str], NDCollection],
 
 def determine_offset_angle(input_collection: NDCollection) -> float:
     """Get the instrument specific offset angle"""
-    if 'angle_1' in input_collection:
-        match input_collection['B0'].meta.get('OBSRVTRY', 'BLANK'):
+    if 'B0.0' in input_collection:
+        match input_collection['B0.0'].meta.get('OBSRVTRY', 'BLANK'):
             case 'STEREO_A':
                 offset_angle = STEREOA_OFFSET_ANGLE
             case 'STEREO_B':

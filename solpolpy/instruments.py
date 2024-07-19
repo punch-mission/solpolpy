@@ -12,14 +12,16 @@ from solpolpy.errors import TooFewFilesError, UnsupportedInstrumentError
 def get_data_angle(header):
     angle_hdr = header["POLAR"]
     if isinstance(angle_hdr, float):
-        return angle_hdr
+        angle = angle_hdr
     elif isinstance(angle_hdr, str):
-        return float(angle_hdr.split("Deg")[0])
+        angle = float(angle_hdr.split("Deg")[0])
     else:
         try:
-            return float(angle_hdr)
+            angle = float(angle_hdr)
         except ValueError:
             raise UnsupportedInstrumentError("Polar angle in the header could not be read for this instrument.")
+
+    return angle
 
 
 def load_data(path_list: t.List[str],

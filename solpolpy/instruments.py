@@ -9,6 +9,19 @@ from ndcube import NDCollection, NDCube
 from solpolpy.errors import TooFewFilesError, UnsupportedInstrumentError
 
 
+def get_data_angle(header):
+    angle_hdr = header["POLAR"]
+    if isinstance(angle_hdr, float):
+        return angle_hdr
+    elif isinstance(angle_hdr, str):
+        return float(angle_hdr.split("Deg")[0])
+    else:
+        try:
+            return float(angle_hdr)
+        except ValueError:
+            raise UnsupportedInstrumentError("Polar angle in the header could not be read for this instrument.")
+
+
 def load_data(path_list: t.List[str],
               mask: t.Optional[np.ndarray] = None,
               use_instrument_mask: bool = False) -> NDCollection:
@@ -45,7 +58,9 @@ def load_data(path_list: t.List[str],
             if mask is None:  # make a mask of False if none is provided
                 mask = np.zeros(hdul[0].data.shape, dtype=bool)
 
-            data_out.append(("angle_" + str(i+1),
+            angle = get_data_angle(hdul[0].header)
+
+            data_out.append((f"B{angle}",
                              NDCube(hdul[0].data,
                                     mask=mask,
                                     wcs=wcs,

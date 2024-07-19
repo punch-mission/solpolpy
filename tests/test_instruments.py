@@ -15,7 +15,7 @@ def test_load_data():
                path_to_test_files+"stereo_240.fts"]
     out = load_data(file_list)
     actual_keys = list(out)
-    expected_keys = ["angle_1", "angle_2", "angle_3"]
+    expected_keys = ["B0.0", "B120.0", "B240.0"]
     assert actual_keys == expected_keys
     assert isinstance(out, NDCollection)
 
@@ -36,7 +36,7 @@ def test_get_instrument_mask():
                path_to_test_files+"stereo_240.fts"]
     out = load_data(file_list)
 
-    mask = get_instrument_mask(out['angle_1'].meta)
+    mask = get_instrument_mask(out['B0.0'].meta)
 
     assert mask.dtype == bool
     assert mask.shape == (2048, 2048)
@@ -50,5 +50,5 @@ def test_use_instrument_mask_overrides_in_load():
                path_to_test_files+"stereo_240.fts"]
     out = load_data(file_list, use_instrument_mask=True)
 
-    assert out['angle_1'].mask.dtype == bool
-    assert out['angle_1'].mask.shape == (2048, 2048)
+    assert out['B0.0'].mask.dtype == bool
+    assert out['B0.0'].mask.shape == (2048, 2048)

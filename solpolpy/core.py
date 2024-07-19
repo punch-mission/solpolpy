@@ -17,9 +17,7 @@ def resolve(input_data: t.Union[t.List[str], NDCollection],
             out_system: str,
             imax_effect: bool = False,
             out_angles: t.Optional[t.List[float]] = None) -> NDCollection:
-    """
-    Apply - apply a polarization transformation to a set of input
-    dataframes.
+    """ Apply a polarization transformation to a set of input dataframes.
 
     Parameters
     ----------

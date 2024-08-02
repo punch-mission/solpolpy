@@ -9,7 +9,7 @@ from solpolpy.instruments import get_instrument_mask, load_data
 
 def test_load_data():
     TESTDATA_DIR = os.path.dirname(__file__)
-    path_to_test_files = TESTDATA_DIR+'/test_support_files/'
+    path_to_test_files = TESTDATA_DIR+"/test_support_files/"
     file_list=[path_to_test_files+"stereo_0.fts",
                path_to_test_files+"stereo_120.fts",
                path_to_test_files+"stereo_240.fts"]
@@ -22,7 +22,7 @@ def test_load_data():
 
 def test_load_data_fails_with_one_file():
     TESTDATA_DIR = os.path.dirname(__file__)
-    path_to_test_files = TESTDATA_DIR+'/test_support_files/'
+    path_to_test_files = TESTDATA_DIR+"/test_support_files/"
     file_list=[path_to_test_files+"stereo_0.fts"]
     with pytest.raises(TooFewFilesError):
         out = load_data(file_list)
@@ -30,13 +30,13 @@ def test_load_data_fails_with_one_file():
 
 def test_get_instrument_mask():
     TESTDATA_DIR = os.path.dirname(__file__)
-    path_to_test_files = TESTDATA_DIR+'/test_support_files/'
+    path_to_test_files = TESTDATA_DIR+"/test_support_files/"
     file_list=[path_to_test_files+"stereo_0.fts",
                path_to_test_files+"stereo_120.fts",
                path_to_test_files+"stereo_240.fts"]
     out = load_data(file_list)
 
-    mask = get_instrument_mask(out['B0.0'].meta)
+    mask = get_instrument_mask(out["B0.0"].meta)
 
     assert mask.dtype == bool
     assert mask.shape == (2048, 2048)
@@ -44,11 +44,11 @@ def test_get_instrument_mask():
 
 def test_use_instrument_mask_overrides_in_load():
     TESTDATA_DIR = os.path.dirname(__file__)
-    path_to_test_files = TESTDATA_DIR+'/test_support_files/'
+    path_to_test_files = TESTDATA_DIR+"/test_support_files/"
     file_list=[path_to_test_files+"stereo_0.fts",
                path_to_test_files+"stereo_120.fts",
                path_to_test_files+"stereo_240.fts"]
     out = load_data(file_list, use_instrument_mask=True)
 
-    assert out['B0.0'].mask.dtype == bool
-    assert out['B0.0'].mask.shape == (2048, 2048)
+    assert out["B0.0"].mask.dtype == bool
+    assert out["B0.0"].mask.shape == (2048, 2048)

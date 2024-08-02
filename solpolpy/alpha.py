@@ -1,11 +1,11 @@
-""" Functions related to constructing an alpha array for transformation"""
+"""Functions related to constructing an alpha array for transformation."""
 
 import astropy.units as u
 import numpy as np
 
 
 def radial_north(shape):
-    """An alpha array oriented west
+    """An alpha array oriented west.
 
     Parameters
     ----------
@@ -18,11 +18,12 @@ def radial_north(shape):
         alpha array used in calculations
 
     Notes
-    ------
+    -----
     - assumes solar north is up
     - assumes polarizer 0 is along solar north axis
     - creates radial polarization map
     - angles increase in counterclockwise direction
+
     """
     x_size, y_size = shape
     x = np.arange(-x_size // 2, x_size // 2)
@@ -31,5 +32,5 @@ def radial_north(shape):
     return np.rot90(np.fliplr(np.arctan2(yy, xx)+np.pi), k=1)*u.radian
 
 
-ALPHA_FUNCTIONS = {'radial_north': radial_north,
-                   'zeros': np.zeros}
+ALPHA_FUNCTIONS = {"radial_north": radial_north,
+                   "zeros": np.zeros}

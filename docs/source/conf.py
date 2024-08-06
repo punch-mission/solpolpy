@@ -18,9 +18,9 @@
 # -- Project information -----------------------------------------------------
 from solpolpy import __version__
 
-project = 'solpolpy'
-copyright = '2023, PUNCH Science Operations Center'
-author = 'PUNCH Science Operations Center'
+project = "solpolpy"
+copyright = "2023, PUNCH Science Operations Center"
+author = "PUNCH Science Operations Center"
 
 # The full version, including alpha/beta/rc tags
 release = __version__
@@ -32,14 +32,14 @@ release = __version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 
-extensions = ['autoapi.extension',
-              'sphinx.ext.autodoc',
-              'sphinx.ext.napoleon',
-              'nbsphinx',
-              'IPython.sphinxext.ipython_console_highlighting']
+extensions = ["autoapi.extension",
+              "sphinx.ext.autodoc",
+              "sphinx.ext.napoleon",
+              "nbsphinx",
+              "IPython.sphinxext.ipython_console_highlighting"]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -54,7 +54,7 @@ exclude_patterns = []
 #
 html_theme = "pydata_sphinx_theme"
 html_show_sourcelink = False
-html_static_path = ['_static']
+html_static_path = ["_static"]
 html_theme_options = {
     "use_edit_page_button": True,
     "icon_links": [
@@ -63,10 +63,10 @@ html_theme_options = {
             "url": "https://github.com/punch-mission/solpolpy",
             "icon": "fa-brands fa-github",
             "type": "fontawesome",
-        }
+        },
     ],
     "show_nav_level": 1,
-    "show_toc_level": 3
+    "show_toc_level": 3,
 }
 html_context = {
     # "github_url": "https://github.com", # or your GitHub Enterprise site
@@ -77,4 +77,4 @@ html_context = {
 }
 
 
-autoapi_dirs = ['../../solpolpy']
+autoapi_dirs = ["../../solpolpy"]

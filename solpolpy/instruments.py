@@ -1,6 +1,6 @@
-"""Instrument specific code"""
-import typing as t
+"""Instrument specific code."""
 
+import astropy.units as u
 import numpy as np
 from astropy.io import fits
 from astropy.wcs import WCS
@@ -12,22 +12,24 @@ from solpolpy.errors import TooFewFilesError, UnsupportedInstrumentError
 def get_data_angle(header):
     angle_hdr = header["POLAR"]
     if isinstance(angle_hdr, float):
-        angle = angle_hdr
+        angle = angle_hdr * u.degree
     elif isinstance(angle_hdr, str):
-        angle = float(angle_hdr.split("Deg")[0])
+        angle = float(angle_hdr.split("Deg")[0]) * u.degree
     else:
         try:
-            angle = float(angle_hdr)
+            angle = float(angle_hdr) * u.degree
         except ValueError:
-            raise UnsupportedInstrumentError("Polar angle in the header could not be read for this instrument.")
+            msg = "Polar angle in the header could not be read for this instrument."
+            raise UnsupportedInstrumentError(msg)
 
     return angle
 
 
-def load_data(path_list: t.List[str],
-              mask: t.Optional[np.ndarray] = None,
+def load_data(path_list: list[str],
+              mask: np.ndarray | None = None,
               use_instrument_mask: bool = False) -> NDCollection:
     """Basic loading function. See `load_with_occulter_mask`.
+
     Parameters
     ----------
     path_list: List[str]
@@ -44,13 +46,15 @@ def load_data(path_list: t.List[str],
     NDCollection
         The data are loaded as NDCollection object with WCS and header information available.
         The keys are labeled as 'angle_1', 'angle_2, 'angle_3', ...
+
     """
     # get length of list to determine how many files to process.
     if len(path_list) < 2:
-        raise TooFewFilesError("Requires at least 2 FITS files")
+        msg = "Requires at least 2 FITS files"
+        raise TooFewFilesError(msg)
 
     data_out = []
-    for i, data_path in enumerate(path_list):
+    for _i, data_path in enumerate(path_list):
         with fits.open(data_path) as hdul:
             wcs = WCS(hdul[0].header)
 
@@ -62,11 +66,11 @@ def load_data(path_list: t.List[str],
 
             angle = get_data_angle(hdul[0].header)
 
-            data_out.append((f"B{angle}",
+            data_out.append((str(angle),
                              NDCube(hdul[0].data,
                                     mask=mask,
                                     wcs=wcs,
-                                    meta=hdul[0].header)))
+                                    meta=dict(hdul[0].header))))
 
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
@@ -75,7 +79,7 @@ def construct_mask(inner_radius: float,
                    outer_radius: float,
                    center_x: int,
                    center_y: int,
-                   shape: t.Tuple[int, int]) -> np.ndarray:
+                   shape: tuple[int, int]) -> np.ndarray:
     """Constructs a mask where False indicates the pixel is valid and True masks the pixel as invalid.
 
     Pixels with radial distance between `inner_radius` and `outer_radius` are valid. Every other pixel is invalid.
@@ -99,6 +103,7 @@ def construct_mask(inner_radius: float,
     np.ndarray
         a coronograph mask that marks invalid pixels
         (those with radius less than `inner_radius` or greater than `outer_radius`) as True
+
     """
     xx, yy = np.ogrid[0:shape[0], 0:shape[1]]
     mask = np.zeros(shape, dtype=bool)
@@ -108,7 +113,7 @@ def construct_mask(inner_radius: float,
 
 
 def get_instrument_mask(header: fits.Header) -> np.ndarray:
-    """ Gets a coronograph mask for common instruments
+    """Gets a coronograph mask for common instruments.
 
     Supports common solar instruments: LASCO, COSMO K, SECCHI
 
@@ -121,34 +126,38 @@ def get_instrument_mask(header: fits.Header) -> np.ndarray:
     -------
     np.ndarray
         a pixel mask where valid pixels are marked False, masked out invalid pixels are flagged as True
+
     """
-    x_shape = header['NAXIS1']
-    y_shape = header['NAXIS2']
+    x_shape = header["NAXIS1"]
+    y_shape = header["NAXIS2"]
 
-    center_x = header['CRPIX1']
-    center_y = header['CRPIX2']
+    center_x = header["CRPIX1"]
+    center_y = header["CRPIX2"]
 
-    R_sun = 960. / header['CDELT1']  # TODO: clarify where 960. comes from
+    R_sun = 960. / header["CDELT1"]  # TODO: clarify where 960. comes from
 
     radius = 0
-    if header['INSTRUME'] == 'LASCO':
-        if 'C2' in  header['DETECTOR']:
+    if header["INSTRUME"] == "LASCO":
+        if "C2" in  header["DETECTOR"]:
             radius = 2.5
-        elif 'C3' in header['DETECTOR']:
+        elif "C3" in header["DETECTOR"]:
             radius = 4.0
         else:
-            raise UnsupportedInstrumentError("The data in this file is not formatted according to a known instrument.")
-    elif header['INSTRUME'] == 'COSMO K-Coronagraph':
+            msg = "The data in this file is not formatted according to a known instrument."
+            raise UnsupportedInstrumentError(msg)
+    elif header["INSTRUME"] == "COSMO K-Coronagraph":
         radius = 1.15
-    elif header['INSTRUME'] == 'SECCHI':
-        if 'COR1' in header['DETECTOR']:
+    elif header["INSTRUME"] == "SECCHI":
+        if "COR1" in header["DETECTOR"]:
             radius = 1.57
-        elif 'COR2' in header['DETECTOR']:
+        elif "COR2" in header["DETECTOR"]:
             radius = 3.0
         else:
-            raise UnsupportedInstrumentError("The data in this file is not formatted according to a known instrument.")
+            msg = "The data in this file is not formatted according to a known instrument."
+            raise UnsupportedInstrumentError(msg)
     else:
-        raise UnsupportedInstrumentError("The data in this file is not formatted according to a known instrument.")
+        msg = "The data in this file is not formatted according to a known instrument."
+        raise UnsupportedInstrumentError(msg)
 
     y_array = [(j_step - center_y) / R_sun for j_step in range(y_shape)]
     outer_edge = np.max(y_array) * R_sun

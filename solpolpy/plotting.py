@@ -13,15 +13,15 @@ def plot_collection(collection: NDCollection,
                     show_colorbar=False,
                     lat_ticks=None,
                     lon_ticks=None,
-                    major_formatter='dd',
+                    major_formatter="dd",
                     xlabel="HP Longitude",
                     ylabel="HP Latitude",
                     vmin=None,
                     vmax=None,
-                    cmap='Greys_r',
+                    cmap="Greys_r",
                     ignore_alpha=True,
                     fontsize=18):
-    """Plot a solpolpy NDCollection input or output
+    """Plot a solpolpy NDCollection input or output.
 
     Parameters
     ----------
@@ -56,6 +56,7 @@ def plot_collection(collection: NDCollection,
     -------
     Matplotlib figure and axes
         the plotted figure and axes are returned for any additional edits
+
     """
     ax_count = len(collection)
     collection_keys = list(collection.keys())
@@ -80,7 +81,7 @@ def plot_collection(collection: NDCollection,
                             ncols=ax_count,
                             figsize=figsize,
                             sharey=True,
-                            subplot_kw={'projection': collection[collection_keys[0]].wcs})
+                            subplot_kw={"projection": collection[collection_keys[0]].wcs})
     for i in range(ax_count):
         this_cube = collection[collection_keys[i]]
         this_cube.plot(axes=axs[i], cmap=cmap, vmin=vmin[i], vmax=vmax[i])
@@ -92,17 +93,18 @@ def plot_collection(collection: NDCollection,
         axs[i].coords[1].set_major_formatter(major_formatter)
         axs[i].set_xlabel(xlabel, fontsize=fontsize)
         axs[i].set_ylabel(ylabel, fontsize=fontsize)
-        axs[i].tick_params(axis='both', labelsize=fontsize)
-        axs[i].grid(color='white', ls='dotted')
+        axs[i].tick_params(axis="both", labelsize=fontsize)
+        axs[i].grid(color="white", ls="dotted")
 
     if show_colorbar:
-        fig.colorbar(im, orientation='horizontal', ax=axs, shrink=0.9)
+        fig.colorbar(im, orientation="horizontal", ax=axs, shrink=0.9)
 
     return fig, axs
 
 
 def get_colormap_str(meta: fits.Header) -> str:
-    """Retrieve a color map name from an input FITS file
+    """Retrieve a color map name from an input FITS file.
+
     Parameters
     ----------
     meta : fits.Header
@@ -112,30 +114,30 @@ def get_colormap_str(meta: fits.Header) -> str:
     -------
     str
         name of appropriate colormap
-    """
 
-    if meta['INSTRUME'] == 'LASCO':
-        detector_name = meta['DETECTOR']
-        if 'C2' in detector_name:
-            color_map = 'soholasco2'
-        elif 'C3' in detector_name:
-            color_map = 'soholasco3'
+    """
+    if meta["INSTRUME"] == "LASCO":
+        detector_name = meta["DETECTOR"]
+        if "C2" in detector_name:
+            color_map = "soholasco2"
+        elif "C3" in detector_name:
+            color_map = "soholasco3"
         else:
             warnings.warn("No valid instrument found, setting color_map soholasco2")
-            color_map = 'soholasco2'
-    elif meta['INSTRUME'] == 'COSMO K-Coronagraph':
-        color_map = 'kcor'
-    elif meta['INSTRUME'] == 'SECCHI':
-        detector_name = meta['DETECTOR']
-        if 'COR1' in detector_name:
-            color_map = 'stereocor1'
-        elif 'COR2' in detector_name:
-            color_map = 'stereocor2'
+            color_map = "soholasco2"
+    elif meta["INSTRUME"] == "COSMO K-Coronagraph":
+        color_map = "kcor"
+    elif meta["INSTRUME"] == "SECCHI":
+        detector_name = meta["DETECTOR"]
+        if "COR1" in detector_name:
+            color_map = "stereocor1"
+        elif "COR2" in detector_name:
+            color_map = "stereocor2"
         else:
             warnings.warn("No valid instrument found, setting color_map soholasco2")
-            color_map = 'soholasco2'
+            color_map = "soholasco2"
     else:
         warnings.warn("No valid instrument found, setting color_map soholasco2")
-        color_map = 'soholasco2'
+        color_map = "soholasco2"
 
     return color_map

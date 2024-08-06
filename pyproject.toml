@@ -1,6 +1,6 @@
 [project]
 name = "solpolpy"
-version = "0.2.0"
+version = "0.3.0"
 authors = [
     { name="J. Marcus Hughes", email="mhughes@boulder.swri.edu"},
     { name="Matthew J. West", email="mwest@boulder.swri.edu"},
@@ -11,7 +11,7 @@ authors = [
 description = "Solar polarization resolver for any instrument"
 readme = "README.md"
 license = { file="LICENSE" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -33,6 +33,16 @@ test = [
     'pytest-cov',
     'ruff'
 ]
+docs = [
+    "sphinx",
+    "pydata-sphinx-theme",
+    "sphinx-autoapi",
+    "nbsphinx",
+    "ipython",
+    "pandoc"
+]
+
+dev = ["solpolpy[test, docs]", "pre-commit"]
 
 [build-system]
 requires = ["setuptools>=61.0"]
@@ -44,6 +54,12 @@ packages = ['solpolpy']
 [tool.ruff]
 line-length = 120
 ignore-init-module-imports = true
+#lint.select = ["ALL"]
+lint.ignore = ["F403"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"tests/*.py" = ['S101']
 
 [tool.isort]
 balanced_wrapping = true

@@ -1,4 +1,4 @@
-"""Core transformation functions for solpolpy"""
+"""Core transformation functions for solpolpy."""
 import typing as t
 
 import astropy.units as u
@@ -7,17 +7,18 @@ import numpy as np
 from ndcube import NDCollection, NDCube
 
 from solpolpy.alpha import radial_north
-from solpolpy.constants import STEREOA_OFFSET_ANGLE, STEREOB_OFFSET_ANGLE, VALID_KINDS
+from solpolpy.constants import STEREOA_OFFSET_ANGLE, STEREOB_OFFSET_ANGLE
 from solpolpy.errors import UnsupportedTransformationError
-from solpolpy.graph import transform_graph
 from solpolpy.instruments import load_data
+from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
 
 
-def resolve(input_data: t.Union[t.List[str], NDCollection],
-            out_system: str,
+@u.quantity_input
+def resolve(input_data: list[str] | NDCollection,
+            out_system: System | str,
             imax_effect: bool = False,
-            out_angles: t.Optional[t.List[float]] = None) -> NDCollection:
-    """ Apply a polarization transformation to a set of input dataframes.
+            out_angles: u.degree = None) -> NDCollection:
+    """Apply a polarization transformation to a set of input dataframes.
 
     Parameters
     ----------
@@ -25,7 +26,7 @@ def resolve(input_data: t.Union[t.List[str], NDCollection],
         Either: 1) a collection where each member NDCube has an expected name or 2) a list of paths to FITS files.
         We recommend option 2.
 
-    out_system : string
+    out_system : System | string
         The polarization state you want to convert your input dataframes to.
         Must be one of the following strings:
 
@@ -43,15 +44,15 @@ def resolve(input_data: t.Union[t.List[str], NDCollection],
         This effect becomes more pronounced for wide field polarized imagers - see Patel et al (2024, in preparation)
         If True, applies the IMAX effect for wide field imagers as part of the resolution process.
 
-    out_angles : List[float]
-        Angles to use (in degrees) when converting to npol or some arbitrary system
+    out_angles : u.degree
+        Angles to use when converting to npol or some arbitrary system
 
     Returns
     -------
     NDCollection
         The transformed data are returned as a NDCollection.
+
     """
-    # standardize out_system to all lowercase
     out_system = out_system.lower()
 
     if isinstance(input_data, list):
@@ -59,45 +60,44 @@ def resolve(input_data: t.Union[t.List[str], NDCollection],
 
     input_kind = determine_input_kind(input_data)
 
-    input_key = list(input_data)
+    input_keys = list(input_data.keys())
     transform_path = get_transform_path(input_kind, out_system)
     equation = get_transform_equation(transform_path)
-    requires_alpha = check_alpha_requirement(transform_path)
+
+    if getattr(equation, "uses_out_angles", False) and out_angles is None:
+        raise ValueError("Out angles must be specified for this transform.")
 
     if imax_effect:
-        if input_kind == 'mzp' and out_system == 'mzp':
+        if input_kind == "mzp":
             input_data = resolve_imax_effect(input_data)
         else:
-            raise UnsupportedTransformationError('IMAX effect applies only for MZP->MZP solpolpy transformations')
+            msg = "IMAX effect applies only for transformations starting from MZP."
+            raise UnsupportedTransformationError(msg)
 
-    if requires_alpha and "alpha" not in input_key:
+    if requires_alpha(equation) and "alpha" not in input_keys:
         input_data = add_alpha(input_data)
 
-    result = equation(input_data,
-                      offset_angle=determine_offset_angle(input_data),
-                      out_angles=out_angles)
-
-    return result
+    return equation(input_data,
+                    offset_angle=determine_offset_angle(input_data),
+                    out_angles=out_angles)
 
 
 def determine_offset_angle(input_collection: NDCollection) -> float:
-    """Get the instrument specific offset angle"""
-    if 'B0.0' in input_collection:
-        match input_collection['B0.0'].meta.get('OBSRVTRY', 'BLANK'):
-            case 'STEREO_A':
-                offset_angle = STEREOA_OFFSET_ANGLE
-            case 'STEREO_B':
-                offset_angle = STEREOB_OFFSET_ANGLE
-            case _:
-                offset_angle = 0 * u.degree
-    else:
-        offset_angle = 0 * u.degree
+    """Get the instrument specific offset angle."""
+    first_key = next(iter(input_collection.keys()))
+    match input_collection[first_key].meta.get("OBSRVTRY", "BLANK"):
+        case "STEREO_A":
+            offset_angle = STEREOA_OFFSET_ANGLE
+        case "STEREO_B":
+            offset_angle = STEREOB_OFFSET_ANGLE
+        case _:
+            offset_angle = 0 * u.degree
 
     return offset_angle
 
 
-def determine_input_kind(input_data: NDCollection) -> str:
-    """Determine what kind of data was input in the NDCollection
+def determine_input_kind(input_data: NDCollection) -> System:
+    """Determine what kind of data was input in the NDCollection.
 
     Parameters
     ----------
@@ -108,27 +108,31 @@ def determine_input_kind(input_data: NDCollection) -> str:
     -------
     str
         a valid input kind, see documentation of `resolve` for the full list under `out_system`
+
     """
-    input_keys = list(input_data)
-    for valid_kind, param_list in VALID_KINDS.items():
-        if valid_kind == "npol":
-            try:
-                key_angles = [float(k[1:]) for k in set(input_keys) if k != "alpha"]
-            except ValueError:
-                msg = "npol polarization system keys must be like BANG where ANG is any angle in degrees, e.g. B30.4"
-                raise ValueError(msg)
-            else:
-                if len(key_angles) >= 1:  # must be at least one angle
-                    return "npol"
-        else:
-            for param_option in param_list:
-                if set(input_keys) == set(param_option):
-                    return valid_kind
-    raise ValueError("Unidentified Polarization System.")
+    input_keys = set(input_data)
+    input_keys.discard("alpha")
+    if len(input_keys) == 0:
+        msg = "Found no cubes in the `input_data` collection."
+        raise ValueError(msg)
+
+    for valid_kind, param_set in SYSTEM_REQUIRED_KEYS.items():
+        if valid_kind != System.npol and param_set == input_keys:
+            return valid_kind
+    try:
+        input_keys_quantities = [u.Quantity(key) for key in input_keys]
+    except TypeError:
+        pass
+    else:
+        if all(u.get_physical_type(q) == "angle" for q in input_keys_quantities):
+            return System.npol
+
+    msg = "Could not determine input transformation."
+    raise UnsupportedTransformationError(msg)
 
 
-def get_transform_path(input_kind: str, output_kind: str) -> t.List[str]:
-    """Given an input and output system type, determine the require path of transforms from the transform graph
+def get_transform_path(input_kind: str, output_kind: str) -> list[str]:
+    """Given an input and output system type, determine the require path of transforms from the transform graph.
 
     Parameters
     ----------
@@ -142,16 +146,18 @@ def get_transform_path(input_kind: str, output_kind: str) -> t.List[str]:
     -------
     List[str]
         a list of transformation identifiers used to convert from `input_kind` to `output_kind`
+
     """
     try:
         path = nx.shortest_path(transform_graph, input_kind, output_kind)
     except nx.exception.NetworkXNoPath:
-        raise UnsupportedTransformationError(f"Not possible to convert {input_kind} to {output_kind}")
+        msg = f"Not possible to convert {input_kind} to {output_kind}"
+        raise UnsupportedTransformationError(msg)
     return path
 
 
-def get_transform_equation(path: t.List[str]) -> t.Callable:
-    """Given a transform path, compose the equation, i.e. the composed function of transforms that executes that path
+def get_transform_equation(path: list[str]) -> t.Callable:
+    """Given a transform path, compose the equation, i.e. the composed function of transforms that executes that path.
 
     Parameters
     ----------
@@ -162,17 +168,18 @@ def get_transform_equation(path: t.List[str]) -> t.Callable:
     -------
     Callable
         a function that executes the transformation
+
     """
     current_function = identity
     for i, step_start in enumerate(path[:-1]):
         step_end = path[i + 1]
-        current_function = _compose2(transform_graph.get_edge_data(step_start, step_end)['func'],
+        current_function = _compose2(transform_graph.get_edge_data(step_start, step_end)["func"],
                                      current_function)
     return current_function
 
 
-def check_alpha_requirement(path: t.List[str]) -> bool:
-    """Determine if an alpha array is required for this transformation path
+def requires_alpha(func: t.Callable) -> bool:
+    """Determine if an alpha array is required for this transformation path.
 
     Parameters
     ----------
@@ -183,20 +190,16 @@ def check_alpha_requirement(path: t.List[str]) -> bool:
     -------
     bool
         whether alpha array is required for transformation
+
     """
-    requires_alpha = False
-    for i, step_start in enumerate(path[:-1]):
-        step_end = path[i + 1]
-        requires_alpha = transform_graph.get_edge_data(step_start, step_end)['requires_alpha'] or requires_alpha
-    return requires_alpha
+    return getattr(func, "uses_alpha", False)
 
 
 def generate_imax_matrix(array_shape) -> np.ndarray:
-    """
-    Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords)
+    """Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords).
 
     Parameters
-    -------
+    ----------
     array_shape
         Defined input WCS array shape for matrix generation
 
@@ -206,10 +209,11 @@ def generate_imax_matrix(array_shape) -> np.ndarray:
         Output A matrix used in converting between camera coordinates and solar coordinates
 
     """
-
     # Ideal MZP wrt Solar North
+    # TODO fix variable name
     thmzp = [-60, 0, 60] * u.degree
 
+    # TODO don't hard code extents but get from the file
     long_arr, lat_arr = np.meshgrid(np.linspace(-20, 20, array_shape[0]), np.linspace(-20, 20, array_shape[1]))
 
     # Foreshortening (IMAX) effect on polarizer angle
@@ -230,11 +234,10 @@ def generate_imax_matrix(array_shape) -> np.ndarray:
 
 
 def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
-    """
-    Resolves the IMAX effect for provided input data, correcting measured polarization angles for wide FOV imagers.
+    """Resolves the IMAX effect for provided input data, correcting measured polarization angles for wide FOV imagers.
 
     Parameters
-    -------
+    ----------
     input_data : NDCollection
         Input data on which to correct foreshortened polarization angles
 
@@ -244,21 +247,21 @@ def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
         Output data with corrected polarization angles
 
     """
-
-    data_shape = input_data['Bm'].data.shape
+    data_shape = _determine_image_shape(input_data)
     data_mzp_camera = np.zeros([data_shape[0], data_shape[1], 3, 1])
 
-    for i, key in enumerate(['Bm', 'Bz', 'Bp']):
+    for i, key in enumerate(["M", "Z", "P"]):
         data_mzp_camera[:, :, i, 0] = input_data[key].data
 
     imax_matrix = generate_imax_matrix(data_shape)
     try:
         imax_matrix_inv = np.linalg.inv(imax_matrix)
     except np.linalg.LinAlgError as err:
-        if 'Singular matrix' in str(err):
-            raise ValueError('Singular IMAX effect matrix is degenerate')
+        if "Singular matrix" in str(err):
+            msg = "Singular IMAX effect matrix is degenerate"
+            raise ValueError(msg)
         else:
-            raise err
+            raise
 
     data_mzp_solar = np.matmul(imax_matrix_inv, data_mzp_camera)
 
@@ -268,8 +271,8 @@ def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
     return input_data
 
 
-def _determine_image_shape(input_collection: NDCollection) -> t.Tuple[int, int]:
-    """Evaluates the shape of the image in the input NDCollection
+def _determine_image_shape(input_collection: NDCollection) -> tuple[int, int]:
+    """Evaluates the shape of the image in the input NDCollection.
 
     Parameters
     ----------
@@ -280,14 +283,14 @@ def _determine_image_shape(input_collection: NDCollection) -> t.Tuple[int, int]:
     -------
     Tuple[int, int]
         shape of image data
+
     """
     keys = list(input_collection.keys())
-    shape = input_collection[keys[0]].data.shape
-    return shape
+    return input_collection[keys[0]].data.shape
 
 
 def add_alpha(input_data: NDCollection) -> NDCollection:
-    """Adds an alpha array to an image NDCollection
+    """Adds an alpha array to an image NDCollection.
 
     Parameters
     ----------
@@ -298,24 +301,27 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
     -------
     NDCollection
         dataset with alpha array appended
+
     """
     # test if alpha exists. if not check if alpha keyword added. if not create default alpha with warning.
     img_shape = _determine_image_shape(input_data)
-    keys = list(input_data)
+    keys = list(input_data.keys())
     wcs = input_data[keys[0]].wcs
-    metad = input_data[keys[0]].meta
+    meta = input_data[keys[0]].meta
 
     if len(img_shape) == 2:  # it's an image and not just an array
         alpha = radial_north(img_shape)
     else:
-        raise ValueError(f"Data must be an image with 2 dimensions, found {len(img_shape)}.")
-    input_data.update(NDCollection([("alpha", NDCube(alpha, wcs=wcs, meta=metad))], meta={}, aligned_axes='all'))
+        msg = f"Data must be an image with 2 dimensions, found {len(img_shape)}."
+        raise ValueError(msg)
+    input_data.update(NDCollection([("alpha", NDCube(alpha, wcs=wcs, meta=meta))], meta={},
+                                   aligned_axes="all"))
 
     return input_data
 
 
 def _compose2(f: t.Callable, g: t.Callable) -> t.Callable:
-    """Compose 2 functions together, i.e. f(g(x))
+    """Compose 2 functions together, i.e. f(g(x)).
 
     Parameters
     ----------
@@ -328,12 +334,18 @@ def _compose2(f: t.Callable, g: t.Callable) -> t.Callable:
     -------
     Callable
         composed function
+
     """
-    return lambda *a, **kw: f(g(*a, **kw), **kw)
+    def out(*a, **kw):
+        return f(g(*a, **kw), **kw)
+    out.uses_alpha = getattr(f, "uses_alpha", False) or getattr(g, "uses_alpha", False)
+    out.uses_out_angles = getattr(f, "uses_out_angles", False) or getattr(g, "uses_out_angles", False)
+
+    return out
 
 
 def identity(x: t.Any, **kwargs) -> t.Any:
-    """Identity function that returns the input
+    """Identity function that returns the input.
 
     Parameters
     ----------
@@ -344,5 +356,6 @@ def identity(x: t.Any, **kwargs) -> t.Any:
     -------
     Any
         input value returned back
+
     """
     return x

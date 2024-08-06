@@ -31,7 +31,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: resolve(input_data: list[str] | ndcube.NDCollection, out_system: solpolpy.transforms.System | str, imax_effect: bool = False, out_angles: astropy.units.degree = None) -> ndcube.NDCollection
+.. py:function:: resolve(input_data: list[str] | ndcube.NDCollection, out_system: str, imax_effect: bool = False, out_angles: astropy.units.degree = None) -> ndcube.NDCollection
 
    Apply a polarization transformation to a set of input dataframes.
 
@@ -49,7 +49,7 @@ Module Contents
                       - "bthp": Total brightness, angle and degree of polarization.
                       - "fourpol": For observations taken at sequence of four polarizer angles, i.e. 0°, 45°, 90° and 135°.
                       - "npol": Set of images taken at than arbitrary polarizing angles other than MZP
-   :type out_system: System | string
+   :type out_system: string
    :param imax_effect: The 'IMAX effect' describes the change in apparent measured polarization angle as an result of foreshortening effects.
                        This effect becomes more pronounced for wide field polarized imagers - see Patel et al (2024, in preparation)
                        If True, applies the IMAX effect for wide field imagers as part of the resolution process.

@@ -13,7 +13,6 @@ Submodules
    /autoapi/solpolpy/alpha/index
    /autoapi/solpolpy/constants/index
    /autoapi/solpolpy/core/index
-   /autoapi/solpolpy/decorators/index
    /autoapi/solpolpy/errors/index
    /autoapi/solpolpy/instruments/index
    /autoapi/solpolpy/plotting/index

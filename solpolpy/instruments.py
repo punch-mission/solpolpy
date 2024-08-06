@@ -1,5 +1,6 @@
 """Instrument specific code."""
 
+import astropy.units as u
 import numpy as np
 from astropy.io import fits
 from astropy.wcs import WCS
@@ -11,12 +12,12 @@ from solpolpy.errors import TooFewFilesError, UnsupportedInstrumentError
 def get_data_angle(header):
     angle_hdr = header["POLAR"]
     if isinstance(angle_hdr, float):
-        angle = angle_hdr
+        angle = angle_hdr * u.degree
     elif isinstance(angle_hdr, str):
-        angle = float(angle_hdr.split("Deg")[0])
+        angle = float(angle_hdr.split("Deg")[0]) * u.degree
     else:
         try:
-            angle = float(angle_hdr)
+            angle = float(angle_hdr) * u.degree
         except ValueError:
             msg = "Polar angle in the header could not be read for this instrument."
             raise UnsupportedInstrumentError(msg)
@@ -65,11 +66,11 @@ def load_data(path_list: list[str],
 
             angle = get_data_angle(hdul[0].header)
 
-            data_out.append((f"B{angle}",
+            data_out.append((str(angle),
                              NDCube(hdul[0].data,
                                     mask=mask,
                                     wcs=wcs,
-                                    meta=hdul[0].header)))
+                                    meta=dict(hdul[0].header))))
 
     return NDCollection(data_out, meta={}, aligned_axes="all")
 

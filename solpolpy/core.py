@@ -15,7 +15,7 @@ from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
 
 @u.quantity_input
 def resolve(input_data: list[str] | NDCollection,
-            out_system: System | str,
+            out_system: str,
             imax_effect: bool = False,
             out_angles: u.degree = None) -> NDCollection:
     """Apply a polarization transformation to a set of input dataframes.
@@ -26,7 +26,7 @@ def resolve(input_data: list[str] | NDCollection,
         Either: 1) a collection where each member NDCube has an expected name or 2) a list of paths to FITS files.
         We recommend option 2.
 
-    out_system : System | string
+    out_system : string
         The polarization state you want to convert your input dataframes to.
         Must be one of the following strings:
 

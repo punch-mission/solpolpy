@@ -17,114 +17,6 @@ wcs.crpix = 0, 2, 2
 wcs.crval = 10, 0.5, 1
 wcs.cname = "wavelength", "HPC lat", "HPC lon"
 
-#
-# @fixture()
-# def npol_mzp_zeros():
-#     data_out = []
-#     data_out.append(("Bp", NDCube(np.array([0]), wcs=wcs, meta={"POLAR": 60.0, "OBSRVTRY": "STEREO_A"})))
-#     data_out.append(("Bz", NDCube(np.array([0]), wcs=wcs, meta={"POLAR": 0.0, "OBSRVTRY": "STEREO_A"})))
-#     data_out.append(("Bm", NDCube(np.array([0]), wcs=wcs, meta={"POLAR": -60.0, "OBSRVTRY": "STEREO_A"})))
-#     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
-#     return NDCollection(data_out, meta={}, aligned_axes="all")
-#
-#
-# def test_npol_mzp_zeros(npol_mzp_zeros):
-#     actual = transforms.npol_to_mzp(npol_mzp_zeros)
-#     expected_data = []
-#     expected_data.append(("Bm", NDCube(np.array([0]), wcs=wcs)))
-#     expected_data.append(("Bz", NDCube(np.array([0]), wcs=wcs)))
-#     expected_data.append(("Bp", NDCube(np.array([0]), wcs=wcs)))
-#     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
-#     for k in list(expected):
-#         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
-#
-#
-# @fixture()
-# def npol_mzp_ones():
-#     data_out = []
-#     data_out.append(("Bm", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": 60, "OBSRVTRY": "STEREO_B"})))
-#     data_out.append(("Bz", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": 0, "OBSRVTRY": "STEREO_B"})))
-#     data_out.append(("Bp", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": -60, "OBSRVTRY": "STEREO_B"})))
-#     return NDCollection(data_out, meta={}, aligned_axes="all")
-#
-#
-# def test_npol_mzp_ones(npol_mzp_ones):
-#     actual = transforms.npol_to_mzp(npol_mzp_ones)
-#     expected_data = []
-#     expected_data.append(("Bm", NDCube(np.array([1]), wcs=wcs)))
-#     expected_data.append(("Bz", NDCube(np.array([1]), wcs=wcs)))
-#     expected_data.append(("Bp", NDCube(np.array([1]), wcs=wcs)))
-#     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
-#     for k in list(expected):
-#         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
-#
-#
-# @fixture()
-# def mzp_ones_alpha():
-#     data_out = []
-#     data_out.append(("Bp", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": 60, "OBSRVTRY": "LASCO"})))
-#     data_out.append(("Bz", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": 0, "OBSRVTRY": "LASCO"})))
-#     data_out.append(("Bm", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": -60, "OBSRVTRY": "LASCO"})))
-#     data_out.append(("alpha", NDCube(np.array([0]), wcs=wcs)))
-#     return NDCollection(data_out, meta={}, aligned_axes="all")
-#
-#
-# def test_npol_mzp_ones_alpha(mzp_ones_alpha):
-#     actual = transforms.npol_to_mzp(mzp_ones_alpha)
-#     expected_data = []
-#     expected_data.append(("Bm", NDCube(np.array([1]), wcs=wcs)))
-#     expected_data.append(("Bz", NDCube(np.array([1]), wcs=wcs)))
-#     expected_data.append(("Bp", NDCube(np.array([1]), wcs=wcs)))
-#     expected_data.append(("alpha", NDCube(np.array([0]), wcs=wcs)))
-#     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
-#     for k in list(expected):
-#         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
-#
-#
-# @fixture()
-# def mzp_zeros():
-#     data_out = []
-#     data_out.append(("Bm", NDCube(np.array([0]), wcs=wcs, meta={"POLAR": 60})))
-#     data_out.append(("Bz", NDCube(np.array([0]), wcs=wcs, meta={"POLAR": 0})))
-#     data_out.append(("Bp", NDCube(np.array([0]), wcs=wcs, meta={"POLAR": -60})))
-#     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
-#     return NDCollection(data_out, meta={}, aligned_axes="all")
-#
-#
-# def test_mzp_bpb_zeros(mzp_zeros):
-#     actual = transforms.mzp_to_bpb(mzp_zeros)
-#     expected_data = []
-#     expected_data.append(("B", NDCube(np.array([0]), wcs=wcs)))
-#     expected_data.append(("pB", NDCube(np.array([0]), wcs=wcs)))
-#     expected_data.append(("alpha", NDCube(np.array([0])*u.radian, wcs=wcs)))
-#     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
-#     for k in list(expected):
-#         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
-#
-#
-# @fixture()
-# def mzp_ones():
-#     data_out = []
-#     data_out.append(("Bm", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": 60})))
-#     data_out.append(("Bz", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": 0})))
-#     data_out.append(("Bp", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": -60})))
-#     data_out.append(("alpha", NDCube(np.array([0])*u.degree, wcs=wcs)))
-#     return NDCollection(data_out, meta={}, aligned_axes="all")
-#
-#
-# def test_mzp_bpb_ones(mzp_ones):
-#     actual = transforms.mzp_to_bpb(mzp_ones)
-#     expected_data = []
-#     expected_data.append(("B", NDCube(np.array([2]), wcs=wcs)))
-#     expected_data.append(("pB", NDCube(np.zeros(1), wcs=wcs)))
-#     expected_data.append(("alpha", NDCube(np.array([0])*u.radian, wcs=wcs)))
-#     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
-#     for k in list(expected):
-#         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
-#
-#
-
-#
 
 def test_bpb_mzp_zeros(bpb_zeros):
     actual = transforms.bpb_to_mzp(bpb_zeros)
@@ -305,12 +197,21 @@ def test_btbr_npol_ones(btbr_ones):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
 
-def test_mzp_t_npol_ones(mzp_ones):
-    actual = transforms.mzp_to_npol(mzp_ones, out_angles=[0]*u.degree)
-    expected_data = [(str(0 * u.degree), NDCube(np.array([1]), wcs=wcs))]
+def test_mzp_to_npol_custom():
+    """M, Z, P = 0, 1, 0 conversion"""
+    input_data = NDCollection(
+        [("P", NDCube(np.array([[0]]), wcs=wcs, meta={"POLAR": 60 * u.degree})),
+                ("Z", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0 * u.degree})),
+                ("M", NDCube(np.array([[0]]), wcs=wcs, meta={"POLAR": -60 * u.degree}))],
+                              meta={}, aligned_axes="all")
+    actual = transforms.mzp_to_npol(input_data, out_angles=[0, 45, 90]*u.degree)
+    expected_data = [(str(0 * u.degree), NDCube(np.array([1]), wcs=wcs, meta={"POLAR": 0*u.degree})),
+                     (str(45 * u.degree), NDCube(np.array([1/3]), wcs=wcs, meta={"POLAR": 45*u.degree})),
+                     (str(90 * u.degree), NDCube(np.array([-1/3]), wcs=wcs, meta={"POLAR": 90*u.degree}))]
     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
+
 
 @fixture()
 def fourpol_ones():

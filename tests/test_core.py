@@ -9,7 +9,7 @@ from ndcube import NDCollection, NDCube
 
 from solpolpy.core import _determine_image_shape, add_alpha, determine_input_kind, get_transform_path, resolve
 from solpolpy.errors import UnsupportedTransformationError
-from solpolpy.graph import System
+from solpolpy.transforms import System
 from tests.fixtures import *
 
 wcs = astropy.wcs.WCS(naxis=3)
@@ -83,16 +83,10 @@ def test_btbr_to_npol_missing_out_angles(btbr_ones):
 
 
 def test_imax_effect(mzp_data):
-    result = resolve(mzp_data, "MZP", imax_effect=True)
+    result = resolve(mzp_data, "mzp", imax_effect=True)
     assert isinstance(result, NDCollection)
     for key in result.keys():
         assert np.sum(result[key].data * mzp_data[key].data) != 0
-
-
-def test_imax_effect_unsupported_transformation_output(mzp_data):
-    with pytest.raises(UnsupportedTransformationError):
-        result = resolve(mzp_data, "BpB", imax_effect=True)
-        assert isinstance(result, NDCollection)
 
 
 def test_imax_effect_unsupported_transformation_input(bpb_data):

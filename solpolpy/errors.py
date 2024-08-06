@@ -16,3 +16,7 @@ class UnsupportedTransformationError(SolpolpyError):
 
 class MissingAlphaError(SolpolpyError):
     pass
+
+
+class InvalidDataError(SolpolpyError):
+    pass

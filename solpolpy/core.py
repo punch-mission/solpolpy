@@ -9,13 +9,13 @@ from ndcube import NDCollection, NDCube
 from solpolpy.alpha import radial_north
 from solpolpy.constants import STEREOA_OFFSET_ANGLE, STEREOB_OFFSET_ANGLE
 from solpolpy.errors import UnsupportedTransformationError
-from solpolpy.graph import SYSTEM_REQUIRED_KEYS, System, transform_graph
 from solpolpy.instruments import load_data
+from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
 
 
 @u.quantity_input
 def resolve(input_data: list[str] | NDCollection,
-            out_system: str,
+            out_system: System,
             imax_effect: bool = False,
             out_angles: u.degree = None) -> NDCollection:
     # TODO: improve this documentation
@@ -66,20 +66,22 @@ def resolve(input_data: list[str] | NDCollection,
     transform_path = get_transform_path(input_kind, out_system)
     equation = get_transform_equation(transform_path)
 
+    if getattr(equation, "uses_out_angles", False) and out_angles is None:
+        raise ValueError("Out angles must be specified for this transform.")
+
     if imax_effect:
-        if input_kind == "mzp" and out_system == "mzp":  # TODO: does this ever get triggered?
+        if input_kind == "mzp":
             input_data = resolve_imax_effect(input_data)
         else:
-            msg = "IMAX effect applies only for MZP->MZP transformations."
+            msg = "IMAX effect applies only for transformations starting from MZP."
             raise UnsupportedTransformationError(msg)
 
     if requires_alpha(equation) and "alpha" not in input_keys:
         input_data = add_alpha(input_data)
 
     return equation(input_data,
-                      offset_angle=determine_offset_angle(input_data),
-                      out_angles=out_angles)
-
+                    offset_angle=determine_offset_angle(input_data),
+                    out_angles=out_angles)
 
 
 def determine_offset_angle(input_collection: NDCollection) -> float:
@@ -213,7 +215,7 @@ def generate_imax_matrix(array_shape) -> np.ndarray:
     # TODO fix variable name
     thmzp = [-60, 0, 60] * u.degree
 
-    # TODO don't hard code extents butg get from the file
+    # TODO don't hard code extents but get from the file
     long_arr, lat_arr = np.meshgrid(np.linspace(-20, 20, array_shape[0]), np.linspace(-20, 20, array_shape[1]))
 
     # Foreshortening (IMAX) effect on polarizer angle
@@ -339,6 +341,8 @@ def _compose2(f: t.Callable, g: t.Callable) -> t.Callable:
     def out(*a, **kw):
         return f(g(*a, **kw), **kw)
     out.uses_alpha = getattr(f, "uses_alpha", False) or getattr(g, "uses_alpha", False)
+    out.uses_out_angles = getattr(f, "uses_out_angles", False) or getattr(g, "uses_out_angles", False)
+
     return out
 
 

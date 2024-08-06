@@ -4,17 +4,60 @@ DeForest, C. E., Seaton, D. B., & West, M. J. (2022).
 Three-polarizer Treatment of Linear Polarization in Coronagraphs and Heliospheric Imagers.
 The Astrophysical Journal, 927(1), 98.
 """
+import sys
 import copy
+from enum import StrEnum
+from inspect import signature, getmembers, isfunction
 
 import astropy.units as u
+import networkx as nx
 import numpy as np
 from ndcube import NDCollection, NDCube
 
-from solpolpy.util import combine_all_collection_masks, use_alpha
+from solpolpy.errors import InvalidDataError, MissingAlphaError
+from solpolpy.util import combine_all_collection_masks
+
+System = StrEnum("System", ["bpb", "npol", "stokes", "mzp", "btbr", "bthp", "fourpol", "bp3"])
+SYSTEM_REQUIRED_KEYS = {System.bpb: {"B", "pB"},
+                        System.npol: set(),
+                        System.stokes: {"I", "Q", "U"},
+                        System.mzp: {"M", "Z", "P"},
+                        System.btbr: {"Bt", "Br"},
+                        System.bp3: {"B", "pB", "pBp"},
+                        System.bthp: {"B", "theta", "p"},
+                        System.fourpol: {str(q) for q in [0.0, 45.0, 90.0, 135.0] * u.degree},
+                        }
 
 
-# TODO: prepare a config file where the reference angle say of STEREO, KCor etc can be set
-def npol_to_mzp(input_collection, offset_angle=0, **kwargs):
+def transform(source_system, target_system, use_alpha):
+    """Decorator for transforms."""
+    def decorator(transform_function):
+        transform_parameters = signature(transform_function).parameters
+        uses_out_angles = "out_angles" in transform_parameters
+
+        def wrapper(input_collection, *args, **kwargs):
+            if uses_out_angles and "out_angles" not in transform_parameters:
+                msg = "Out angles is expected but not provided for this function"
+                raise InvalidDataError(msg)
+            if use_alpha and "alpha" not in input_collection:
+                msg = "alpha expected in input_collection but not found."
+                raise MissingAlphaError(msg)
+            required_keys = SYSTEM_REQUIRED_KEYS[source_system]
+            for key in required_keys:
+                if key not in input_collection:
+                    msg = f"Expected key of {key} for {source_system} but not found."
+                    raise InvalidDataError(msg)
+            return transform_function(input_collection, *args, **kwargs)
+
+        wrapper.uses_out_angles = uses_out_angles
+        wrapper.uses_alpha = use_alpha
+        return wrapper
+    return decorator
+
+
+@transform(System.npol, System.mzp, use_alpha=False)
+@u.quantity_input
+def npol_to_mzp(input_collection, offset_angle=0*u.degree, **kwargs):
     """
     Notes
     ------
@@ -55,7 +98,7 @@ def npol_to_mzp(input_collection, offset_angle=0, **kwargs):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-@use_alpha
+@transform(System.mzp, System.bpb, use_alpha=True)
 def mzp_to_bpb(input_collection, **kwargs):
     """
     Notes
@@ -96,16 +139,12 @@ def mzp_to_bpb(input_collection, **kwargs):
     return NDCollection(BpB_cube, meta={}, aligned_axes="all")
 
 
-@use_alpha
+@transform(System.bpb, System.mzp, use_alpha=True)
 def bpb_to_mzp(input_collection, **kwargs):
     """Notes
     -----
     Equation 4 in DeForest et al. 2022.
     """
-    if "alpha" not in input_collection:
-        msg = "missing alpha"
-        raise ValueError(msg)
-
     alpha = input_collection["alpha"].data * u.radian
     B, pB = input_collection["B"].data, input_collection["pB"].data
     mzp_angles = [-60, 0, 60] * u.degree
@@ -128,16 +167,12 @@ def bpb_to_mzp(input_collection, **kwargs):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-@use_alpha
+@transform(System.bpb, System.btbr, use_alpha=True)
 def bpb_to_btbr(input_collection, **kwargs):
     """Notes
     -----
     Equation 1 and 2 in DeForest et al. 2022.
     """
-    if "alpha" not in input_collection:
-        msg = "missing alpha"
-        raise ValueError(msg)
-
     alpha = input_collection["alpha"].data * u.radian
     B, pB = input_collection["B"].data, input_collection["pB"].data
     Br = (B - pB) / 2
@@ -156,7 +191,7 @@ def bpb_to_btbr(input_collection, **kwargs):
     return NDCollection(BtBr_cube, meta={}, aligned_axes="all")
 
 
-@use_alpha
+@transform(System.btbr, System.bpb, use_alpha=True)
 def btbr_to_bpb(input_collection, **kwargs):
     """Notes
     -----
@@ -184,6 +219,7 @@ def btbr_to_bpb(input_collection, **kwargs):
     return NDCollection(BpB_cube, meta={}, aligned_axes="all")
 
 
+@transform(System.mzp, System.stokes, use_alpha=False)
 def mzp_to_stokes(input_collection, **kwargs):
     """Notes
     -----
@@ -210,6 +246,7 @@ def mzp_to_stokes(input_collection, **kwargs):
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")
 
 
+@transform(System.stokes, System.mzp, use_alpha=False)
 def stokes_to_mzp(input_collection, **kwargs):
     """Notes
     -----
@@ -241,7 +278,7 @@ def stokes_to_mzp(input_collection, **kwargs):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-@use_alpha
+@transform(System.mzp, System.bp3, use_alpha=True)
 def mzp_to_bp3(input_collection, **kwargs):
     """
     Notes
@@ -285,18 +322,13 @@ def mzp_to_bp3(input_collection, **kwargs):
     return NDCollection(Bp3_cube, meta={}, aligned_axes="all")
 
 
-@use_alpha
+@transform(System.bp3, System.mzp, use_alpha=True)
 def bp3_to_mzp(input_collection, **kwargs):
     """
     Notes
     ------
     Equation 11 in DeForest et al. 2022.
     """""
-
-    if "alpha" not in input_collection:
-        msg = "missing alpha"
-        raise ValueError(msg)
-
     B, pB, pBp = input_collection["B"].data, input_collection["pB"].data, input_collection["pBp"].data
     alpha = input_collection["alpha"].data * u.radian
 
@@ -321,16 +353,12 @@ def bp3_to_mzp(input_collection, **kwargs):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-@use_alpha
+@transform(System.btbr, System.mzp, use_alpha=True)
 def btbr_to_mzp(input_collection, **kwargs):
     """Notes
     -----
     Equation 3 in DeForest et al. 2022.
     """
-    if "alpha" not in input_collection:
-        msg = "missing alpha"
-        raise ValueError(msg)
-
     alpha = input_collection["alpha"].data * u.radian
     Bt = input_collection["Bt"].data
     Br = input_collection["Br"].data
@@ -355,17 +383,13 @@ def btbr_to_mzp(input_collection, **kwargs):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-@use_alpha
+@transform(System.bp3, System.bthp, use_alpha=True)
 def bp3_to_bthp(input_collection, **kwargs):
     """
     Notes
     ------
     Equations 9, 15, 16 in DeForest et al. 2022.
     """""
-    if "alpha" not in input_collection:
-        msg = "missing alpha"
-        raise ValueError(msg)
-
     B, pB, pBp = input_collection["B"].data, input_collection["pB"].data, input_collection["pBp"].data
     alpha = input_collection["alpha"].data * u.radian
 
@@ -384,22 +408,14 @@ def bp3_to_bthp(input_collection, **kwargs):
     return NDCollection(Bthp_cube, meta={}, aligned_axes="all")
 
 
-@use_alpha
-@u.quantity_input(out_angles="angle")
-def btbr_to_npol(input_collection, out_angles=None, **kwargs):
+@transform(System.btbr, System.npol, use_alpha=True)
+@u.quantity_input
+def btbr_to_npol(input_collection, out_angles: u.degree, **kwargs):
     """Notes
     -----
     Equation 3 in DeForest et al. 2022.
     angles: list of input angles in degree
     """
-    if "alpha" not in input_collection:
-        msg = "missing alpha"
-        raise ValueError(msg)
-
-    if out_angles is None:
-        msg = "out_angles must be defined as a list of floats"
-        raise ValueError(msg)
-
     alpha = input_collection["alpha"].data * u.radian
     Bt, Br = input_collection["Bt"].data, input_collection["Br"].data
 
@@ -416,17 +432,14 @@ def btbr_to_npol(input_collection, out_angles=None, **kwargs):
     return NDCollection(Bnpol_cube, meta={}, aligned_axes="all")
 
 
-@u.quantity_input(out_angles="angle")
-def mzp_to_npol(input_collection, out_angles=None, offset_angle=0, **kwargs):
+@transform(System.mzp, System.npol, use_alpha=False)
+@u.quantity_input
+def mzp_to_npol(input_collection, out_angles: u.degree, offset_angle=0*u.degree, **kwargs):
     """Notes
     -----
     Equation 45 in DeForest et al. 2022.
     angles: list of input angles in degree
     """
-    if out_angles is None:
-        msg = "out_angles must be defined as a list of floats"
-        raise ValueError(msg)
-
     in_list = list(input_collection)
     input_dict = {}
 
@@ -440,7 +453,8 @@ def mzp_to_npol(input_collection, out_angles=None, offset_angle=0, **kwargs):
     Bnpol_cube = []
     mask = combine_all_collection_masks(input_collection)
     for ang in npol_ang:
-        Bnpol[ang] = (1/3) * np.sum([v.data * (4 * np.power(np.cos(ang - k - offset_angle), 2)) - 1 for k, v in input_dict.items()], axis=0)
+        Bnpol[ang] = (1/3) * np.sum([v.data * (4 * np.power(np.cos(ang - k - offset_angle), 2)) - 1
+                                     for k, v in input_dict.items()], axis=0)
         meta_tmp = copy.copy(input_collection[in_list[0]].meta)
         meta_tmp.update(Polar=ang)
         Bnpol_cube.append((str(ang), NDCube(Bnpol[ang], wcs=input_collection[in_list[0]].wcs, mask=mask,  meta=meta_tmp)))
@@ -452,6 +466,7 @@ def mzp_to_npol(input_collection, out_angles=None, offset_angle=0, **kwargs):
     return NDCollection(Bnpol_cube, meta={}, aligned_axes="all")
 
 
+@transform(System.fourpol, System.stokes, use_alpha=False)
 def fourpol_to_stokes(input_collection, **kwargs):
     """
     Notes
@@ -466,9 +481,24 @@ def fourpol_to_stokes(input_collection, **kwargs):
     metaI, metaQ, metaU = (copy.copy(input_collection[str(0 * u.degree)].meta),
                            copy.copy(input_collection[str(0 * u.degree)].meta),
                            copy.copy(input_collection[str(0 * u.degree)].meta))
+    metaI.update(POLAR="Stokes I")
+    metaQ.update(POLAR="Stokes Q")
+    metaU.update(POLAR="Stokes U")
+
     mask = combine_all_collection_masks(input_collection)
     BStokes_cube = [("I", NDCube(Bi, wcs=input_collection[str(0 * u.degree)].wcs, mask=mask, meta=metaI)),
                     ("Q", NDCube(Bq, wcs=input_collection[str(0 * u.degree)].wcs, mask=mask, meta=metaQ)),
                     ("U", NDCube(Bu, wcs=input_collection[str(0 * u.degree)].wcs, mask=mask, meta=metaU))]
 
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")
+
+
+# Build the graph at the bottom so all transforms are defined
+transform_graph = nx.DiGraph()
+transform_functions = getmembers(sys.modules[__name__], isfunction)
+for function_name, function in transform_functions:
+    if "_to_" in function_name:
+        source, destination = function_name.split("_to_")
+        transform_graph.add_edge(System[source.lower()],
+                                 System[destination.lower()],
+                                 func=function)

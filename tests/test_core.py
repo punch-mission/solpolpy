@@ -93,3 +93,15 @@ def test_imax_effect_unsupported_transformation_input(bpb_data):
     with pytest.raises(UnsupportedTransformationError):
         result = resolve(bpb_data, "MZP", imax_effect=True)
         assert isinstance(result, NDCollection)
+
+
+def test_mzp_to_mzp_is_constant(mzp_ones_other_order):
+    result = resolve(mzp_ones_other_order, "mzp", imax_effect=False)
+    assert result == mzp_ones_other_order
+
+
+def test_mzp_to_npol_as_mzp_is_constant(mzp_ones):
+    result = resolve(mzp_ones, "npol", out_angles=[-60, 0, 60]*u.degree, imax_effect=False)
+    assert np.allclose(result['60.0 deg'].data, mzp_ones["P"].data)
+    assert np.allclose(result['-60.0 deg'].data, mzp_ones["M"].data)
+    assert np.allclose(result['0.0 deg'].data, mzp_ones["Z"].data)

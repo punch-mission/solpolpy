@@ -448,22 +448,23 @@ def mzp_to_npol(input_collection, out_angles: u.degree, offset_angle=0*u.degree,
             break
         input_dict[input_collection[p_angle].meta["POLAR"]] = input_collection[p_angle].data
 
-    npol_ang = out_angles
-    Bnpol = {}
-    Bnpol_cube = []
+    output_cubes = []
     mask = combine_all_collection_masks(input_collection)
-    for ang in npol_ang:
-        Bnpol[ang] = (1/3) * np.sum([v.data * (4 * np.power(np.cos(ang - k - offset_angle), 2)) - 1
-                                     for k, v in input_dict.items()], axis=0)
-        meta_tmp = copy.copy(input_collection[in_list[0]].meta)
-        meta_tmp.update(Polar=ang)
-        Bnpol_cube.append((str(ang), NDCube(Bnpol[ang], wcs=input_collection[in_list[0]].wcs, mask=mask,  meta=meta_tmp)))
+    first_meta = input_collection[in_list[0]].meta
+    first_wcs = input_collection[in_list[0]].wcs
+    for out_angle in out_angles:
+        value = (1/3) * np.sum([input_cube.data * (4 * np.square(np.cos(out_angle - input_angle - offset_angle)) - 1)
+                                     for input_angle, input_cube in input_dict.items()], axis=0)
+        out_meta = copy.copy(first_meta)
+        out_meta.update(POLAR=out_angle)
+        output_cubes.append((str(out_angle),
+                           NDCube(value, wcs=first_wcs, mask=mask, meta=out_meta)))
 
     if "alpha" in input_collection:
         alpha = input_collection["alpha"].data * u.radian
-        Bnpol_cube.append(("alpha", NDCube(alpha, wcs=input_collection[in_list[0]].wcs, mask=mask)))
+        output_cubes.append(("alpha", NDCube(alpha, wcs=input_collection[in_list[0]].wcs, mask=mask)))
 
-    return NDCollection(Bnpol_cube, meta={}, aligned_axes="all")
+    return NDCollection(output_cubes, meta={}, aligned_axes="all")
 
 
 @transform(System.fourpol, System.stokes, use_alpha=False)

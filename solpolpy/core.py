@@ -15,10 +15,9 @@ from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
 
 @u.quantity_input
 def resolve(input_data: list[str] | NDCollection,
-            out_system: System,
+            out_system: System | str,
             imax_effect: bool = False,
             out_angles: u.degree = None) -> NDCollection:
-    # TODO: improve this documentation
     """Apply a polarization transformation to a set of input dataframes.
 
     Parameters
@@ -27,7 +26,7 @@ def resolve(input_data: list[str] | NDCollection,
         Either: 1) a collection where each member NDCube has an expected name or 2) a list of paths to FITS files.
         We recommend option 2.
 
-    out_system : string
+    out_system : System | string
         The polarization state you want to convert your input dataframes to.
         Must be one of the following strings:
 
@@ -45,8 +44,8 @@ def resolve(input_data: list[str] | NDCollection,
         This effect becomes more pronounced for wide field polarized imagers - see Patel et al (2024, in preparation)
         If True, applies the IMAX effect for wide field imagers as part of the resolution process.
 
-    out_angles : List[float]
-        Angles to use (in degrees) when converting to npol or some arbitrary system
+    out_angles : u.degree
+        Angles to use when converting to npol or some arbitrary system
 
     Returns
     -------
@@ -54,7 +53,6 @@ def resolve(input_data: list[str] | NDCollection,
         The transformed data are returned as a NDCollection.
 
     """
-    # standardize out_system to all lowercase
     out_system = out_system.lower()
 
     if isinstance(input_data, list):

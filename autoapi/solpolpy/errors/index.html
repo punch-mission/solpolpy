@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>solpolpy.errors &#8212; solpolpy 0.2.0 documentation</title>
+    <title>solpolpy.errors &#8212; solpolpy 0.3.0 documentation</title>
   
   
   
@@ -36,15 +36,15 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../../_static/documentation_options.js?v=e259d695"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/solpolpy/errors/index';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="solpolpy.graph" href="../graph/index.html" />
-    <link rel="prev" title="solpolpy.core" href="../core/index.html" />
+    <link rel="next" title="solpolpy.instruments" href="../instruments/index.html" />
+    <link rel="prev" title="solpolpy.decorators" href="../decorators/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">solpolpy 0.2.0 documentation</p>
+    <p class="title logo__title">solpolpy 0.3.0 documentation</p>
   
 </a></div>
     
@@ -376,11 +376,12 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../alpha/index.html">solpolpy.alpha</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../constants/index.html">solpolpy.constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../core/index.html">solpolpy.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators/index.html">solpolpy.decorators</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">solpolpy.errors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../graph/index.html">solpolpy.graph</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../instruments/index.html">solpolpy.instruments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../plotting/index.html">solpolpy.plotting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../polarizers/index.html">solpolpy.polarizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/index.html">solpolpy.transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../util/index.html">solpolpy.util</a></li>
 </ul>
 </details></li>
 </ul>
@@ -449,13 +450,22 @@ document.write(`
 <h2>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.errors.TooFewFilesError" title="solpolpy.errors.TooFewFilesError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TooFewFilesError</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.errors.SolpolpyError" title="solpolpy.errors.SolpolpyError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SolpolpyError</span></code></a></p></td>
 <td><p>Common base class for all non-exit exceptions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.errors.UnsupportedInstrumentError" title="solpolpy.errors.UnsupportedInstrumentError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnsupportedInstrumentError</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.errors.TooFewFilesError" title="solpolpy.errors.TooFewFilesError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TooFewFilesError</span></code></a></p></td>
 <td><p>Common base class for all non-exit exceptions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.errors.UnsupportedTransformationError" title="solpolpy.errors.UnsupportedTransformationError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnsupportedTransformationError</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.errors.UnsupportedInstrumentError" title="solpolpy.errors.UnsupportedInstrumentError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnsupportedInstrumentError</span></code></a></p></td>
+<td><p>Common base class for all non-exit exceptions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.errors.UnsupportedTransformationError" title="solpolpy.errors.UnsupportedTransformationError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UnsupportedTransformationError</span></code></a></p></td>
+<td><p>Common base class for all non-exit exceptions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.errors.MissingAlphaError" title="solpolpy.errors.MissingAlphaError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MissingAlphaError</span></code></a></p></td>
+<td><p>Common base class for all non-exit exceptions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.errors.InvalidDataError" title="solpolpy.errors.InvalidDataError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InvalidDataError</span></code></a></p></td>
 <td><p>Common base class for all non-exit exceptions.</p></td>
 </tr>
 </tbody>
@@ -465,23 +475,44 @@ document.write(`
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
 <dl class="py exception">
+<dt class="sig sig-object py" id="solpolpy.errors.SolpolpyError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">solpolpy.errors.</span></span><span class="sig-name descname"><span class="pre">SolpolpyError</span></span><a class="headerlink" href="#solpolpy.errors.SolpolpyError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Common base class for all non-exit exceptions.</p>
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="solpolpy.errors.TooFewFilesError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">solpolpy.errors.</span></span><span class="sig-name descname"><span class="pre">TooFewFilesError</span></span><a class="headerlink" href="#solpolpy.errors.TooFewFilesError" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#solpolpy.errors.SolpolpyError" title="solpolpy.errors.SolpolpyError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SolpolpyError</span></code></a></p>
 <p>Common base class for all non-exit exceptions.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="solpolpy.errors.UnsupportedInstrumentError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">solpolpy.errors.</span></span><span class="sig-name descname"><span class="pre">UnsupportedInstrumentError</span></span><a class="headerlink" href="#solpolpy.errors.UnsupportedInstrumentError" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#solpolpy.errors.SolpolpyError" title="solpolpy.errors.SolpolpyError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SolpolpyError</span></code></a></p>
 <p>Common base class for all non-exit exceptions.</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="solpolpy.errors.UnsupportedTransformationError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">solpolpy.errors.</span></span><span class="sig-name descname"><span class="pre">UnsupportedTransformationError</span></span><a class="headerlink" href="#solpolpy.errors.UnsupportedTransformationError" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#solpolpy.errors.SolpolpyError" title="solpolpy.errors.SolpolpyError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SolpolpyError</span></code></a></p>
+<p>Common base class for all non-exit exceptions.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="solpolpy.errors.MissingAlphaError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">solpolpy.errors.</span></span><span class="sig-name descname"><span class="pre">MissingAlphaError</span></span><a class="headerlink" href="#solpolpy.errors.MissingAlphaError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#solpolpy.errors.SolpolpyError" title="solpolpy.errors.SolpolpyError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SolpolpyError</span></code></a></p>
+<p>Common base class for all non-exit exceptions.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="solpolpy.errors.InvalidDataError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">solpolpy.errors.</span></span><span class="sig-name descname"><span class="pre">InvalidDataError</span></span><a class="headerlink" href="#solpolpy.errors.InvalidDataError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#solpolpy.errors.SolpolpyError" title="solpolpy.errors.SolpolpyError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SolpolpyError</span></code></a></p>
 <p>Common base class for all non-exit exceptions.</p>
 </dd></dl>
 
@@ -499,20 +530,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../core/index.html"
+       href="../decorators/index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">solpolpy.core</p>
+        <p class="prev-next-title">solpolpy.decorators</p>
       </div>
     </a>
     <a class="right-next"
-       href="../graph/index.html"
+       href="../instruments/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">solpolpy.graph</p>
+        <p class="prev-next-title">solpolpy.instruments</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -536,9 +567,12 @@ document.write(`
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exceptions">Exceptions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.errors.SolpolpyError"><code class="docutils literal notranslate"><span class="pre">SolpolpyError</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.errors.TooFewFilesError"><code class="docutils literal notranslate"><span class="pre">TooFewFilesError</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.errors.UnsupportedInstrumentError"><code class="docutils literal notranslate"><span class="pre">UnsupportedInstrumentError</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.errors.UnsupportedTransformationError"><code class="docutils literal notranslate"><span class="pre">UnsupportedTransformationError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.errors.MissingAlphaError"><code class="docutils literal notranslate"><span class="pre">MissingAlphaError</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.errors.InvalidDataError"><code class="docutils literal notranslate"><span class="pre">InvalidDataError</span></code></a></li>
 </ul>
 </li>
 </ul>

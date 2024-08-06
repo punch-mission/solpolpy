@@ -5,7 +5,7 @@ solpolpy.alpha
 
 .. autoapi-nested-parse::
 
-   Functions related to constructing an alpha array for transformation
+   Functions related to constructing an alpha array for transformation.
 
 
 
@@ -30,7 +30,7 @@ Module Contents
 
 .. py:function:: radial_north(shape)
 
-   An alpha array oriented west
+   An alpha array oriented west.
 
    :param shape: how big the array should be
    :type shape: tuple[int, int]

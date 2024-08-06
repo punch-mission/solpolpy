@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Quickstart &#8212; solpolpy 0.2.0 documentation</title>
+    <title>Quickstart &#8212; solpolpy 0.3.0 documentation</title>
   
   
   
@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="_static/documentation_options.js?v=e259d695"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">solpolpy 0.2.0 documentation</p>
+    <p class="title logo__title">solpolpy 0.3.0 documentation</p>
   
 </a></div>
     
@@ -447,18 +447,19 @@ You can find a detailed description of these systems with their equations in <a 
 <span class="nb">print</span><span class="p">(</span><span class="n">output_collection</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">resolve</span></code> takes two parameters: 1. the input data and 2. the desired output polarization system.
+<p><code class="docutils literal notranslate"><span class="pre">resolve</span></code> takes two (or more depending on the polarization systems) parameters:
+1. the input data and 2. the desired output polarization system.
 Valid polarization systems are described in the documentation.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.resolve">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.</span></span><span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NDCollection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_system</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imax_effect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NDCollection</span></span></span><a class="headerlink" href="#solpolpy.resolve" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.</span></span><span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NDCollection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_system</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">System</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imax_effect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Unit</span><span class="p"><span class="pre">(</span></span><span class="s"><span class="pre">'deg'</span></span><span class="p"><span class="pre">)</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NDCollection</span></span></span><a class="headerlink" href="#solpolpy.resolve" title="Link to this definition">#</a></dt>
 <dd><p>Apply a polarization transformation to a set of input dataframes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_data</strong> (<em>NDCollection</em><em> or </em><em>List</em><em>[</em><em>str</em><em>]</em>) – Either: 1) a collection where each member NDCube has an expected name or 2) a list of paths to FITS files.
 We recommend option 2.</p></li>
-<li><p><strong>out_system</strong> (<em>string</em>) – <p>The polarization state you want to convert your input dataframes to.
+<li><p><strong>out_system</strong> (<em>System</em><em> | </em><em>string</em>) – <p>The polarization state you want to convert your input dataframes to.
 Must be one of the following strings:</p>
 <ul>
 <li><p>”mzp”: Triplet of images taken at -60°, 0°, and +60° polarizing angles.</p></li>
@@ -474,7 +475,7 @@ Must be one of the following strings:</p>
 <li><p><strong>imax_effect</strong> (<em>Boolean</em>) – The ‘IMAX effect’ describes the change in apparent measured polarization angle as an result of foreshortening effects.
 This effect becomes more pronounced for wide field polarized imagers - see Patel et al (2024, in preparation)
 If True, applies the IMAX effect for wide field imagers as part of the resolution process.</p></li>
-<li><p><strong>out_angles</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Angles to use (in degrees) when converting to npol or some arbitrary system</p></li>
+<li><p><strong>out_angles</strong> (<em>u.degree</em>) – Angles to use when converting to npol or some arbitrary system</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -512,7 +513,7 @@ If set to true, it corrects for the IMAX effect and converts the apparent non-id
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.plot_collection">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.</span></span><span class="sig-name descname"><span class="pre">plot_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NDCollection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">major_formatter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HP</span> <span class="pre">Longitude'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HP</span> <span class="pre">Latitude'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Greys_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">18</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.plot_collection" title="Link to this definition">#</a></dt>
-<dd><p>Plot a solpolpy NDCollection input or output</p>
+<dd><p>Plot a solpolpy NDCollection input or output.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

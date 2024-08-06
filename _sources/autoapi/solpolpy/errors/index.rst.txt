@@ -9,17 +9,28 @@ Exceptions
 
 .. autoapisummary::
 
+   solpolpy.errors.SolpolpyError
    solpolpy.errors.TooFewFilesError
    solpolpy.errors.UnsupportedInstrumentError
    solpolpy.errors.UnsupportedTransformationError
+   solpolpy.errors.MissingAlphaError
+   solpolpy.errors.InvalidDataError
 
 
 Module Contents
 ---------------
 
-.. py:exception:: TooFewFilesError
+.. py:exception:: SolpolpyError
 
    Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: TooFewFilesError
+
+   Bases: :py:obj:`SolpolpyError`
 
 
    Common base class for all non-exit exceptions.
@@ -27,7 +38,7 @@ Module Contents
 
 .. py:exception:: UnsupportedInstrumentError
 
-   Bases: :py:obj:`Exception`
+   Bases: :py:obj:`SolpolpyError`
 
 
    Common base class for all non-exit exceptions.
@@ -35,7 +46,23 @@ Module Contents
 
 .. py:exception:: UnsupportedTransformationError
 
-   Bases: :py:obj:`Exception`
+   Bases: :py:obj:`SolpolpyError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: MissingAlphaError
+
+   Bases: :py:obj:`SolpolpyError`
+
+
+   Common base class for all non-exit exceptions.
+
+
+.. py:exception:: InvalidDataError
+
+   Bases: :py:obj:`SolpolpyError`
 
 
    Common base class for all non-exit exceptions.

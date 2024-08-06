@@ -5,7 +5,7 @@ solpolpy.core
 
 .. autoapi-nested-parse::
 
-   Core transformation functions for solpolpy
+   Core transformation functions for solpolpy.
 
 
 
@@ -19,7 +19,7 @@ Functions
    solpolpy.core.determine_input_kind
    solpolpy.core.get_transform_path
    solpolpy.core.get_transform_equation
-   solpolpy.core.check_alpha_requirement
+   solpolpy.core.requires_alpha
    solpolpy.core.generate_imax_matrix
    solpolpy.core.resolve_imax_effect
    solpolpy.core._determine_image_shape
@@ -31,7 +31,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: resolve(input_data: Union[List[str], ndcube.NDCollection], out_system: str, imax_effect: bool = False, out_angles: Optional[List[float]] = None) -> ndcube.NDCollection
+.. py:function:: resolve(input_data: list[str] | ndcube.NDCollection, out_system: solpolpy.transforms.System | str, imax_effect: bool = False, out_angles: astropy.units.degree = None) -> ndcube.NDCollection
 
    Apply a polarization transformation to a set of input dataframes.
 
@@ -49,13 +49,13 @@ Module Contents
                       - "bthp": Total brightness, angle and degree of polarization.
                       - "fourpol": For observations taken at sequence of four polarizer angles, i.e. 0°, 45°, 90° and 135°.
                       - "npol": Set of images taken at than arbitrary polarizing angles other than MZP
-   :type out_system: string
+   :type out_system: System | string
    :param imax_effect: The 'IMAX effect' describes the change in apparent measured polarization angle as an result of foreshortening effects.
                        This effect becomes more pronounced for wide field polarized imagers - see Patel et al (2024, in preparation)
                        If True, applies the IMAX effect for wide field imagers as part of the resolution process.
    :type imax_effect: Boolean
-   :param out_angles: Angles to use (in degrees) when converting to npol or some arbitrary system
-   :type out_angles: List[float]
+   :param out_angles: Angles to use when converting to npol or some arbitrary system
+   :type out_angles: u.degree
 
    :returns: The transformed data are returned as a NDCollection.
    :rtype: NDCollection
@@ -63,12 +63,12 @@ Module Contents
 
 .. py:function:: determine_offset_angle(input_collection: ndcube.NDCollection) -> float
 
-   Get the instrument specific offset angle
+   Get the instrument specific offset angle.
 
 
-.. py:function:: determine_input_kind(input_data: ndcube.NDCollection) -> str
+.. py:function:: determine_input_kind(input_data: ndcube.NDCollection) -> solpolpy.transforms.System
 
-   Determine what kind of data was input in the NDCollection
+   Determine what kind of data was input in the NDCollection.
 
    :param input_data: data to evaluate kind of
    :type input_data: NDCollection
@@ -77,9 +77,9 @@ Module Contents
    :rtype: str
 
 
-.. py:function:: get_transform_path(input_kind: str, output_kind: str) -> List[str]
+.. py:function:: get_transform_path(input_kind: str, output_kind: str) -> list[str]
 
-   Given an input and output system type, determine the require path of transforms from the transform graph
+   Given an input and output system type, determine the require path of transforms from the transform graph.
 
    :param input_kind: starting point for transformations
    :type input_kind: str
@@ -90,9 +90,9 @@ Module Contents
    :rtype: List[str]
 
 
-.. py:function:: get_transform_equation(path: List[str]) -> Callable
+.. py:function:: get_transform_equation(path: list[str]) -> Callable
 
-   Given a transform path, compose the equation, i.e. the composed function of transforms that executes that path
+   Given a transform path, compose the equation, i.e. the composed function of transforms that executes that path.
 
    :param path: a list of transform identifiers from the path
    :type path: List[str]
@@ -101,9 +101,9 @@ Module Contents
    :rtype: Callable
 
 
-.. py:function:: check_alpha_requirement(path: List[str]) -> bool
+.. py:function:: requires_alpha(func: Callable) -> bool
 
-   Determine if an alpha array is required for this transformation path
+   Determine if an alpha array is required for this transformation path.
 
    :param path: a path through the transform graph
    :type path: List[str]
@@ -114,7 +114,7 @@ Module Contents
 
 .. py:function:: generate_imax_matrix(array_shape) -> numpy.ndarray
 
-   Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords)
+   Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords).
 
    :param array_shape: Defined input WCS array shape for matrix generation
 
@@ -133,9 +133,9 @@ Module Contents
    :rtype: NDCollection
 
 
-.. py:function:: _determine_image_shape(input_collection: ndcube.NDCollection) -> Tuple[int, int]
+.. py:function:: _determine_image_shape(input_collection: ndcube.NDCollection) -> tuple[int, int]
 
-   Evaluates the shape of the image in the input NDCollection
+   Evaluates the shape of the image in the input NDCollection.
 
    :param input_collection: collection to determine image shape for
    :type input_collection: NDCollection
@@ -146,7 +146,7 @@ Module Contents
 
 .. py:function:: add_alpha(input_data: ndcube.NDCollection) -> ndcube.NDCollection
 
-   Adds an alpha array to an image NDCollection
+   Adds an alpha array to an image NDCollection.
 
    :param input_data: dataset to append alpha to
    :type input_data: NDCollection
@@ -157,7 +157,7 @@ Module Contents
 
 .. py:function:: _compose2(f: Callable, g: Callable) -> Callable
 
-   Compose 2 functions together, i.e. f(g(x))
+   Compose 2 functions together, i.e. f(g(x)).
 
    :param f: outer function
    :type f: Callable
@@ -170,7 +170,7 @@ Module Contents
 
 .. py:function:: identity(x: Any, **kwargs) -> Any
 
-   Identity function that returns the input
+   Identity function that returns the input.
 
    :param x: value
    :type x: Any

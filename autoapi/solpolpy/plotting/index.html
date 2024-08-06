@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>solpolpy.plotting &#8212; solpolpy 0.2.0 documentation</title>
+    <title>solpolpy.plotting &#8212; solpolpy 0.3.0 documentation</title>
   
   
   
@@ -36,14 +36,14 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../../_static/documentation_options.js?v=e259d695"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/solpolpy/plotting/index';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="solpolpy.polarizers" href="../polarizers/index.html" />
+    <link rel="next" title="solpolpy.transforms" href="../transforms/index.html" />
     <link rel="prev" title="solpolpy.instruments" href="../instruments/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">solpolpy 0.2.0 documentation</p>
+    <p class="title logo__title">solpolpy 0.3.0 documentation</p>
   
 </a></div>
     
@@ -376,11 +376,12 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../alpha/index.html">solpolpy.alpha</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../constants/index.html">solpolpy.constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../core/index.html">solpolpy.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators/index.html">solpolpy.decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../errors/index.html">solpolpy.errors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../graph/index.html">solpolpy.graph</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../instruments/index.html">solpolpy.instruments</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">solpolpy.plotting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../polarizers/index.html">solpolpy.polarizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/index.html">solpolpy.transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../util/index.html">solpolpy.util</a></li>
 </ul>
 </details></li>
 </ul>
@@ -450,10 +451,10 @@ document.write(`
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.plotting.plot_collection" title="solpolpy.plotting.plot_collection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_collection</span></code></a>(collection[, figsize, show_colorbar, ...])</p></td>
-<td><p>Plot a solpolpy NDCollection input or output</p></td>
+<td><p>Plot a solpolpy NDCollection input or output.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.plotting.get_colormap_str" title="solpolpy.plotting.get_colormap_str"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_colormap_str</span></code></a>(→ str)</p></td>
-<td><p>Retrieve a color map name from an input FITS file</p></td>
+<td><p>Retrieve a color map name from an input FITS file.</p></td>
 </tr>
 </tbody>
 </table>
@@ -464,7 +465,7 @@ document.write(`
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.plotting.plot_collection">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndcube.NDCollection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon_ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">major_formatter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HP</span> <span class="pre">Longitude'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HP</span> <span class="pre">Latitude'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Greys_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">18</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solpolpy.plotting.plot_collection" title="Link to this definition">#</a></dt>
-<dd><p>Plot a solpolpy NDCollection input or output</p>
+<dd><p>Plot a solpolpy NDCollection input or output.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -495,15 +496,16 @@ document.write(`
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.plotting.get_colormap_str">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.plotting.</span></span><span class="sig-name descname"><span class="pre">get_colormap_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">astropy.io.fits.Header</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#solpolpy.plotting.get_colormap_str" title="Link to this definition">#</a></dt>
-<dd><p>Retrieve a color map name from an input FITS file
-:param meta: header of the data
-:type meta: fits.Header</p>
+<dd><p>Retrieve a color map name from an input FITS file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>name of appropriate colormap</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>meta</strong> (<em>fits.Header</em>) – header of the data</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>name of appropriate colormap</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -531,11 +533,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="../polarizers/index.html"
+       href="../transforms/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">solpolpy.polarizers</p>
+        <p class="prev-next-title">solpolpy.transforms</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

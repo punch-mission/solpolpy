@@ -1,7 +1,7 @@
-solpolpy.polarizers
+solpolpy.transforms
 ===================
 
-.. py:module:: solpolpy.polarizers
+.. py:module:: solpolpy.transforms
 
 .. autoapi-nested-parse::
 
@@ -13,35 +13,52 @@ solpolpy.polarizers
 
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   solpolpy.transforms.System
+   solpolpy.transforms.SYSTEM_REQUIRED_KEYS
+   solpolpy.transforms.transform_graph
+   solpolpy.transforms.transform_functions
+
+
 Functions
 ---------
 
 .. autoapisummary::
 
-   solpolpy.polarizers.conv_polar_from_head
-   solpolpy.polarizers.npol_to_mzp
-   solpolpy.polarizers.mzp_to_bpb
-   solpolpy.polarizers.bpb_to_mzp
-   solpolpy.polarizers.bpb_to_btbr
-   solpolpy.polarizers.btbr_to_bpb
-   solpolpy.polarizers.mzp_to_stokes
-   solpolpy.polarizers.stokes_to_mzp
-   solpolpy.polarizers.mzp_to_bp3
-   solpolpy.polarizers.bp3_to_mzp
-   solpolpy.polarizers.btbr_to_mzp
-   solpolpy.polarizers.bp3_to_bthp
-   solpolpy.polarizers.btbr_to_npol
-   solpolpy.polarizers.mzp_to_npol
-   solpolpy.polarizers.fourpol_to_stokes
-   solpolpy.polarizers.combine_masks
+   solpolpy.transforms.transform
+   solpolpy.transforms.npol_to_mzp
+   solpolpy.transforms.mzp_to_bpb
+   solpolpy.transforms.bpb_to_mzp
+   solpolpy.transforms.bpb_to_btbr
+   solpolpy.transforms.btbr_to_bpb
+   solpolpy.transforms.mzp_to_stokes
+   solpolpy.transforms.stokes_to_mzp
+   solpolpy.transforms.mzp_to_bp3
+   solpolpy.transforms.bp3_to_mzp
+   solpolpy.transforms.btbr_to_mzp
+   solpolpy.transforms.bp3_to_bthp
+   solpolpy.transforms.btbr_to_npol
+   solpolpy.transforms.mzp_to_npol
+   solpolpy.transforms.fourpol_to_stokes
 
 
 Module Contents
 ---------------
 
-.. py:function:: conv_polar_from_head(input_cube)
+.. py:data:: System
 
-.. py:function:: npol_to_mzp(input_collection, offset_angle=0, **kwargs)
+.. py:data:: SYSTEM_REQUIRED_KEYS
+
+.. py:function:: transform(source_system, target_system, use_alpha)
+
+   Decorator for transforms.
+
+
+.. py:function:: npol_to_mzp(input_collection, offset_angle=0 * u.degree, **kwargs)
 
    .. rubric:: Notes
 
@@ -118,7 +135,7 @@ Module Contents
    Equations 9, 15, 16 in DeForest et al. 2022.
 
 
-.. py:function:: btbr_to_npol(input_collection, out_angles=None, **kwargs)
+.. py:function:: btbr_to_npol(input_collection, out_angles: astropy.units.degree, **kwargs)
 
    .. rubric:: Notes
 
@@ -126,7 +143,7 @@ Module Contents
    angles: list of input angles in degree
 
 
-.. py:function:: mzp_to_npol(input_collection, out_angles=None, offset_angle=0, **kwargs)
+.. py:function:: mzp_to_npol(input_collection, out_angles: astropy.units.degree, offset_angle=0 * u.degree, **kwargs)
 
    .. rubric:: Notes
 
@@ -141,11 +158,7 @@ Module Contents
    Table 1 in DeForest et al. 2022.
 
 
-.. py:function:: combine_masks(*args)
+.. py:data:: transform_graph
 
-   Combines masks
-
-   If any of the masks are None, the result is None.
-   Otherwise, when combining any value that is masked in any of the input args, gets masked, i.e. it does a logical or.
-
+.. py:data:: transform_functions
 

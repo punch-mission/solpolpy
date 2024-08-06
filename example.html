@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Examples &#8212; solpolpy 0.2.0 documentation</title>
+    <title>Examples &#8212; solpolpy 0.3.0 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="_static/documentation_options.js?v=e259d695"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -123,7 +123,7 @@
   
   
   
-    <p class="title logo__title">solpolpy 0.2.0 documentation</p>
+    <p class="title logo__title">solpolpy 0.3.0 documentation</p>
   
 </a></div>
     
@@ -449,7 +449,7 @@ plotting utility to plot any collection called <code class="docutils literal not
 <section id="Import-Data">
 <h2>Import Data<a class="headerlink" href="#Import-Data" title="Link to this heading">#</a></h2>
 <p>Import an example STEREO polarzation triplet dataset from 2010-04-03 at 10:10 UT. These can be substituted with any file paths you have.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -463,6 +463,18 @@ plotting utility to plot any collection called <code class="docutils literal not
 <span class="n">stereo_paths</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;data/stereo*.fts&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+WARNING: SunpyUserWarning: Importing sunpy.visualization without its extra dependencies may result in errors.
+The following packages are not installed:
+[&#39;mpl-animators&gt;=1.0.0&#39;]
+To install sunpy with these dependencies use `pip install sunpy[visualization]` or `pip install sunpy[all]` for all extras.
+If you installed sunpy via conda, please report this to the community channel: https://matrix.to/#/#sunpy:openastronomy.org [sunpy.util.sysinfo]
+</pre></div></div>
 </div>
 <p>Use the solpolpy <code class="docutils literal notranslate"><span class="pre">load_data</span></code> function to import data from FITS files. Alternatively, you can pass FITS filenames to the <code class="docutils literal notranslate"><span class="pre">resolve</span></code> method showcased later. However, you have more control and can visualize the inputs if you use <code class="docutils literal notranslate"><span class="pre">load_data</span></code>. In this case, we specify <code class="docutils literal notranslate"><span class="pre">use_instrument_mask=True</span></code> because we want to load the data with the solpolpy-provided instrument mask.</p>
 <div class="nbinput docutils container">
@@ -511,7 +523,7 @@ Set MJD-END to 55289.422651 from DATE-END&#39;. [astropy.wcs.wcs]
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-dict_keys([&#39;B240.0&#39;, &#39;B120.0&#39;, &#39;B0.0&#39;])
+dict_keys([&#39;240.0 deg&#39;, &#39;120.0 deg&#39;, &#39;0.0 deg&#39;])
 </pre></div></div>
 </div>
 <p>In this case, we can see they are angle measurements (in degrees). If we want to know more, we can look at the appropriate cube:</p>
@@ -519,7 +531,7 @@ dict_keys([&#39;B240.0&#39;, &#39;B120.0&#39;, &#39;B0.0&#39;])
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;B240.0&#39;</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;240.0 deg&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -529,7 +541,7 @@ dict_keys([&#39;B240.0&#39;, &#39;B120.0&#39;, &#39;B0.0&#39;])
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;ndcube.ndcube.NDCube object at 0x107e20040&gt;
+&lt;ndcube.ndcube.NDCube object at 0x10ed5f7a0&gt;
 NDCube
 ------
 Dimensions: [2048. 2048.] pix
@@ -543,7 +555,7 @@ Data Type: uint16
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;B240.0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;POLAR&#39;</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;240.0 deg&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;POLAR&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -556,39 +568,12 @@ Data Type: uint16
 240.0
 </pre></div></div>
 </div>
-<p>You can also inspect the entire FITS header of the file as it was loaded.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;B240.0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>  <span class="c1"># we put [:10] just so we look at the first 10 lines of the meta... it&#39;s long!</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-SIMPLE  =                    T / Written by IDL:  Mon Apr  5 17:12:11 2010
-BITPIX  =                   16 /
-NAXIS   =                    2 /
-NAXIS1  =                 2048 /
-NAXIS2  =                 2048 /
-EXTEND  =                    T /
-DATE-OBS= &#39;2010-04-03T10:09:15.006&#39; /
-FILEORIG= &#39;A4030234.411&#39;       /
-SEB_PROG= &#39;NORMAL  &#39;           /
-SYNC    =                    T /
-</pre></div></div>
-</div>
 </section>
 <section id="View-the-STEREO-triplet-input-data">
 <h2>View the STEREO triplet input data<a class="headerlink" href="#View-the-STEREO-triplet-input-data" title="Link to this heading">#</a></h2>
 <p>solpolpy provides two helpful functions for viewing data: - <code class="docutils literal notranslate"><span class="pre">get_colormap_str</span></code> determines the appropriate colormap string to use for the dataset. - <code class="docutils literal notranslate"><span class="pre">plot_collection</span></code> visualizes the collection. There are many optional arguments to this function. We suggest you look at the documentation’s help to see them all.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">plot_collection</span><span class="p">)</span>
@@ -603,7 +588,7 @@ SYNC    =                    T /
 Help on function plot_collection in module solpolpy.plotting:
 
 plot_collection(collection: ndcube.ndcollection.NDCollection, figsize=(8, 8), show_colorbar=False, lat_ticks=None, lon_ticks=None, major_formatter=&#39;dd&#39;, xlabel=&#39;HP Longitude&#39;, ylabel=&#39;HP Latitude&#39;, vmin=None, vmax=None, cmap=&#39;Greys_r&#39;, ignore_alpha=True, fontsize=18)
-    Plot a solpolpy NDCollection input or output
+    Plot a solpolpy NDCollection input or output.
 
     Parameters
     ----------
@@ -642,10 +627,10 @@ plot_collection(collection: ndcube.ndcollection.NDCollection, figsize=(8, 8), sh
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cmap</span> <span class="o">=</span> <span class="n">get_colormap_str</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;B0.0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cmap</span> <span class="o">=</span> <span class="n">get_colormap_str</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;0.0 deg&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
 <span class="n">plot_collection</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">,</span>
                 <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
                 <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -660,7 +645,7 @@ plot_collection(collection: ndcube.ndcollection.NDCollection, figsize=(8, 8), sh
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/example_16_0.png" src="_images/example_16_0.png" />
+<img alt="_images/example_14_0.png" src="_images/example_14_0.png" />
 </div>
 </div>
 </section>
@@ -669,7 +654,7 @@ plot_collection(collection: ndcube.ndcollection.NDCollection, figsize=(8, 8), sh
 <p>The native polarization system (npol or mzp) for STEREO is not all that directly helpful for solar physics science. Instead, we convert the data into a different polarization system, namely the total brightness (B) and polarized brightness (pB) system. We use solpolpy’s <code class="docutils literal notranslate"><span class="pre">resolve</span></code> method to do this and just pass in our collection and the string <code class="docutils literal notranslate"><span class="pre">&quot;BpB&quot;</span></code> indicating that’s our desired output system.</p>
 <p>Alternatively, you can pass the FITS filenames in as a list. This avoids having to manually load them first.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_bpb</span> <span class="o">=</span> <span class="n">resolve</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">,</span> <span class="s1">&#39;bpb&#39;</span><span class="p">)</span>
@@ -678,7 +663,7 @@ plot_collection(collection: ndcube.ndcollection.NDCollection, figsize=(8, 8), sh
 </div>
 <p>As noted earlier, we can look at any collection’s keys.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_bpb</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
@@ -686,7 +671,7 @@ plot_collection(collection: ndcube.ndcollection.NDCollection, figsize=(8, 8), sh
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -697,7 +682,7 @@ dict_keys([&#39;B&#39;, &#39;pB&#39;, &#39;alpha&#39;])
 <p>In this example we have converted the STEREO image triplet into a brightness - polarized brightness (BpB) pair. We see three keys are present in the output NDcollection, the brightness ‘B’, and, the polarized brightness ‘pB’ array, as well as the alpha array used to produce the pair. More information on the alpha parameter can be found in <a class="reference external" href="https://doi.org/10.3847/1538-4357/ac43b6">Deforest et al. 2022</a></p>
 <p>To do science on the resulting data, you can access it directly.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_bpb</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
@@ -705,7 +690,7 @@ dict_keys([&#39;B&#39;, &#39;pB&#39;, &#39;alpha&#39;])
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -727,7 +712,7 @@ array([[4118.66666667, 4117.33333333, 4116.        , ..., 4118.66666667,
 </div>
 <p>An important note is that the “POLAR” keyword is now “B”. This can be helpful if you forget what data you’re dealing with.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_bpb</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;POLAR&#39;</span><span class="p">]</span>
@@ -735,7 +720,7 @@ array([[4118.66666667, 4117.33333333, 4116.        , ..., 4118.66666667,
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -745,7 +730,7 @@ array([[4118.66666667, 4117.33333333, 4116.        , ..., 4118.66666667,
 </div>
 <p>We can look at this resolved data the same way we looked at the inputs by using <code class="docutils literal notranslate"><span class="pre">plot_collection</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_collection</span><span class="p">(</span><span class="n">output_bpb</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="p">[</span><span class="mi">20000</span><span class="p">,</span> <span class="mi">200</span><span class="p">])</span>
@@ -757,7 +742,7 @@ array([[4118.66666667, 4117.33333333, 4116.        , ..., 4118.66666667,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/example_27_0.png" src="_images/example_27_0.png" />
+<img alt="_images/example_25_0.png" src="_images/example_25_0.png" />
 </div>
 </div>
 </section>
@@ -765,7 +750,7 @@ array([[4118.66666667, 4117.33333333, 4116.        , ..., 4118.66666667,
 <h2>2. Resolve STEREO brightness and polarized brightness pair into a Stokes triplet<a class="headerlink" href="#2.-Resolve-STEREO-brightness-and-polarized-brightness-pair-into-a-Stokes-triplet" title="Link to this heading">#</a></h2>
 <p>We could convert this data to the Stokes system now if we wanted.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_stokes</span> <span class="o">=</span> <span class="n">resolve</span><span class="p">(</span><span class="n">output_bpb</span><span class="p">,</span> <span class="s1">&#39;stokes&#39;</span><span class="p">)</span>
@@ -774,7 +759,7 @@ array([[4118.66666667, 4117.33333333, 4116.        , ..., 4118.66666667,
 </div>
 <p>Once again we can look at the keys in the output NDcollection.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_stokes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
@@ -782,19 +767,19 @@ array([[4118.66666667, 4117.33333333, 4116.        , ..., 4118.66666667,
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-dict_keys([&#39;Bi&#39;, &#39;Bq&#39;, &#39;Bu&#39;])
+dict_keys([&#39;I&#39;, &#39;Q&#39;, &#39;U&#39;])
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cmap</span> <span class="o">=</span> <span class="n">get_colormap_str</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;B0.0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cmap</span> <span class="o">=</span> <span class="n">get_colormap_str</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;0.0 deg&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
 <span class="n">plot_collection</span><span class="p">(</span><span class="n">output_stokes</span><span class="p">,</span>
                 <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
                 <span class="n">vmin</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="o">-</span><span class="mi">200</span><span class="p">],</span>
@@ -809,7 +794,7 @@ dict_keys([&#39;Bi&#39;, &#39;Bq&#39;, &#39;Bu&#39;])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/example_32_0.png" src="_images/example_32_0.png" />
+<img alt="_images/example_30_0.png" src="_images/example_30_0.png" />
 </div>
 </div>
 </section>
@@ -817,12 +802,12 @@ dict_keys([&#39;Bi&#39;, &#39;Bq&#39;, &#39;Bu&#39;])
 <h2>3. Taking the shortcut<a class="headerlink" href="#3.-Taking-the-shortcut" title="Link to this heading">#</a></h2>
 <p>Instead of having to convert from STEREO’s native MZP to BpB and then to Stokes, we can ask solpolpy to resolve from MZP directly to Stokes as well! We’ll run the <code class="docutils literal notranslate"><span class="pre">resolve</span></code> command with the original STEREO data and convert directly to Stokes. solpolpy figures out how to do this conversion behind the scenes. If you ever ask for an impossible transformation, it’ll let you know.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">output_stokes2</span> <span class="o">=</span> <span class="n">resolve</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">,</span> <span class="s1">&#39;stokes&#39;</span><span class="p">)</span>
 
-<span class="n">cmap</span> <span class="o">=</span> <span class="n">get_colormap_str</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;B0.0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">get_colormap_str</span><span class="p">(</span><span class="n">stereo_collection</span><span class="p">[</span><span class="s1">&#39;0.0 deg&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
 <span class="n">plot_collection</span><span class="p">(</span><span class="n">output_stokes2</span><span class="p">,</span>
                 <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
                 <span class="n">vmin</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="o">-</span><span class="mi">200</span><span class="p">],</span>
@@ -837,7 +822,7 @@ dict_keys([&#39;Bi&#39;, &#39;Bq&#39;, &#39;Bu&#39;])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/example_34_0.png" src="_images/example_34_0.png" />
+<img alt="_images/example_32_0.png" src="_images/example_32_0.png" />
 </div>
 </div>
 <p>Our results are the same either way!</p>

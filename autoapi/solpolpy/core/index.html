@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>solpolpy.core &#8212; solpolpy 0.2.0 documentation</title>
+    <title>solpolpy.core &#8212; solpolpy 0.3.0 documentation</title>
   
   
   
@@ -36,14 +36,14 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../../_static/documentation_options.js?v=e259d695"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/solpolpy/core/index';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="solpolpy.errors" href="../errors/index.html" />
+    <link rel="next" title="solpolpy.decorators" href="../decorators/index.html" />
     <link rel="prev" title="solpolpy.constants" href="../constants/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">solpolpy 0.2.0 documentation</p>
+    <p class="title logo__title">solpolpy 0.3.0 documentation</p>
   
 </a></div>
     
@@ -376,11 +376,12 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../alpha/index.html">solpolpy.alpha</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../constants/index.html">solpolpy.constants</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">solpolpy.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators/index.html">solpolpy.decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../errors/index.html">solpolpy.errors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../graph/index.html">solpolpy.graph</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../instruments/index.html">solpolpy.instruments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../plotting/index.html">solpolpy.plotting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../polarizers/index.html">solpolpy.polarizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/index.html">solpolpy.transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../util/index.html">solpolpy.util</a></li>
 </ul>
 </details></li>
 </ul>
@@ -445,7 +446,7 @@ document.write(`
                   
   <section id="module-solpolpy.core">
 <span id="solpolpy-core"></span><h1>solpolpy.core<a class="headerlink" href="#module-solpolpy.core" title="Link to this heading">#</a></h1>
-<p>Core transformation functions for solpolpy</p>
+<p>Core transformation functions for solpolpy.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
@@ -454,37 +455,37 @@ document.write(`
 <td><p>Apply a polarization transformation to a set of input dataframes.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.determine_offset_angle" title="solpolpy.core.determine_offset_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_offset_angle</span></code></a>(→ float)</p></td>
-<td><p>Get the instrument specific offset angle</p></td>
+<td><p>Get the instrument specific offset angle.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.determine_input_kind" title="solpolpy.core.determine_input_kind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_input_kind</span></code></a>(→ str)</p></td>
-<td><p>Determine what kind of data was input in the NDCollection</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.determine_input_kind" title="solpolpy.core.determine_input_kind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_input_kind</span></code></a>(→ solpolpy.transforms.System)</p></td>
+<td><p>Determine what kind of data was input in the NDCollection.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.get_transform_path" title="solpolpy.core.get_transform_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_transform_path</span></code></a>(→ List[str])</p></td>
-<td><p>Given an input and output system type, determine the require path of transforms from the transform graph</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.get_transform_path" title="solpolpy.core.get_transform_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_transform_path</span></code></a>(→ list[str])</p></td>
+<td><p>Given an input and output system type, determine the require path of transforms from the transform graph.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.get_transform_equation" title="solpolpy.core.get_transform_equation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_transform_equation</span></code></a>(→ Callable)</p></td>
-<td><p>Given a transform path, compose the equation, i.e. the composed function of transforms that executes that path</p></td>
+<td><p>Given a transform path, compose the equation, i.e. the composed function of transforms that executes that path.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.check_alpha_requirement" title="solpolpy.core.check_alpha_requirement"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_alpha_requirement</span></code></a>(→ bool)</p></td>
-<td><p>Determine if an alpha array is required for this transformation path</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.requires_alpha" title="solpolpy.core.requires_alpha"><code class="xref py py-obj docutils literal notranslate"><span class="pre">requires_alpha</span></code></a>(→ bool)</p></td>
+<td><p>Determine if an alpha array is required for this transformation path.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core.generate_imax_matrix" title="solpolpy.core.generate_imax_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_imax_matrix</span></code></a>(→ numpy.ndarray)</p></td>
-<td><p>Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords)</p></td>
+<td><p>Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.resolve_imax_effect" title="solpolpy.core.resolve_imax_effect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_imax_effect</span></code></a>(→ ndcube.NDCollection)</p></td>
 <td><p>Resolves the IMAX effect for provided input data, correcting measured polarization angles for wide FOV imagers.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core._determine_image_shape" title="solpolpy.core._determine_image_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_determine_image_shape</span></code></a>(→ Tuple[int, int])</p></td>
-<td><p>Evaluates the shape of the image in the input NDCollection</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core._determine_image_shape" title="solpolpy.core._determine_image_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_determine_image_shape</span></code></a>(→ tuple[int, int])</p></td>
+<td><p>Evaluates the shape of the image in the input NDCollection.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.add_alpha" title="solpolpy.core.add_alpha"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_alpha</span></code></a>(→ ndcube.NDCollection)</p></td>
-<td><p>Adds an alpha array to an image NDCollection</p></td>
+<td><p>Adds an alpha array to an image NDCollection.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.core._compose2" title="solpolpy.core._compose2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compose2</span></code></a>(→ Callable)</p></td>
-<td><p>Compose 2 functions together, i.e. f(g(x))</p></td>
+<td><p>Compose 2 functions together, i.e. f(g(x)).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.core.identity" title="solpolpy.core.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(→ Any)</p></td>
-<td><p>Identity function that returns the input</p></td>
+<td><p>Identity function that returns the input.</p></td>
 </tr>
 </tbody>
 </table>
@@ -494,14 +495,14 @@ document.write(`
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.core.resolve">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndcube.NDCollection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_system</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imax_effect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndcube.NDCollection</span></span></span><a class="headerlink" href="#solpolpy.core.resolve" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndcube.NDCollection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_system</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">solpolpy.transforms.System</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imax_effect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_angles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">astropy.units.degree</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndcube.NDCollection</span></span></span><a class="headerlink" href="#solpolpy.core.resolve" title="Link to this definition">#</a></dt>
 <dd><p>Apply a polarization transformation to a set of input dataframes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_data</strong> (<em>NDCollection</em><em> or </em><em>List</em><em>[</em><em>str</em><em>]</em>) – Either: 1) a collection where each member NDCube has an expected name or 2) a list of paths to FITS files.
 We recommend option 2.</p></li>
-<li><p><strong>out_system</strong> (<em>string</em>) – <p>The polarization state you want to convert your input dataframes to.
+<li><p><strong>out_system</strong> (<em>System</em><em> | </em><em>string</em>) – <p>The polarization state you want to convert your input dataframes to.
 Must be one of the following strings:</p>
 <ul>
 <li><p>”mzp”: Triplet of images taken at -60°, 0°, and +60° polarizing angles.</p></li>
@@ -517,7 +518,7 @@ Must be one of the following strings:</p>
 <li><p><strong>imax_effect</strong> (<em>Boolean</em>) – The ‘IMAX effect’ describes the change in apparent measured polarization angle as an result of foreshortening effects.
 This effect becomes more pronounced for wide field polarized imagers - see Patel et al (2024, in preparation)
 If True, applies the IMAX effect for wide field imagers as part of the resolution process.</p></li>
-<li><p><strong>out_angles</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – Angles to use (in degrees) when converting to npol or some arbitrary system</p></li>
+<li><p><strong>out_angles</strong> (<em>u.degree</em>) – Angles to use when converting to npol or some arbitrary system</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -532,13 +533,13 @@ If True, applies the IMAX effect for wide field imagers as part of the resolutio
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.core.determine_offset_angle">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">determine_offset_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndcube.NDCollection</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#solpolpy.core.determine_offset_angle" title="Link to this definition">#</a></dt>
-<dd><p>Get the instrument specific offset angle</p>
+<dd><p>Get the instrument specific offset angle.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.core.determine_input_kind">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">determine_input_kind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndcube.NDCollection</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#solpolpy.core.determine_input_kind" title="Link to this definition">#</a></dt>
-<dd><p>Determine what kind of data was input in the NDCollection</p>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">determine_input_kind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndcube.NDCollection</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">solpolpy.transforms.System</span></span></span><a class="headerlink" href="#solpolpy.core.determine_input_kind" title="Link to this definition">#</a></dt>
+<dd><p>Determine what kind of data was input in the NDCollection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>input_data</strong> (<em>NDCollection</em>) – data to evaluate kind of</p>
@@ -554,8 +555,8 @@ If True, applies the IMAX effect for wide field imagers as part of the resolutio
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.core.get_transform_path">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">get_transform_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#solpolpy.core.get_transform_path" title="Link to this definition">#</a></dt>
-<dd><p>Given an input and output system type, determine the require path of transforms from the transform graph</p>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">get_transform_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#solpolpy.core.get_transform_path" title="Link to this definition">#</a></dt>
+<dd><p>Given an input and output system type, determine the require path of transforms from the transform graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -574,8 +575,8 @@ If True, applies the IMAX effect for wide field imagers as part of the resolutio
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.core.get_transform_equation">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">get_transform_equation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="headerlink" href="#solpolpy.core.get_transform_equation" title="Link to this definition">#</a></dt>
-<dd><p>Given a transform path, compose the equation, i.e. the composed function of transforms that executes that path</p>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">get_transform_equation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="headerlink" href="#solpolpy.core.get_transform_equation" title="Link to this definition">#</a></dt>
+<dd><p>Given a transform path, compose the equation, i.e. the composed function of transforms that executes that path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – a list of transform identifiers from the path</p>
@@ -590,9 +591,9 @@ If True, applies the IMAX effect for wide field imagers as part of the resolutio
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="solpolpy.core.check_alpha_requirement">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">check_alpha_requirement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#solpolpy.core.check_alpha_requirement" title="Link to this definition">#</a></dt>
-<dd><p>Determine if an alpha array is required for this transformation path</p>
+<dt class="sig sig-object py" id="solpolpy.core.requires_alpha">
+<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">requires_alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#solpolpy.core.requires_alpha" title="Link to this definition">#</a></dt>
+<dd><p>Determine if an alpha array is required for this transformation path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – a path through the transform graph</p>
@@ -609,7 +610,7 @@ If True, applies the IMAX effect for wide field imagers as part of the resolutio
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.core.generate_imax_matrix">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">generate_imax_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array_shape</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#solpolpy.core.generate_imax_matrix" title="Link to this definition">#</a></dt>
-<dd><p>Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords)</p>
+<dd><p>Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>array_shape</strong> – Defined input WCS array shape for matrix generation</p>
@@ -642,8 +643,8 @@ If True, applies the IMAX effect for wide field imagers as part of the resolutio
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.core._determine_image_shape">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">_determine_image_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndcube.NDCollection</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#solpolpy.core._determine_image_shape" title="Link to this definition">#</a></dt>
-<dd><p>Evaluates the shape of the image in the input NDCollection</p>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">_determine_image_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndcube.NDCollection</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#solpolpy.core._determine_image_shape" title="Link to this definition">#</a></dt>
+<dd><p>Evaluates the shape of the image in the input NDCollection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>input_collection</strong> (<em>NDCollection</em>) – collection to determine image shape for</p>
@@ -660,7 +661,7 @@ If True, applies the IMAX effect for wide field imagers as part of the resolutio
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.core.add_alpha">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">add_alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndcube.NDCollection</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndcube.NDCollection</span></span></span><a class="headerlink" href="#solpolpy.core.add_alpha" title="Link to this definition">#</a></dt>
-<dd><p>Adds an alpha array to an image NDCollection</p>
+<dd><p>Adds an alpha array to an image NDCollection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>input_data</strong> (<em>NDCollection</em>) – dataset to append alpha to</p>
@@ -677,7 +678,7 @@ If True, applies the IMAX effect for wide field imagers as part of the resolutio
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.core._compose2">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">_compose2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="headerlink" href="#solpolpy.core._compose2" title="Link to this definition">#</a></dt>
-<dd><p>Compose 2 functions together, i.e. f(g(x))</p>
+<dd><p>Compose 2 functions together, i.e. f(g(x)).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -697,7 +698,7 @@ If True, applies the IMAX effect for wide field imagers as part of the resolutio
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.core.identity">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.core.</span></span><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#solpolpy.core.identity" title="Link to this definition">#</a></dt>
-<dd><p>Identity function that returns the input</p>
+<dd><p>Identity function that returns the input.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>x</strong> (<em>Any</em>) – value</p>
@@ -734,11 +735,11 @@ If True, applies the IMAX effect for wide field imagers as part of the resolutio
       </div>
     </a>
     <a class="right-next"
-       href="../errors/index.html"
+       href="../decorators/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">solpolpy.errors</p>
+        <p class="prev-next-title">solpolpy.decorators</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -767,7 +768,7 @@ If True, applies the IMAX effect for wide field imagers as part of the resolutio
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.determine_input_kind"><code class="docutils literal notranslate"><span class="pre">determine_input_kind()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.get_transform_path"><code class="docutils literal notranslate"><span class="pre">get_transform_path()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.get_transform_equation"><code class="docutils literal notranslate"><span class="pre">get_transform_equation()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.check_alpha_requirement"><code class="docutils literal notranslate"><span class="pre">check_alpha_requirement()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.requires_alpha"><code class="docutils literal notranslate"><span class="pre">requires_alpha()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.generate_imax_matrix"><code class="docutils literal notranslate"><span class="pre">generate_imax_matrix()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core.resolve_imax_effect"><code class="docutils literal notranslate"><span class="pre">resolve_imax_effect()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.core._determine_image_shape"><code class="docutils literal notranslate"><span class="pre">_determine_image_shape()</span></code></a></li>

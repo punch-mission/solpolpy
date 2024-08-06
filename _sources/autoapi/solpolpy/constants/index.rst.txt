@@ -5,7 +5,7 @@ solpolpy.constants
 
 .. autoapi-nested-parse::
 
-   Constants used in code
+   Constants used in code.
 
 
 
@@ -14,15 +14,12 @@ Attributes
 
 .. autoapisummary::
 
-   solpolpy.constants.VALID_KINDS
    solpolpy.constants.STEREOA_OFFSET_ANGLE
    solpolpy.constants.STEREOB_OFFSET_ANGLE
 
 
 Module Contents
 ---------------
-
-.. py:data:: VALID_KINDS
 
 .. py:data:: STEREOA_OFFSET_ANGLE
 

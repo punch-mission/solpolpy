@@ -27,7 +27,8 @@ The easiest way to interact with solpolpy is through the ``resolve`` method:
     # to access the data, just access the appropriate cube
     print(output_collection['B'].data)
 
-``resolve`` takes two parameters: 1. the input data and 2. the desired output polarization system.
+``resolve`` takes two (or more depending on the polarization systems) parameters:
+1. the input data and 2. the desired output polarization system.
 Valid polarization systems are described in the documentation.
 
 .. autofunction:: solpolpy.resolve

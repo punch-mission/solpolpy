@@ -1,0 +1,31 @@
+solpolpy.util
+=============
+
+.. py:module:: solpolpy.util
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   solpolpy.util.combine_all_collection_masks
+   solpolpy.util.combine_masks
+
+
+Module Contents
+---------------
+
+.. py:function:: combine_all_collection_masks(collection: ndcube.NDCollection) -> numpy.ndarray | None
+
+   Combine all the masks in a given collection.
+
+
+.. py:function:: combine_masks(*args) -> numpy.ndarray | None
+
+   Combine masks.
+
+   If any of the masks are None, the result is None.
+   Otherwise, when combining any value that is masked in any of the input args, gets masked, i.e. it does a logical or.
+
+

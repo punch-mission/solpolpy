@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>solpolpy.graph &#8212; solpolpy 0.2.0 documentation</title>
+    <title>solpolpy.decorators &#8212; solpolpy 0.3.0 documentation</title>
   
   
   
@@ -36,15 +36,15 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../../_static/documentation_options.js?v=e259d695"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/solpolpy/graph/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/solpolpy/decorators/index';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="solpolpy.instruments" href="../instruments/index.html" />
-    <link rel="prev" title="solpolpy.errors" href="../errors/index.html" />
+    <link rel="next" title="solpolpy.errors" href="../errors/index.html" />
+    <link rel="prev" title="solpolpy.core" href="../core/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">solpolpy 0.2.0 documentation</p>
+    <p class="title logo__title">solpolpy 0.3.0 documentation</p>
   
 </a></div>
     
@@ -376,11 +376,12 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../alpha/index.html">solpolpy.alpha</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../constants/index.html">solpolpy.constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../core/index.html">solpolpy.core</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">solpolpy.decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../errors/index.html">solpolpy.errors</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">solpolpy.graph</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../instruments/index.html">solpolpy.instruments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../plotting/index.html">solpolpy.plotting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../polarizers/index.html">solpolpy.polarizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/index.html">solpolpy.transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../util/index.html">solpolpy.util</a></li>
 </ul>
 </details></li>
 </ul>
@@ -426,7 +427,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">solpolpy</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">solpolpy.graph</li>
+    <li class="breadcrumb-item active" aria-current="page">solpolpy.decorators</li>
   </ul>
 </nav>
 </div>
@@ -443,28 +444,8 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-solpolpy.graph">
-<span id="solpolpy-graph"></span><h1>solpolpy.graph<a class="headerlink" href="#module-solpolpy.graph" title="Link to this heading">#</a></h1>
-<p>Constructs transformation graph</p>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.graph.transform_graph" title="solpolpy.graph.transform_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform_graph</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
-<dl class="py data">
-<dt class="sig sig-object py" id="solpolpy.graph.transform_graph">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.graph.</span></span><span class="sig-name descname"><span class="pre">transform_graph</span></span><a class="headerlink" href="#solpolpy.graph.transform_graph" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-</section>
+  <section id="module-solpolpy.decorators">
+<span id="solpolpy-decorators"></span><h1>solpolpy.decorators<a class="headerlink" href="#module-solpolpy.decorators" title="Link to this heading">#</a></h1>
 </section>
 
 
@@ -478,20 +459,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../errors/index.html"
+       href="../core/index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">solpolpy.errors</p>
+        <p class="prev-next-title">solpolpy.core</p>
       </div>
     </a>
     <a class="right-next"
-       href="../instruments/index.html"
+       href="../errors/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">solpolpy.instruments</p>
+        <p class="prev-next-title">solpolpy.errors</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -506,26 +487,10 @@ document.write(`
 
 
   <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.graph.transform_graph"><code class="docutils literal notranslate"><span class="pre">transform_graph</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
-
-  <div class="sidebar-secondary-item">
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/punch-mission/solpolpy/edit/main/docs/source/autoapi/solpolpy/graph/index.rst">
+    <a href="https://github.com/punch-mission/solpolpy/edit/main/docs/source/autoapi/solpolpy/decorators/index.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

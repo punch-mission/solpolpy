@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>solpolpy.instruments &#8212; solpolpy 0.2.0 documentation</title>
+    <title>solpolpy.instruments &#8212; solpolpy 0.3.0 documentation</title>
   
   
   
@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../../_static/documentation_options.js?v=e259d695"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -44,7 +44,7 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="solpolpy.plotting" href="../plotting/index.html" />
-    <link rel="prev" title="solpolpy.graph" href="../graph/index.html" />
+    <link rel="prev" title="solpolpy.errors" href="../errors/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">solpolpy 0.2.0 documentation</p>
+    <p class="title logo__title">solpolpy 0.3.0 documentation</p>
   
 </a></div>
     
@@ -376,11 +376,12 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../alpha/index.html">solpolpy.alpha</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../constants/index.html">solpolpy.constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../core/index.html">solpolpy.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators/index.html">solpolpy.decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../errors/index.html">solpolpy.errors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../graph/index.html">solpolpy.graph</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">solpolpy.instruments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../plotting/index.html">solpolpy.plotting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../polarizers/index.html">solpolpy.polarizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/index.html">solpolpy.transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../util/index.html">solpolpy.util</a></li>
 </ul>
 </details></li>
 </ul>
@@ -445,7 +446,7 @@ document.write(`
                   
   <section id="module-solpolpy.instruments">
 <span id="solpolpy-instruments"></span><h1>solpolpy.instruments<a class="headerlink" href="#module-solpolpy.instruments" title="Link to this heading">#</a></h1>
-<p>Instrument specific code</p>
+<p>Instrument specific code.</p>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
@@ -460,7 +461,7 @@ document.write(`
 <td><p>Constructs a mask where False indicates the pixel is valid and True masks the pixel as invalid.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.instruments.get_instrument_mask" title="solpolpy.instruments.get_instrument_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_instrument_mask</span></code></a>(→ numpy.ndarray)</p></td>
-<td><p>Gets a coronograph mask for common instruments</p></td>
+<td><p>Gets a coronograph mask for common instruments.</p></td>
 </tr>
 </tbody>
 </table>
@@ -475,28 +476,29 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.instruments.load_data">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.instruments.</span></span><span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_instrument_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndcube.NDCollection</span></span></span><a class="headerlink" href="#solpolpy.instruments.load_data" title="Link to this definition">#</a></dt>
-<dd><p>Basic loading function. See <cite>load_with_occulter_mask</cite>.
-:param path_list: list of paths to FITS files to be loaded
-:type path_list: List[str]
-:param mask: An optional mask to couple with images. Overrides any mask computed when use_instrument_mask=True.
-:type mask: Optional[np.ndarray]
-:param use_instrument_mask: If true, loads an instrument mask for common instruments defined in <cite>get_instrument_mask</cite>.
-:type use_instrument_mask: bool</p>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.instruments.</span></span><span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_instrument_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndcube.NDCollection</span></span></span><a class="headerlink" href="#solpolpy.instruments.load_data" title="Link to this definition">#</a></dt>
+<dd><p>Basic loading function. See <cite>load_with_occulter_mask</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The data are loaded as NDCollection object with WCS and header information available.
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of paths to FITS files to be loaded</p></li>
+<li><p><strong>mask</strong> (<em>Optional</em><em>[</em><em>np.ndarray</em><em>]</em>) – An optional mask to couple with images. Overrides any mask computed when use_instrument_mask=True.</p></li>
+<li><p><strong>use_instrument_mask</strong> (<em>bool</em>) – If true, loads an instrument mask for common instruments defined in <cite>get_instrument_mask</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The data are loaded as NDCollection object with WCS and header information available.
 The keys are labeled as ‘angle_1’, ‘angle_2, ‘angle_3’, …</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>NDCollection</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NDCollection</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.instruments.construct_mask">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.instruments.</span></span><span class="sig-name descname"><span class="pre">construct_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inner_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outer_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#solpolpy.instruments.construct_mask" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">solpolpy.instruments.</span></span><span class="sig-name descname"><span class="pre">construct_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inner_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outer_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#solpolpy.instruments.construct_mask" title="Link to this definition">#</a></dt>
 <dd><p>Constructs a mask where False indicates the pixel is valid and True masks the pixel as invalid.</p>
 <p>Pixels with radial distance between <cite>inner_radius</cite> and <cite>outer_radius</cite> are valid. Every other pixel is invalid.
 This is a standard coronograph mask.</p>
@@ -523,7 +525,7 @@ This is a standard coronograph mask.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="solpolpy.instruments.get_instrument_mask">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.instruments.</span></span><span class="sig-name descname"><span class="pre">get_instrument_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">astropy.io.fits.Header</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#solpolpy.instruments.get_instrument_mask" title="Link to this definition">#</a></dt>
-<dd><p>Gets a coronograph mask for common instruments</p>
+<dd><p>Gets a coronograph mask for common instruments.</p>
 <p>Supports common solar instruments: LASCO, COSMO K, SECCHI</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -552,12 +554,12 @@ This is a standard coronograph mask.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../graph/index.html"
+       href="../errors/index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">solpolpy.graph</p>
+        <p class="prev-next-title">solpolpy.errors</p>
       </div>
     </a>
     <a class="right-next"

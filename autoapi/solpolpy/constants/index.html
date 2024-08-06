@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>solpolpy.constants &#8212; solpolpy 0.2.0 documentation</title>
+    <title>solpolpy.constants &#8212; solpolpy 0.3.0 documentation</title>
   
   
   
@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../../../_static/documentation_options.js?v=e259d695"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -120,7 +120,7 @@
   
   
   
-    <p class="title logo__title">solpolpy 0.2.0 documentation</p>
+    <p class="title logo__title">solpolpy 0.3.0 documentation</p>
   
 </a></div>
     
@@ -376,11 +376,12 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../alpha/index.html">solpolpy.alpha</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">solpolpy.constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../core/index.html">solpolpy.core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators/index.html">solpolpy.decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../errors/index.html">solpolpy.errors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../graph/index.html">solpolpy.graph</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../instruments/index.html">solpolpy.instruments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../plotting/index.html">solpolpy.plotting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../polarizers/index.html">solpolpy.polarizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/index.html">solpolpy.transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../util/index.html">solpolpy.util</a></li>
 </ul>
 </details></li>
 </ul>
@@ -445,18 +446,15 @@ document.write(`
                   
   <section id="module-solpolpy.constants">
 <span id="solpolpy-constants"></span><h1>solpolpy.constants<a class="headerlink" href="#module-solpolpy.constants" title="Link to this heading">#</a></h1>
-<p>Constants used in code</p>
+<p>Constants used in code.</p>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.constants.VALID_KINDS" title="solpolpy.constants.VALID_KINDS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VALID_KINDS</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.constants.STEREOA_OFFSET_ANGLE" title="solpolpy.constants.STEREOA_OFFSET_ANGLE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">STEREOA_OFFSET_ANGLE</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.constants.STEREOA_OFFSET_ANGLE" title="solpolpy.constants.STEREOA_OFFSET_ANGLE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">STEREOA_OFFSET_ANGLE</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#solpolpy.constants.STEREOB_OFFSET_ANGLE" title="solpolpy.constants.STEREOB_OFFSET_ANGLE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">STEREOB_OFFSET_ANGLE</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#solpolpy.constants.STEREOB_OFFSET_ANGLE" title="solpolpy.constants.STEREOB_OFFSET_ANGLE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">STEREOB_OFFSET_ANGLE</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -465,11 +463,6 @@ document.write(`
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
-<dl class="py data">
-<dt class="sig sig-object py" id="solpolpy.constants.VALID_KINDS">
-<span class="sig-prename descclassname"><span class="pre">solpolpy.constants.</span></span><span class="sig-name descname"><span class="pre">VALID_KINDS</span></span><a class="headerlink" href="#solpolpy.constants.VALID_KINDS" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
 <dl class="py data">
 <dt class="sig sig-object py" id="solpolpy.constants.STEREOA_OFFSET_ANGLE">
 <span class="sig-prename descclassname"><span class="pre">solpolpy.constants.</span></span><span class="sig-name descname"><span class="pre">STEREOA_OFFSET_ANGLE</span></span><a class="headerlink" href="#solpolpy.constants.STEREOA_OFFSET_ANGLE" title="Link to this definition">#</a></dt>
@@ -531,7 +524,6 @@ document.write(`
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.constants.VALID_KINDS"><code class="docutils literal notranslate"><span class="pre">VALID_KINDS</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.constants.STEREOA_OFFSET_ANGLE"><code class="docutils literal notranslate"><span class="pre">STEREOA_OFFSET_ANGLE</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solpolpy.constants.STEREOB_OFFSET_ANGLE"><code class="docutils literal notranslate"><span class="pre">STEREOB_OFFSET_ANGLE</span></code></a></li>
 </ul>

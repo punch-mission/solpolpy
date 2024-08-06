@@ -32,8 +32,16 @@ def fourpol_ones():
 
 @fixture()
 def mzp_ones():
-    data_out = [("P", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 60*u.degree})),
-                ("Z", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0*u.degree})),
+    data_out = [("P", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 60*u.degree})),
+                ("Z", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 0*u.degree})),
+                ("M", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": -60*u.degree}))]
+    return NDCollection(data_out, meta={}, aligned_axes="all")
+
+
+@fixture()
+def mzp_ones_other_order():
+    data_out = [("Z", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0*u.degree})),
+                ("P", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 60*u.degree})),
                 ("M", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": -60*u.degree}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 

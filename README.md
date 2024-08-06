@@ -26,10 +26,11 @@ Please open a discussion or issue for help.
 ## Features Coming Soon
 - [x] core transformation capability
 - [x] clearer examples in the documentation
+- [x] more comprehensive support for 4-polarizer systems
+- [x] functions to deal with the IMAX effect in wide-field imagers
 - [ ] quantification and propagation of error
 - [ ] additional plotting utilities
-- [ ] more comprehensive support for 4-polarizer systems
-- [x] functions to deal with the IMAX effect in wide-field imagers
+
 
 ## Contributing
 We encourage all contributions.

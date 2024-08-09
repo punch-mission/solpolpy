@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Hughes"
+  given-names: "J. Marcus"
+  orcid: "https://orcid.org/0000-0003-3410-7650"
+- family-names: "Lowder"
+  given-names: "Chris"
+    orcid: "https://orcid.org/0000-0001-8318-8229"
+title: "solpolpy"
+version: 1.0.0
+doi: 10.5281/zenodo.10076326
+date-released: 2024-08-09
+url: "https://github.com/punch-mission/solpolpy"

@@ -6,7 +6,10 @@ authors:
   orcid: "https://orcid.org/0000-0003-3410-7650"
 - family-names: "Lowder"
   given-names: "Chris"
-    orcid: "https://orcid.org/0000-0001-8318-8229"
+  orcid: "https://orcid.org/0000-0001-8318-8229"
+- family-names: "DeForest"
+  given-names: "Craig"
+  orcid: "https://orcid.org/0000-0002-7164-2786"
 title: "solpolpy"
 version: 1.0.0
 doi: 10.5281/zenodo.10076326

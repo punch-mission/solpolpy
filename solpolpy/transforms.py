@@ -81,8 +81,6 @@ def npol_to_mzp(input_collection, offset_angle=0*u.degree, **kwargs):
     except np.linalg.LinAlgError as err:
         if "Singular matrix" in str(err):
             raise ValueError("Conversion matrix is degenerate")
-        else:
-            raise
 
     data_mzp_solar = np.matmul(conv_matrix_inv, data_npol)
 

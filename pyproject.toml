@@ -43,7 +43,8 @@ docs = [
     "sphinx-autoapi",
     "nbsphinx",
     "ipython",
-    "pandoc"
+    "pandoc",
+    "packaging"
 ]
 
 dev = ["solpolpy[test, docs]", "pre-commit"]

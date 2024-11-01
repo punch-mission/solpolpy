@@ -13,18 +13,21 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-
+from packaging.version import Version
 
 # -- Project information -----------------------------------------------------
 from solpolpy import __version__
 
 project = "solpolpy"
-copyright = "2023, PUNCH Science Operations Center"
+copyright = "2024, PUNCH Science Operations Center"
 author = "PUNCH Science Operations Center"
 
 # The full version, including alpha/beta/rc tags
 release = __version__
-
+version: str = release
+_version = Version(release)
+if _version.is_devrelease:
+    version = release = f"{_version.base_version}.dev{_version.dev}"
 
 # -- General configuration ---------------------------------------------------
 

@@ -14,7 +14,7 @@ import networkx as nx
 import numpy as np
 from ndcube import NDCollection, NDCube
 
-from solpolpy.errors import InvalidDataError, MissingAlphaError
+from solpolpy.errors import InvalidDataError, MissingAlphaError, SolpolpyError
 from solpolpy.util import combine_all_collection_masks
 
 System = StrEnum("System", ["bpb", "npol", "stokes", "mzp", "btbr", "bthp", "fourpol", "bp3"])
@@ -62,40 +62,39 @@ def npol_to_mzp(input_collection, offset_angle=0*u.degree, **kwargs):
     Notes
     ------
     Equation 44 in DeForest et al. 2022.
-
-    """""
+    """
     input_keys = list(input_collection.keys())
-    input_dict = {}
-    in_list = list(input_collection)
+    phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha']*u.degree
+    mzp_angles = [-60, 0, 60] * u.degree    # theta angle in Eq 44
 
-    for p_angle in in_list:
-        if p_angle == "alpha":
-            break
-        input_dict[u.Quantity(p_angle)] = input_collection[p_angle].data
+    data_shape = input_collection[input_keys[0]].data.shape
+    data_npol = np.zeros([data_shape[0], data_shape[1], 3, 1])
 
-    mzp_angles = [-60, 0, 60] * u.degree
-    Bmzp = {}
-    for target_angle in mzp_angles:
-        Bmzp[target_angle] = ((1 / 3) * np.sum([ith_polarizer_brightness * (1 + 2 * np.cos(2 * (target_angle - (ith_angle-offset_angle))))
-                                       for ith_angle, ith_polarizer_brightness in input_dict.items()], axis=0))
+    conv_matrix = np.array([[(4 * np.cos(phi[i] - mzp_angles[j] - offset_angle) ** 2 - 1) / 3
+                             for j in range(3)] for i in range(3)])
 
-    # TODO: update header properly; time info?
-    metaM, metaZ, metaP = (copy.copy(input_collection[input_keys[0]].meta),
-                           copy.copy(input_collection[input_keys[0]].meta),
-                           copy.copy(input_collection[input_keys[0]].meta))
-    metaM.update(POLAR=-60*u.degree)
-    metaZ.update(POLAR=0*u.degree)
-    metaP.update(POLAR=60*u.degree)
+    for i, key in enumerate(key for key in input_keys if key != 'alpha'):
+        data_npol[:, :, i, 0] = input_collection[key].data
+
+    try:
+        conv_matrix_inv = np.linalg.inv(conv_matrix)
+    except np.linalg.LinAlgError as err:
+        if "Singular matrix" in str(err):
+            raise SolpolpyError("Conversion matrix is degenerate")
+
+    data_mzp_solar = np.matmul(conv_matrix_inv, data_npol)
+
+    meta = copy.copy(input_collection[input_keys[0]].meta)
+    metas = [{**meta, 'POLAR': angle} for angle in [-60, 0, 60] * u.degree]
     mask = combine_all_collection_masks(input_collection)
-    Bmzp_cube = [("M", NDCube(Bmzp[-60 * u.degree], wcs=input_collection[input_keys[0]].wcs, mask=mask, meta=metaM)),
-                 ("Z", NDCube(Bmzp[0 * u.degree], wcs=input_collection[input_keys[0]].wcs, mask=mask, meta=metaZ)),
-                 ("P", NDCube(Bmzp[60 * u.degree], wcs=input_collection[input_keys[0]].wcs, mask=mask, meta=metaP))]
-    for p_angle in in_list:
+    cube_list = [(key, NDCube(data_mzp_solar[:, :, i, 0], wcs=input_collection[input_keys[0]].wcs,
+                mask=mask, meta=metas[i])) for i, key in enumerate(["M", "Z", "P"])]
+    for p_angle in input_keys:
         if p_angle.lower() == "alpha":
-            Bmzp_cube.append(("alpha", NDCube(input_collection["alpha"].data * u.radian,
+            cube_list.append(("alpha", NDCube(input_collection["alpha"].data * u.radian,
                                               wcs=input_collection[input_keys[0]].wcs,
-                                              meta=metaP)))
-    return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
+                                              meta=input_collection["alpha"].meta)))
+    return NDCollection(cube_list, meta={}, aligned_axes="all")
 
 
 @transform(System.mzp, System.bpb, use_alpha=True)

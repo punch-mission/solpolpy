@@ -14,7 +14,7 @@ import networkx as nx
 import numpy as np
 from ndcube import NDCollection, NDCube
 
-from solpolpy.errors import InvalidDataError, MissingAlphaError
+from solpolpy.errors import InvalidDataError, MissingAlphaError, SolpolpyError
 from solpolpy.util import combine_all_collection_masks
 
 System = StrEnum("System", ["bpb", "npol", "stokes", "mzp", "btbr", "bthp", "fourpol", "bp3"])
@@ -80,21 +80,21 @@ def npol_to_mzp(input_collection, offset_angle=0*u.degree, **kwargs):
         conv_matrix_inv = np.linalg.inv(conv_matrix)
     except np.linalg.LinAlgError as err:
         if "Singular matrix" in str(err):
-            raise ValueError("Conversion matrix is degenerate")
+            raise SolpolpyError("Conversion matrix is degenerate")
 
     data_mzp_solar = np.matmul(conv_matrix_inv, data_npol)
 
     meta = copy.copy(input_collection[input_keys[0]].meta)
     metas = [{**meta, 'POLAR': angle} for angle in [-60, 0, 60] * u.degree]
     mask = combine_all_collection_masks(input_collection)
-    Bmzp_cube = [(key, NDCube(data_mzp_solar[:, :, i, 0], wcs=input_collection[input_keys[0]].wcs,
+    cube_list = [(key, NDCube(data_mzp_solar[:, :, i, 0], wcs=input_collection[input_keys[0]].wcs,
                 mask=mask, meta=metas[i])) for i, key in enumerate(["M", "Z", "P"])]
     for p_angle in input_keys:
         if p_angle.lower() == "alpha":
-            Bmzp_cube.append(("alpha", NDCube(input_collection["alpha"].data * u.radian,
+            cube_list.append(("alpha", NDCube(input_collection["alpha"].data * u.radian,
                                               wcs=input_collection[input_keys[0]].wcs,
                                               meta=input_collection["alpha"].meta)))
-    return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
+    return NDCollection(cube_list, meta={}, aligned_axes="all")
 
 
 @transform(System.mzp, System.bpb, use_alpha=True)

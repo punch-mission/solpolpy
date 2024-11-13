@@ -17,7 +17,8 @@ from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
 def resolve(input_data: list[str] | NDCollection,
             out_system: str,
             imax_effect: bool = False,
-            out_angles: u.degree = None) -> NDCollection:
+            out_angles: u.degree = None,
+            offset_angle: u.degree = None) -> NDCollection:
     """Apply a polarization transformation to a set of input dataframes.
 
     Parameters
@@ -46,6 +47,9 @@ def resolve(input_data: list[str] | NDCollection,
 
     out_angles : u.degree
         Angles to use when converting to npol or some arbitrary system
+
+    offset_angle : u.degree
+        Reference angle used for the polarizer offset. If None, it will try to determine it from the metadata.
 
     Returns
     -------
@@ -77,12 +81,14 @@ def resolve(input_data: list[str] | NDCollection,
     if requires_alpha(equation) and "alpha" not in input_keys:
         input_data = add_alpha(input_data)
 
+    offset_angle = determine_offset_angle(input_data) if offset_angle is None else offset_angle
+
     return equation(input_data,
-                    offset_angle=determine_offset_angle(input_data),
+                    offset_angle=offset_angle,
                     out_angles=out_angles)
 
 
-def determine_offset_angle(input_collection: NDCollection) -> float:
+def determine_offset_angle(input_collection: NDCollection) -> u.degree:
     """Get the instrument specific offset angle."""
     first_key = next(iter(input_collection.keys()))
     match input_collection[first_key].meta.get("OBSRVTRY", "BLANK"):

@@ -62,8 +62,6 @@ def test_determine_input_kind_fail(example_fail):
 def test_check_all_paths_resolve(request):
     for source_system in System:
         for target_system in System:
-            # source_system = System.npol
-            # target_system = System.bpb
             if source_system != target_system:  # don't need to convert if the input and output systems are the same
                 try:
                     path = get_transform_path(source_system, target_system)

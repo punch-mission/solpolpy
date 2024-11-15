@@ -57,7 +57,7 @@ def transform(source_system, target_system, use_alpha):
 
 @transform(System.npol, System.mzp, use_alpha=False)
 @u.quantity_input
-def npol_to_mzp(input_collection, offset_angle=0*u.degree, **kwargs):
+def npol_to_mzp(input_collection, reference_angle=0*u.degree, **kwargs):
     """
     Notes
     ------
@@ -70,7 +70,7 @@ def npol_to_mzp(input_collection, offset_angle=0*u.degree, **kwargs):
     data_shape = input_collection[input_keys[0]].data.shape
     data_npol = np.zeros([data_shape[0], data_shape[1], 3, 1])
 
-    conv_matrix = np.array([[(4 * np.cos(phi[i] - mzp_angles[j] - offset_angle) ** 2 - 1) / 3
+    conv_matrix = np.array([[(4 * np.cos(phi[i] - mzp_angles[j] - reference_angle) ** 2 - 1) / 3
                              for j in range(3)] for i in range(3)])
 
     for i, key in enumerate(key for key in input_keys if key != 'alpha'):
@@ -433,7 +433,7 @@ def btbr_to_npol(input_collection, out_angles: u.degree, **kwargs):
 
 @transform(System.mzp, System.npol, use_alpha=False)
 @u.quantity_input
-def mzp_to_npol(input_collection, out_angles: u.degree, offset_angle=0*u.degree, **kwargs):
+def mzp_to_npol(input_collection, out_angles: u.degree, reference_angle=0*u.degree, **kwargs):
     """Notes
     -----
     Equation 45 in DeForest et al. 2022.
@@ -452,7 +452,7 @@ def mzp_to_npol(input_collection, out_angles: u.degree, offset_angle=0*u.degree,
     first_meta = input_collection[in_list[0]].meta
     first_wcs = input_collection[in_list[0]].wcs
     for out_angle in out_angles:
-        value = (1/3) * np.sum([input_cube.data * (4 * np.square(np.cos(out_angle - input_angle - offset_angle)) - 1)
+        value = (1/3) * np.sum([input_cube.data * (4 * np.square(np.cos(out_angle - input_angle - reference_angle)) - 1)
                                      for input_angle, input_cube in input_dict.items()], axis=0)
         out_meta = copy.copy(first_meta)
         out_meta.update(POLAR=out_angle)

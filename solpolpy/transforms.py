@@ -15,9 +15,9 @@ import numpy as np
 from ndcube import NDCollection, NDCube
 
 from solpolpy.errors import InvalidDataError, MissingAlphaError, SolpolpyError
-from solpolpy.util import combine_all_collection_masks
+from solpolpy.util import combine_all_collection_masks, extract_crota_from_wcs
 
-System = StrEnum("System", ["bpb", "npol", "stokes", "mzp", "btbr", "bthp", "fourpol", "bp3"])
+System = StrEnum("System", ["bpb", "npol", "stokes", "mzp", "btbr", "bthp", "fourpol", "bp3", "rotmzp"])
 SYSTEM_REQUIRED_KEYS = {System.bpb: {"B", "pB"},
                         System.npol: set(),
                         System.stokes: {"I", "Q", "U"},
@@ -492,6 +492,51 @@ def fourpol_to_stokes(input_collection, **kwargs):
 
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")
 
+def rotmzp_to_mzp(input_collection, reference_angle=0*u.degree, **kwargs):
+    """
+    Notes
+    ------
+    For rotating frames like NFI, ASPIICS, CODEX
+    Input has MZP in instrument reference.
+    Equation 44 in DeForest et al. 2022.
+    """
+    input_keys = list(input_collection.keys())
+    satellite_orientation = extract_crota_from_wcs(input_collection['Z'])
+    polarizer_difference = [input_collection[k].meta['POLAROFF'] if 'POLAROFF' in input_collection[k].meta else 0
+                            for k in ['M', 'Z', 'P']] * u.degree
+
+    phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha']*u.degree
+    phi = phi + satellite_orientation + polarizer_difference
+    mzp_angles = [-60, 0, 60] * u.degree    # theta angle in Eq 44
+
+    data_shape = input_collection[input_keys[0]].data.shape
+    data_npol = np.zeros([data_shape[0], data_shape[1], 3, 1])
+
+    conv_matrix = np.array([[(4 * np.cos(phi[i] - mzp_angles[j] - reference_angle) ** 2 - 1) / 3
+                             for j in range(3)] for i in range(3)])
+
+    for i, key in enumerate(key for key in input_keys if key != 'alpha'):
+        data_npol[:, :, i, 0] = input_collection[key].data
+
+    try:
+        conv_matrix_inv = np.linalg.inv(conv_matrix)
+    except np.linalg.LinAlgError as err:
+        if "Singular matrix" in str(err):
+            raise SolpolpyError("Conversion matrix is degenerate")
+
+    data_mzp_solar = np.matmul(conv_matrix_inv, data_npol)
+
+    meta = copy.copy(input_collection[input_keys[0]].meta)
+    metas = [{**meta, 'POLAR': angle} for angle in [-60, 0, 60] * u.degree]
+    mask = combine_all_collection_masks(input_collection)
+    cube_list = [(key, NDCube(data_mzp_solar[:, :, i, 0], wcs=input_collection[input_keys[0]].wcs,
+                mask=mask, meta=metas[i])) for i, key in enumerate(["M", "Z", "P"])]
+    for p_angle in input_keys:
+        if p_angle.lower() == "alpha":
+            cube_list.append(("alpha", NDCube(input_collection["alpha"].data * u.radian,
+                                              wcs=input_collection[input_keys[0]].wcs,
+                                              meta=input_collection["alpha"].meta)))
+    return NDCollection(cube_list, meta={}, aligned_axes="all")
 
 # Build the graph at the bottom so all transforms are defined
 transform_graph = nx.DiGraph()

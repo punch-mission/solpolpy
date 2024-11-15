@@ -225,6 +225,8 @@ def generate_imax_matrix(array_shape: (int, int), cumulative_offset: u.deg, wcs:
         raise ValueError(msg)
 
     thmzp = [-60, 0, 60] * u.degree + cumulative_offset
+    # Define the A matrix
+    mat_a = np.empty((array_shape[0], array_shape[1], 3, 3))
 
     long_extent, lat_extent = wcs.wcs.cdelt[0]*array_shape[0], wcs.wcs.cdelt[1]*array_shape[1]
     long_arr, lat_arr = np.meshgrid(np.linspace(-long_extent/2, long_extent/2, array_shape[0]),
@@ -236,9 +238,6 @@ def generate_imax_matrix(array_shape: (int, int), cumulative_offset: u.deg, wcs:
     phi_p = np.arctan2(np.tan(thmzp[2]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
 
     phi = np.stack([phi_m, phi_z, phi_p])
-
-    # Define the A matrix
-    mat_a = np.empty((array_shape[0], array_shape[1], 3, 3))
 
     for i in range(3):
         for j in range(3):

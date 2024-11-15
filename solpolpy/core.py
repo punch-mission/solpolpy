@@ -4,13 +4,15 @@ import typing as t
 import astropy.units as u
 import networkx as nx
 import numpy as np
+from astropy.wcs import WCS
 from ndcube import NDCollection, NDCube
 
 from solpolpy.alpha import radial_north
-from solpolpy.constants import STEREOA_OFFSET_ANGLE, STEREOB_OFFSET_ANGLE
+from solpolpy.constants import STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.instruments import load_data
 from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
+from solpolpy.util import extract_crota_from_wcs
 
 
 @u.quantity_input
@@ -18,7 +20,7 @@ def resolve(input_data: list[str] | NDCollection,
             out_system: str,
             imax_effect: bool = False,
             out_angles: u.degree = None,
-            offset_angle: u.degree = None) -> NDCollection:
+            reference_angle: u.degree = None) -> NDCollection:
     """Apply a polarization transformation to a set of input dataframes.
 
     Parameters
@@ -48,7 +50,7 @@ def resolve(input_data: list[str] | NDCollection,
     out_angles : u.degree
         Angles to use when converting to npol or some arbitrary system
 
-    offset_angle : u.degree
+    reference_angle : u.degree
         Reference angle used for the polarizer offset. If None, it will try to determine it from the metadata.
 
     Returns
@@ -81,25 +83,25 @@ def resolve(input_data: list[str] | NDCollection,
     if requires_alpha(equation) and "alpha" not in input_keys:
         input_data = add_alpha(input_data)
 
-    offset_angle = determine_offset_angle(input_data) if offset_angle is None else offset_angle
+    reference_angle = determine_reference_angle(input_data) if reference_angle is None else reference_angle
 
     return equation(input_data,
-                    offset_angle=offset_angle,
+                    reference_angle=reference_angle,
                     out_angles=out_angles)
 
 
-def determine_offset_angle(input_collection: NDCollection) -> u.degree:
+def determine_reference_angle(input_collection: NDCollection) -> u.degree:
     """Get the instrument specific offset angle."""
     first_key = next(iter(input_collection.keys()))
     match input_collection[first_key].meta.get("OBSRVTRY", "BLANK"):
         case "STEREO_A":
-            offset_angle = STEREOA_OFFSET_ANGLE
+            reference_angle = STEREOA_REFERENCE_ANGLE
         case "STEREO_B":
-            offset_angle = STEREOB_OFFSET_ANGLE
+            reference_angle = STEREOB_REFERENCE_ANGLE
         case _:
-            offset_angle = 0 * u.degree
+            reference_angle = 0 * u.degree
 
-    return offset_angle
+    return reference_angle
 
 
 def determine_input_kind(input_data: NDCollection) -> System:
@@ -201,7 +203,8 @@ def requires_alpha(func: t.Callable) -> bool:
     return getattr(func, "uses_alpha", False)
 
 
-def generate_imax_matrix(array_shape) -> np.ndarray:
+@u.quantity_input
+def generate_imax_matrix(array_shape: (int, int), cumulative_offset: u.deg, wcs: WCS) -> np.ndarray:
     """Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords).
 
     Parameters
@@ -217,10 +220,15 @@ def generate_imax_matrix(array_shape) -> np.ndarray:
     """
     # Ideal MZP wrt Solar North
     # TODO fix variable name
-    thmzp = [-60, 0, 60] * u.degree
+    if len(cumulative_offset) != 3:
+        msg = "Three angles must be provided for the polarizer difference."
+        raise ValueError(msg)
 
-    # TODO don't hard code extents but get from the file
-    long_arr, lat_arr = np.meshgrid(np.linspace(-20, 20, array_shape[0]), np.linspace(-20, 20, array_shape[1]))
+    thmzp = [-60, 0, 60] * u.degree + cumulative_offset
+
+    long_extent, lat_extent = wcs.wcs.cdelt[0]*array_shape[0], wcs.wcs.cdelt[1]*array_shape[1]
+    long_arr, lat_arr = np.meshgrid(np.linspace(-long_extent/2, long_extent/2, array_shape[0]),
+                                    np.linspace(-lat_extent/2, lat_extent, array_shape[1]))
 
     # Foreshortening (IMAX) effect on polarizer angle
     phi_m = np.arctan2(np.tan(thmzp[0]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
@@ -256,10 +264,14 @@ def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
     data_shape = _determine_image_shape(input_data)
     data_mzp_camera = np.zeros([data_shape[0], data_shape[1], 3, 1])
 
+    satellite_orientation = extract_crota_from_wcs(input_data['M'])
+    polarizer_difference = [input_data[k].meta['POLAROFF'] if 'POLAROFF' in input_data[k].meta else 0
+                            for k in ['M', 'Z', 'P']] * u.degree
+
     for i, key in enumerate(["M", "Z", "P"]):
         data_mzp_camera[:, :, i, 0] = input_data[key].data
 
-    imax_matrix = generate_imax_matrix(data_shape)
+    imax_matrix = generate_imax_matrix(data_shape, polarizer_difference + satellite_orientation, input_data['M'].wcs)
     try:
         imax_matrix_inv = np.linalg.inv(imax_matrix)
     except np.linalg.LinAlgError as err:

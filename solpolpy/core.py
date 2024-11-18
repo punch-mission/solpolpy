@@ -74,7 +74,7 @@ def resolve(input_data: list[str] | NDCollection,
         raise ValueError("Out angles must be specified for this transform.")
 
     if imax_effect:
-        if input_kind == "mzp":
+        if input_kind in ("mzp", "rotmzp"):
             input_data = resolve_imax_effect(input_data)
         else:
             msg = "IMAX effect applies only for transformations starting from MZP."

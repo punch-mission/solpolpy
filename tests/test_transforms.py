@@ -245,9 +245,9 @@ def test_fourpol_to_stokes_ones(fourpol_ones):
 @fixture()
 def rotmzp_ones():
     input_data = NDCollection(
-        [("Pp", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 60 * u.degree, "POLAROFF": 1 * u.degree})),
-         ("Zp", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0 * u.degree, "POLAROFF": 1 * u.degree})),
-         ("Mp", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": -60 * u.degree, "POLAROFF": 1 * u.degree}))],
+        [("Pp", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 60 * u.degree, "POLAROFF": 1})),
+         ("Zp", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0 * u.degree, "POLAROFF": 1})),
+         ("Mp", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": -60 * u.degree, "POLAROFF": 1}))],
         meta={}, aligned_axes="all")
     return input_data
 

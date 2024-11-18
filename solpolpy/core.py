@@ -12,7 +12,7 @@ from solpolpy.constants import STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.instruments import load_data
 from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
-from solpolpy.util import extract_crota_from_wcs
+from solpolpy.util import extract_crota_from_wcs, calculate_distortion, apply_distortion_shift
 
 
 @u.quantity_input
@@ -237,7 +237,14 @@ def generate_imax_matrix(array_shape: (int, int), cumulative_offset: u.deg, wcs:
     phi_z = np.arctan2(np.tan(thmzp[1]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
     phi_p = np.arctan2(np.tan(thmzp[2]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
 
-    phi = np.stack([phi_m, phi_z, phi_p])
+    # Apply distortion to IMAX matrix
+    # x_distortion = calculate_distortion(wcs.cpdis1, array_shape)
+    # y_distortion = calculate_distortion(wcs.cpdis2, array_shape)
+    phi_m_distorted = apply_distortion_shift(phi_m, wcs)
+    phi_z_distorted = apply_distortion_shift(phi_z, wcs)
+    phi_p_distorted = apply_distortion_shift(phi_p, wcs)
+
+    phi = np.stack([phi_m_distorted, phi_z_distorted, phi_p_distorted])
 
     for i in range(3):
         for j in range(3):

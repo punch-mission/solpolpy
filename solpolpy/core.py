@@ -270,14 +270,14 @@ def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
     data_shape = _determine_image_shape(input_data)
     data_mzp_camera = np.zeros([data_shape[0], data_shape[1], 3, 1])
 
-    satellite_orientation = extract_crota_from_wcs(input_data['M'])
+    satellite_orientation = extract_crota_from_wcs(input_data['Mp'])
     polarizer_difference = [input_data[k].meta['POLAROFF'] if 'POLAROFF' in input_data[k].meta else 0
-                            for k in ['M', 'Z', 'P']] * u.degree
+                            for k in ['Mp', 'Zp', 'Pp']] * u.degree
 
-    for i, key in enumerate(["M", "Z", "P"]):
+    for i, key in enumerate(["Mp", "Zp", "Pp"]):
         data_mzp_camera[:, :, i, 0] = input_data[key].data
 
-    imax_matrix = generate_imax_matrix(data_shape, polarizer_difference + satellite_orientation, input_data['M'].wcs)
+    imax_matrix = generate_imax_matrix(data_shape, polarizer_difference + satellite_orientation, input_data['Mp'].wcs)
     try:
         imax_matrix_inv = np.linalg.inv(imax_matrix)
     except np.linalg.LinAlgError as err:

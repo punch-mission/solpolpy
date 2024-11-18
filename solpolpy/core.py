@@ -12,7 +12,7 @@ from solpolpy.constants import STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.instruments import load_data
 from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
-from solpolpy.util import apply_distortion_shift, extract_crota_from_wcs
+from solpolpy.util import extract_crota_from_wcs, calculate_distortion, apply_distortion_shift
 
 
 @u.quantity_input

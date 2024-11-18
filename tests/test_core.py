@@ -81,11 +81,11 @@ def test_btbr_to_npol_missing_out_angles(btbr_ones):
         resolve(btbr_ones, "npol")
 
 
-def test_imax_effect(mzp_data):
-    result = resolve(mzp_data, "mzp", imax_effect=True)
+def test_imax_effect(rotmzp_ones):
+    result = resolve(rotmzp_ones, "mzp", imax_effect=True)
     assert isinstance(result, NDCollection)
     for key in result.keys():
-        assert np.sum(result[key].data * mzp_data[key].data) != 0
+        assert np.sum(result[key].data * rotmzp_ones[key].data) != 0
 
 
 def test_imax_effect_unsupported_transformation_input(bpb_data):

@@ -142,7 +142,6 @@ def bthp_ones():
 
 
 @fixture()
-@fixture()
 def rotmzp_ones():
     input_data = [("Pp", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 60 * u.degree, "POLAROFF": 1})),
          ("Zp", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0 * u.degree, "POLAROFF": 1})),

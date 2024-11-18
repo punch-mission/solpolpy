@@ -22,7 +22,7 @@ SYSTEM_REQUIRED_KEYS = {System.bpb: {"B", "pB"},
                         System.npol: set(),
                         System.stokes: {"I", "Q", "U"},
                         System.mzp: {"M", "Z", "P"},
-                        System.rotmzp: {"Mp", "Zp", "Pp"},
+                        System.rotmzp: {"M", "Z", "P"},
                         System.btbr: {"Bt", "Br"},
                         System.bp3: {"B", "pB", "pBp"},
                         System.bthp: {"B", "theta", "p"},
@@ -503,9 +503,9 @@ def rotmzp_to_mzp(input_collection, reference_angle=0*u.degree, **kwargs):
     Equation 44 in DeForest et al. 2022.
     """
     input_keys = list(input_collection.keys())
-    satellite_orientation = extract_crota_from_wcs(input_collection['Zp'])
+    satellite_orientation = extract_crota_from_wcs(input_collection['Z'])
     polarizer_difference = [input_collection[k].meta['POLAROFF'] if 'POLAROFF' in input_collection[k].meta else 0
-                            for k in ['Mp', 'Zp', 'Pp']] * u.degree
+                            for k in ['M', 'Z', 'P']] * u.degree
 
     phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha']*u.degree
     phi = phi + satellite_orientation + polarizer_difference

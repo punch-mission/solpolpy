@@ -1,6 +1,7 @@
+import copy as copy
+
 import astropy.units as u
 import numpy as np
-import copy as copy
 from astropy.wcs import WCS
 from astropy.wcs.utils import proj_plane_pixel_scales
 from ndcube import NDCollection

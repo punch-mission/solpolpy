@@ -1,5 +1,6 @@
 import astropy.units as u
 import numpy as np
+import copy as copy
 from astropy.wcs import WCS
 from astropy.wcs.utils import proj_plane_pixel_scales
 from ndcube import NDCollection
@@ -20,6 +21,7 @@ def combine_masks(*args) -> np.ndarray | None:
         return None
     else:
         return np.logical_or.reduce(args)
+
 
 def calculate_pc_matrix(crota: float, cdelt: (float, float)) -> np.ndarray:
     """
@@ -45,10 +47,11 @@ def calculate_pc_matrix(crota: float, cdelt: (float, float)) -> np.ndarray:
         ],
     )
 
+
 def convert_cd_matrix_to_pc_matrix(wcs):
     if hasattr(wcs.wcs, 'cd'):
         cdelt1, cdelt2 = proj_plane_pixel_scales(wcs)
-        crota = np.arccos(wcs.wcs.cd[0, 0]/cdelt1)
+        crota = np.arccos(wcs.wcs.cd[0, 0] / cdelt1)
         new_wcs = WCS(naxis=2)
         new_wcs.wcs.ctype = wcs.wcs.ctype
         new_wcs.wcs.crval = wcs.wcs.crval
@@ -60,13 +63,43 @@ def convert_cd_matrix_to_pc_matrix(wcs):
     else:  # noqa RET505
         return wcs
 
+
 def extract_crota_from_wcs(wcs: WCS) -> u.deg:
     """Extract CROTA from a WCS."""
     if hasattr(wcs.wcs, 'pc'):
         delta_ratio = wcs.wcs.cdelt[1] / wcs.wcs.cdelt[0]
-        return np.arctan2(wcs.wcs.pc[1, 0]/delta_ratio, wcs.wcs.pc[0, 0]) * u.rad
+        return np.arctan2(wcs.wcs.pc[1, 0] / delta_ratio, wcs.wcs.pc[0, 0]) * u.rad
     elif hasattr(wcs.wcs, 'cd'):
         new_wcs = convert_cd_matrix_to_pc_matrix(wcs)
         return extract_crota_from_wcs(new_wcs)
     else:
         return 0 * u.rad
+
+
+def indexed_offset(index, distortion, image_shape):
+    return distortion.get_offset(index % image_shape[0], index // image_shape[0])
+
+
+def calculate_distortion(distortion, image_shape):
+    vectorized_offset = np.vectorize(indexed_offset, excluded=["distortion", "image_shape"])
+    distortion_array = vectorized_offset(np.arange(image_shape[0] * image_shape[1]),
+                                         distortion=distortion,
+                                         image_shape=image_shape)
+    return distortion_array.reshape(image_shape)
+
+
+def apply_distortion_shift(input_image, wcs: WCS):
+    shift_x = calculate_distortion(wcs.cpdis1, input_image[0])
+    shift_y = calculate_distortion(wcs.cpdis2, input_image[1])
+    # Calculate new coordinates for pixel shifts
+    i_coords, j_coords = np.meshgrid(np.arange(input_image.shape[0]), np.arange(input_image.shape[1]), indexing='ij')
+    new_x = np.round(j_coords + shift_x).astype(int)
+    new_y = np.round(i_coords + shift_y).astype(int)
+
+    # Create a shifted image
+    shifted_image = copy.copy(input_image)
+    valid_mask = (0 <= new_x) & (new_x < input_image.shape[1]) & (0 <= new_y) & (new_y < input_image.shape[0])
+
+    shifted_image[new_y[valid_mask], new_x[valid_mask]] = input_image[i_coords[valid_mask], j_coords[valid_mask]]
+
+    return shifted_image

@@ -492,6 +492,7 @@ def fourpol_to_stokes(input_collection, **kwargs):
 
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")
 
+@transform(System.rotmzp, System.npol, use_alpha=False)
 def rotmzp_to_mzp(input_collection, reference_angle=0*u.degree, **kwargs):
     """
     Notes

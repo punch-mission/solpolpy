@@ -48,7 +48,8 @@ def test_add_alpha(bpb_ones_no_alpha):
      ("stokes_ones", System.stokes),
      ("bp3_ones", System.bp3),
      ("bp3_ones_no_alpha", System.bp3),
-     ("bthp_ones", System.bthp)],
+     ("bthp_ones", System.bthp),
+     ("rotmzp_ones", System.rotmzp)],
 )
 def test_determine_input_kind(fixture_name, kind, request):
     assert determine_input_kind(request.getfixturevalue(fixture_name)) == kind

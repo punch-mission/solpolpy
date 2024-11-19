@@ -36,7 +36,7 @@ def resolve(input_data: list[str] | NDCollection,
 
         - "mzpsolar": Triplet of images taken at -60°, 0°, and +60° polarizing angles with a reference angle set to solar frame.
         - "mzpinstru": Triplet of images taken at -60°, 0°, and +60° polarizing angles with a reference angle set to instrument frame.
-        - "btbr": Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
+        - "btbr": A Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
         - "stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
         - "bpb": Total brightness and ‘excess polarized’ brightness images pair respectively.
         - "bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead of a fixed frame of reference of the instrument.
@@ -275,9 +275,13 @@ def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
     data_mzp_camera = np.zeros([data_shape[0], data_shape[1], 3, 1])
     input_keys = list(input_data.keys())
 
-    satellite_orientation = extract_crota_from_wcs(input_data['M'])
-    polarizer_difference = [input_data[k].meta['POLAROFF'] if 'POLAROFF' in input_data[k].meta else 0
-                            for k in ['M', 'Z', 'P']] * u.degree
+    if input_data['M'].meta['POLARREF'].lower() == 'instrument':
+        satellite_orientation = extract_crota_from_wcs(input_data['M'])
+        polarizer_difference = [input_data[k].meta['POLAROFF'] if 'POLAROFF' in input_data[k].meta else 0
+                                for k in ['M', 'Z', 'P']] * u.degree
+    else:
+        satellite_orientation = 0 * u.degree
+        polarizer_difference = [0,0,0] * u.degree
 
     for i, key in enumerate(["M", "Z", "P"]):
         data_mzp_camera[:, :, i, 0] = input_data[key].data

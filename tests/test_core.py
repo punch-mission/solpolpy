@@ -87,6 +87,23 @@ def test_imax_effect(mzpsolar_ones):
     assert isinstance(result, NDCollection)
     for key in result.keys():
         assert np.sum(result[key].data * mzpsolar_ones[key].data) != 0
+        assert (result[key].meta["POLARREF"].lower() == 'solar')
+
+
+def test_imax_effect_instru(mzpinstru_ones):
+    result = resolve(mzpinstru_ones, "mzpsolar", imax_effect=True)
+    assert isinstance(result, NDCollection)
+    for key in result.keys():
+        assert np.sum(result[key].data * mzpinstru_ones[key].data) != 0
+        assert (result[key].meta["POLARREF"].lower() == 'solar')
+
+
+def test_imax_effect_false(mzpinstru_ones):
+    result = resolve(mzpinstru_ones, "mzpsolar", imax_effect=False)
+    assert isinstance(result, NDCollection)
+    for key in result.keys():
+        assert np.sum(result[key].data * mzpinstru_ones[key].data) != 0
+        assert (result[key].meta["POLARREF"].lower() == 'solar')
 
 
 def test_imax_effect_unsupported_transformation_input(bpb_data):

@@ -4,6 +4,7 @@ import numpy as np
 from ndcube import NDCollection, NDCube
 from pytest import fixture
 
+
 wcs = astropy.wcs.WCS(naxis=3)
 wcs.ctype = "WAVE", "HPLT-TAN", "HPLN-TAN"
 wcs.cdelt = 0.2, 0.5, 0.4
@@ -32,17 +33,23 @@ def fourpol_ones():
 
 @fixture()
 def mzpsolar_ones():
-    data_out = [("P", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 60*u.degree})),
-                ("Z", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 0*u.degree})),
-                ("M", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": -60*u.degree}))]
+    data_out = [("P", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 60*u.degree, "POLARREF": 'Solar'})),
+                ("Z", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 0*u.degree, "POLARREF": 'Solar'})),
+                ("M", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": -60*u.degree, "POLARREF": 'Solar'}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
+@fixture()
+def mzpinstru_ones():
+    data_out = [("P", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 60*u.degree, "POLARREF": 'Instrument'})),
+                ("Z", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 0*u.degree, "POLARREF": 'Instrument'})),
+                ("M", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": -60*u.degree, "POLARREF": 'Instrument'}))]
+    return NDCollection(data_out, meta={}, aligned_axes="all")
 
 @fixture()
 def mzp_ones_other_order():
-    data_out = [("Z", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0*u.degree})),
-                ("P", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 60*u.degree})),
-                ("M", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": -60*u.degree}))]
+    data_out = [("Z", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0*u.degree, "POLARREF": 'Solar'})),
+                ("P", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 60*u.degree, "POLARREF": 'Solar'})),
+                ("M", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": -60*u.degree, "POLARREF": 'Solar'}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 

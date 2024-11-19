@@ -38,12 +38,6 @@ def mzpsolar_ones():
                 ("M", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": -60*u.degree, "POLARREF": 'Solar'}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
-@fixture()
-def mzpinstru_ones():
-    data_out = [("P", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 60*u.degree, "POLARREF": 'Instrument'})),
-                ("Z", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 0*u.degree, "POLARREF": 'Instrument'})),
-                ("M", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": -60*u.degree, "POLARREF": 'Instrument'}))]
-    return NDCollection(data_out, meta={}, aligned_axes="all")
 
 @fixture()
 def mzp_ones_other_order():
@@ -52,13 +46,6 @@ def mzp_ones_other_order():
                 ("M", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": -60*u.degree, "POLARREF": 'Solar'}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
-
-@fixture()
-def mzpsolar_data():
-    data_out = [("P", NDCube(np.random.random([50, 50]), wcs=wcs, meta={"POLAR": 60*u.degree})),
-                ("Z", NDCube(np.random.random([50, 50]), wcs=wcs, meta={"POLAR": 0*u.degree})),
-                ("M", NDCube(np.random.random([50, 50]), wcs=wcs, meta={"POLAR": -60*u.degree}))]
-    return NDCollection(data_out, meta={}, aligned_axes="all")
 
 
 @fixture()

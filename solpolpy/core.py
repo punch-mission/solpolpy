@@ -34,7 +34,8 @@ def resolve(input_data: list[str] | NDCollection,
         The polarization state you want to convert your input dataframes to.
         Must be one of the following strings:
 
-        - "mzp": Triplet of images taken at -60°, 0°, and +60° polarizing angles.
+        - "mzpsolar": Triplet of images taken at -60°, 0°, and +60° polarizing angles with a reference angle set to solar frame.
+        - "mzpinstru": Triplet of images taken at -60°, 0°, and +60° polarizing angles with a reference angle set to instrument frame.
         - "btbr": Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
         - "stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
         - "bpb": Total brightness and ‘excess polarized’ brightness images pair respectively.

@@ -1,10 +1,10 @@
 """Core transformation functions for solpolpy."""
+import copy
 import typing as t
 
 import astropy.units as u
 import networkx as nx
 import numpy as np
-import copy
 from astropy.wcs import WCS
 from ndcube import NDCollection, NDCube
 

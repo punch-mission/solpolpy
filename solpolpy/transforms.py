@@ -15,14 +15,14 @@ import numpy as np
 from ndcube import NDCollection, NDCube
 
 from solpolpy.errors import InvalidDataError, MissingAlphaError, SolpolpyError
-from solpolpy.util import combine_all_collection_masks, extract_crota_from_wcs
+from solpolpy.util import combine_all_collection_masks
 
-System = StrEnum("System", ["bpb", "npol", "stokes", "mzp", "btbr", "bthp", "fourpol", "bp3", "rotmzp"])
+System = StrEnum("System", ["bpb", "npol", "stokes", "mzpsolar", "mzpinstru", "btbr", "bthp", "fourpol", "bp3"])
 SYSTEM_REQUIRED_KEYS = {System.bpb: {"B", "pB"},
                         System.npol: set(),
                         System.stokes: {"I", "Q", "U"},
-                        System.mzp: {"M", "Z", "P"},
-                        System.rotmzp: {"M", "Z", "P"},
+                        System.mzpsolar: {"M", "Z", "P"},
+                        System.mzpinstru: {"M", "Z", "P"},
                         System.btbr: {"Bt", "Br"},
                         System.bp3: {"B", "pB", "pBp"},
                         System.bthp: {"B", "theta", "p"},
@@ -56,17 +56,17 @@ def transform(source_system, target_system, use_alpha):
     return decorator
 
 
-@transform(System.npol, System.mzp, use_alpha=False)
+@transform(System.npol, System.mzpsolar, use_alpha=False)
 @u.quantity_input
-def npol_to_mzp(input_collection, reference_angle=0*u.degree, **kwargs):
+def npol_to_mzpsolar(input_collection, reference_angle=0 * u.degree, **kwargs):
     """
     Notes
     ------
     Equation 44 in DeForest et al. 2022.
     """
     input_keys = list(input_collection.keys())
-    phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha']*u.degree
-    mzp_angles = [-60, 0, 60] * u.degree    # theta angle in Eq 44
+    phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha'] * u.degree
+    mzp_angles = [-60, 0, 60] * u.degree  # theta angle in Eq 44
 
     data_shape = input_collection[input_keys[0]].data.shape
     data_npol = np.zeros([data_shape[0], data_shape[1], 3, 1])
@@ -85,11 +85,14 @@ def npol_to_mzp(input_collection, reference_angle=0*u.degree, **kwargs):
 
     data_mzp_solar = np.matmul(conv_matrix_inv, data_npol)
 
-    meta = copy.copy(input_collection[input_keys[0]].meta)
-    metas = [{**meta, 'POLAR': angle} for angle in [-60, 0, 60] * u.degree]
+    metas = [{'POLAR': target_angle,
+              'POLARREF': "Solar",
+              "POLAROFF": input_collection[original_angle].meta.get("POLAROFF", 0*u.degree)}
+             for original_angle, target_angle in zip(input_keys, [-60, 0, 60] * u.degree)]
     mask = combine_all_collection_masks(input_collection)
     cube_list = [(key, NDCube(data_mzp_solar[:, :, i, 0], wcs=input_collection[input_keys[0]].wcs,
-                mask=mask, meta=metas[i])) for i, key in enumerate(["M", "Z", "P"])]
+                              mask=mask, meta=metas[i])) for i, key in enumerate(["M", "Z", "P"])]
+
     for p_angle in input_keys:
         if p_angle.lower() == "alpha":
             cube_list.append(("alpha", NDCube(input_collection["alpha"].data * u.radian,
@@ -98,8 +101,8 @@ def npol_to_mzp(input_collection, reference_angle=0*u.degree, **kwargs):
     return NDCollection(cube_list, meta={}, aligned_axes="all")
 
 
-@transform(System.mzp, System.bpb, use_alpha=True)
-def mzp_to_bpb(input_collection, **kwargs):
+@transform(System.mzpsolar, System.bpb, use_alpha=True)
+def mzpsolar_to_bpb(input_collection, **kwargs):
     """
     Notes
     ------
@@ -139,8 +142,8 @@ def mzp_to_bpb(input_collection, **kwargs):
     return NDCollection(BpB_cube, meta={}, aligned_axes="all")
 
 
-@transform(System.bpb, System.mzp, use_alpha=True)
-def bpb_to_mzp(input_collection, **kwargs):
+@transform(System.bpb, System.mzpsolar, use_alpha=True)
+def bpb_to_mzpsolar(input_collection, **kwargs):
     """Notes
     -----
     Equation 4 in DeForest et al. 2022.
@@ -219,8 +222,8 @@ def btbr_to_bpb(input_collection, **kwargs):
     return NDCollection(BpB_cube, meta={}, aligned_axes="all")
 
 
-@transform(System.mzp, System.stokes, use_alpha=False)
-def mzp_to_stokes(input_collection, **kwargs):
+@transform(System.mzpsolar, System.stokes, use_alpha=False)
+def mzpsolar_to_stokes(input_collection, **kwargs):
     """Notes
     -----
     Equation 9, 12 and 13 in DeForest et al. 2022.
@@ -246,8 +249,8 @@ def mzp_to_stokes(input_collection, **kwargs):
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")
 
 
-@transform(System.stokes, System.mzp, use_alpha=False)
-def stokes_to_mzp(input_collection, **kwargs):
+@transform(System.stokes, System.mzpsolar, use_alpha=False)
+def stokes_to_mzpsolar(input_collection, **kwargs):
     """Notes
     -----
     Equation 11 in DeForest et al. 2022. with alpha = np.pi/2
@@ -278,8 +281,8 @@ def stokes_to_mzp(input_collection, **kwargs):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-@transform(System.mzp, System.bp3, use_alpha=True)
-def mzp_to_bp3(input_collection, **kwargs):
+@transform(System.mzpsolar, System.bp3, use_alpha=True)
+def mzpsolar_to_bp3(input_collection, **kwargs):
     """
     Notes
     ------
@@ -322,8 +325,8 @@ def mzp_to_bp3(input_collection, **kwargs):
     return NDCollection(Bp3_cube, meta={}, aligned_axes="all")
 
 
-@transform(System.bp3, System.mzp, use_alpha=True)
-def bp3_to_mzp(input_collection, **kwargs):
+@transform(System.bp3, System.mzpsolar, use_alpha=True)
+def bp3_to_mzpsolar(input_collection, **kwargs):
     """
     Notes
     ------
@@ -353,8 +356,8 @@ def bp3_to_mzp(input_collection, **kwargs):
     return NDCollection(Bmzp_cube, meta={}, aligned_axes="all")
 
 
-@transform(System.btbr, System.mzp, use_alpha=True)
-def btbr_to_mzp(input_collection, **kwargs):
+@transform(System.btbr, System.mzpsolar, use_alpha=True)
+def btbr_to_mzpsolar(input_collection, **kwargs):
     """Notes
     -----
     Equation 3 in DeForest et al. 2022.
@@ -432,9 +435,9 @@ def btbr_to_npol(input_collection, out_angles: u.degree, **kwargs):
     return NDCollection(Bnpol_cube, meta={}, aligned_axes="all")
 
 
-@transform(System.mzp, System.npol, use_alpha=False)
+@transform(System.mzpsolar, System.npol, use_alpha=False)
 @u.quantity_input
-def mzp_to_npol(input_collection, out_angles: u.degree, reference_angle=0*u.degree, **kwargs):
+def mzpsolar_to_npol(input_collection, out_angles: u.degree, reference_angle=0 * u.degree, **kwargs):
     """Notes
     -----
     Equation 45 in DeForest et al. 2022.
@@ -493,52 +496,15 @@ def fourpol_to_stokes(input_collection, **kwargs):
 
     return NDCollection(BStokes_cube, meta={}, aligned_axes="all")
 
-@transform(System.rotmzp, System.npol, use_alpha=False)
-def rotmzp_to_mzp(input_collection, reference_angle=0*u.degree, **kwargs):
-    """
-    Notes
-    ------
-    For rotating frames like NFI, ASPIICS, CODEX
-    Input has MZP in instrument reference.
-    Equation 44 in DeForest et al. 2022.
-    """
-    input_keys = list(input_collection.keys())
-    satellite_orientation = extract_crota_from_wcs(input_collection['Z'])
-    polarizer_difference = [input_collection[k].meta['POLAROFF'] if 'POLAROFF' in input_collection[k].meta else 0
-                            for k in ['M', 'Z', 'P']] * u.degree
 
-    phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha']*u.degree
-    phi = phi + satellite_orientation + polarizer_difference
-    mzp_angles = [-60, 0, 60] * u.degree    # theta angle in Eq 44
+@transform(System.mzpsolar, System.mzpinstru, use_alpha=False)
+def mzpsolar_to_mzpinstru(input_collection, **kwargs):
+    return input_collection
 
-    data_shape = input_collection[input_keys[0]].data.shape
-    data_npol = np.zeros([data_shape[0], data_shape[1], 3, 1])
 
-    conv_matrix = np.array([[(4 * np.cos(phi[i] - mzp_angles[j] - reference_angle) ** 2 - 1) / 3
-                             for j in range(3)] for i in range(3)])
-
-    for i, key in enumerate(key for key in input_keys if key != 'alpha'):
-        data_npol[:, :, i, 0] = input_collection[key].data
-
-    try:
-        conv_matrix_inv = np.linalg.inv(conv_matrix)
-    except np.linalg.LinAlgError as err:
-        if "Singular matrix" in str(err):
-            raise SolpolpyError("Conversion matrix is degenerate")
-
-    data_mzp_solar = np.matmul(conv_matrix_inv, data_npol)
-
-    meta = copy.copy(input_collection[input_keys[0]].meta)
-    metas = [{**meta, 'POLAR': angle} for angle in [-60, 0, 60] * u.degree]
-    mask = combine_all_collection_masks(input_collection)
-    cube_list = [(key, NDCube(data_mzp_solar[:, :, i, 0], wcs=input_collection[input_keys[0]].wcs,
-                mask=mask, meta=metas[i])) for i, key in enumerate(["M", "Z", "P"])]
-    for p_angle in input_keys:
-        if p_angle.lower() == "alpha":
-            cube_list.append(("alpha", NDCube(input_collection["alpha"].data * u.radian,
-                                              wcs=input_collection[input_keys[0]].wcs,
-                                              meta=input_collection["alpha"].meta)))
-    return NDCollection(cube_list, meta={}, aligned_axes="all")
+@transform(System.mzpinstru, System.mzpsolar, use_alpha=False)
+def mzpinstru_to_mzpsolar(input_collection, **kwargs):
+    return input_collection
 
 # Build the graph at the bottom so all transforms are defined
 transform_graph = nx.DiGraph()

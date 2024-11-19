@@ -4,6 +4,7 @@ import typing as t
 import astropy.units as u
 import networkx as nx
 import numpy as np
+import copy
 from astropy.wcs import WCS
 from ndcube import NDCollection, NDCube
 
@@ -74,7 +75,7 @@ def resolve(input_data: list[str] | NDCollection,
         raise ValueError("Out angles must be specified for this transform.")
 
     if imax_effect:
-        if input_kind == "mzp":
+        if input_kind in ('mzpsolar', 'mzpinstru'):
             input_data = resolve_imax_effect(input_data)
         else:
             msg = "IMAX effect applies only for transformations starting from MZP."
@@ -125,6 +126,9 @@ def determine_input_kind(input_data: NDCollection) -> System:
         raise ValueError(msg)
 
     for valid_kind, param_set in SYSTEM_REQUIRED_KEYS.items():
+        if valid_kind in [System.mzpinstru, System.mzpsolar] and param_set == input_keys:
+            polarref_value = input_data['Z'].meta.get("POLARREF", "solar").lower()
+            return System.mzpinstru if polarref_value == "instrument" else System.mzpsolar
         if valid_kind != System.npol and param_set == input_keys:
             return valid_kind
     try:
@@ -228,9 +232,9 @@ def generate_imax_matrix(array_shape: (int, int), cumulative_offset: u.deg, wcs:
     # Define the A matrix
     mat_a = np.empty((array_shape[0], array_shape[1], 3, 3))
 
-    long_extent, lat_extent = wcs.wcs.cdelt[0]*array_shape[0], wcs.wcs.cdelt[1]*array_shape[1]
-    long_arr, lat_arr = np.meshgrid(np.linspace(-long_extent/2, long_extent/2, array_shape[0]),
-                                    np.linspace(-lat_extent/2, lat_extent, array_shape[1]))
+    long_extent, lat_extent = wcs.wcs.cdelt[0] * array_shape[0], wcs.wcs.cdelt[1] * array_shape[1]
+    long_arr, lat_arr = np.meshgrid(np.linspace(-long_extent / 2, long_extent / 2, array_shape[0]),
+                                    np.linspace(-lat_extent / 2, lat_extent, array_shape[1]))
 
     # Foreshortening (IMAX) effect on polarizer angle
     phi_m = np.arctan2(np.tan(thmzp[0]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
@@ -238,13 +242,12 @@ def generate_imax_matrix(array_shape: (int, int), cumulative_offset: u.deg, wcs:
     phi_p = np.arctan2(np.tan(thmzp[2]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
 
     # Apply distortion to IMAX matrix
-    # x_distortion = calculate_distortion(wcs.cpdis1, array_shape)
-    # y_distortion = calculate_distortion(wcs.cpdis2, array_shape)
-    phi_m_distorted = apply_distortion_shift(phi_m, wcs)
-    phi_z_distorted = apply_distortion_shift(phi_z, wcs)
-    phi_p_distorted = apply_distortion_shift(phi_p, wcs)
+    if wcs.has_distortion:
+        phi_m = apply_distortion_shift(phi_m, wcs)
+        phi_z = apply_distortion_shift(phi_z, wcs)
+        phi_p = apply_distortion_shift(phi_p, wcs)
 
-    phi = np.stack([phi_m_distorted, phi_z_distorted, phi_p_distorted])
+    phi = np.stack([phi_m, phi_z, phi_p])
 
     for i in range(3):
         for j in range(3):
@@ -269,6 +272,7 @@ def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
     """
     data_shape = _determine_image_shape(input_data)
     data_mzp_camera = np.zeros([data_shape[0], data_shape[1], 3, 1])
+    input_keys = list(input_data.keys())
 
     satellite_orientation = extract_crota_from_wcs(input_data['M'])
     polarizer_difference = [input_data[k].meta['POLAROFF'] if 'POLAROFF' in input_data[k].meta else 0
@@ -289,10 +293,21 @@ def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
 
     data_mzp_solar = np.matmul(imax_matrix_inv, data_mzp_camera)
 
-    for i, key in enumerate(input_data.keys()):
-        input_data[key].data[:, :] = data_mzp_solar[:, :, i, 0]
+    metaM, metaZ, metaP = (copy.copy(input_data[key].meta) for key in ["M", "Z", "P"])
+    for meta in [metaM, metaZ, metaP]:
+        meta.update(POLARREF='Solar')
 
-    return input_data
+    cube_list = [
+        (key, NDCube(data_mzp_solar[:, :, i, 0], wcs=input_data[key].wcs, meta=meta))
+        for i, (key, meta) in enumerate(zip(["M", "Z", "P"], [metaM, metaZ, metaP]))
+    ]
+
+    for p_angle in input_keys:
+        if p_angle.lower() == "alpha":
+            cube_list.append(("alpha", NDCube(input_data["alpha"].data * u.radian,
+                                              wcs=input_data[input_keys[0]].wcs,
+                                              meta=input_data["alpha"].meta)))
+    return NDCollection(cube_list, meta={}, aligned_axes="all")
 
 
 def _determine_image_shape(input_collection: NDCollection) -> tuple[int, int]:
@@ -360,8 +375,10 @@ def _compose2(f: t.Callable, g: t.Callable) -> t.Callable:
         composed function
 
     """
+
     def out(*a, **kw):
         return f(g(*a, **kw), **kw)
+
     out.uses_alpha = getattr(f, "uses_alpha", False) or getattr(g, "uses_alpha", False)
     out.uses_out_angles = getattr(f, "uses_out_angles", False) or getattr(g, "uses_out_angles", False)
 

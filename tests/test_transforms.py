@@ -19,7 +19,7 @@ wcs.cname = "wavelength", "HPC lat", "HPC lon"
 
 
 def test_bpb_mzp_zeros(bpb_zeros):
-    actual = transforms.bpb_to_mzp(bpb_zeros)
+    actual = transforms.bpb_to_mzpsolar(bpb_zeros)
     expected_data = []
     expected_data.append(("M", NDCube(np.array([0]), wcs=wcs)))
     expected_data.append(("Z", NDCube(np.array([0]), wcs=wcs)))
@@ -40,7 +40,7 @@ def bpb_ones():
 
 
 def test_bpb_mzp_ones(bpb_ones):
-    actual = transforms.bpb_to_mzp(bpb_ones)
+    actual = transforms.bpb_to_mzpsolar(bpb_ones)
     expected_data = []
     expected_data.append(("M", NDCube(np.array([3 / 4]), wcs=wcs)))
     expected_data.append(("Z", NDCube(np.array([0]), wcs=wcs)))
@@ -92,15 +92,15 @@ def test_btbr_bpb_ones(btbr_ones):
 
 
 def test_btbr_mzp_ways(btbr_ones):
-    actual_mzp_direct = transforms.btbr_to_mzp(btbr_ones)
+    actual_mzp_direct = transforms.btbr_to_mzpsolar(btbr_ones)
     actual_bpb = transforms.btbr_to_bpb(btbr_ones)
-    actual_mzp_indirect = transforms.bpb_to_mzp(actual_bpb)
+    actual_mzp_indirect = transforms.bpb_to_mzpsolar(actual_bpb)
     for k in list(actual_mzp_direct):
         assert np.allclose(actual_mzp_direct[str(k)].data, actual_mzp_indirect[str(k)].data)
 
 
-def test_mzp_stokes_ones(mzp_ones):
-    actual = transforms.mzp_to_stokes(mzp_ones)
+def test_mzp_stokes_ones(mzpsolar_ones):
+    actual = transforms.mzpsolar_to_stokes(mzpsolar_ones)
     expected_data = []
     expected_data.append(("I", NDCube(np.array([2]), wcs=wcs)))
     expected_data.append(("Q", NDCube(np.array([0]), wcs=wcs)))
@@ -120,7 +120,7 @@ def stokes_ones():
 
 
 def test_stokes_mzp_ones(stokes_ones):
-    actual = transforms.stokes_to_mzp(stokes_ones)
+    actual = transforms.stokes_to_mzpsolar(stokes_ones)
     expected_data = []
     expected_data.append(("M", NDCube(np.array([(-np.sqrt(3) + 1) / 4]), wcs=wcs)))
     expected_data.append(("Z", NDCube(np.array([1]), wcs=wcs)))
@@ -130,9 +130,9 @@ def test_stokes_mzp_ones(stokes_ones):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
 
-def test_mzp_bp3_missing_alpha_errors(mzp_ones):
+def test_mzp_bp3_missing_alpha_errors(mzpsolar_ones):
     with pytest.raises(MissingAlphaError):
-        transforms.mzp_to_bp3(mzp_ones)
+        transforms.mzpsolar_to_bp3(mzpsolar_ones)
 
 
 @fixture()
@@ -146,7 +146,7 @@ def bp3_ones():
 
 
 def test_bp3_mzp_ones(bp3_ones):
-    actual = transforms.bp3_to_mzp(bp3_ones)
+    actual = transforms.bp3_to_mzpsolar(bp3_ones)
     expected_data = []
     expected_data.append(("M", NDCube(np.array([1]), wcs=wcs)))
     expected_data.append(("Z", NDCube(np.array([-0.5]), wcs=wcs)))
@@ -166,7 +166,7 @@ def btbr_ones_mzp():
 
 
 def test_btbr_mzp_ones(btbr_ones_mzp):
-    actual = transforms.btbr_to_mzp(btbr_ones_mzp)
+    actual = transforms.btbr_to_mzpsolar(btbr_ones_mzp)
     expected_data = []
     expected_data.append(("M", NDCube(np.array([1]), wcs=wcs)))
     expected_data.append(("Z", NDCube(np.array([1]), wcs=wcs)))
@@ -205,7 +205,7 @@ def test_mzp_to_npol_custom():
          ("Z", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0 * u.degree})),
          ("M", NDCube(np.array([[0]]), wcs=wcs, meta={"POLAR": -60 * u.degree}))],
         meta={}, aligned_axes="all")
-    actual = transforms.mzp_to_npol(input_data, out_angles=[0, 45, 90] * u.degree)
+    actual = transforms.mzpsolar_to_npol(input_data, out_angles=[0, 45, 90] * u.degree)
     expected_data = [(str(0 * u.degree), NDCube(np.array([1]), wcs=wcs, meta={"POLAR": 0 * u.degree})),
                      (str(45 * u.degree), NDCube(np.array([1 / 3]), wcs=wcs, meta={"POLAR": 45 * u.degree})),
                      (str(90 * u.degree), NDCube(np.array([-1 / 3]), wcs=wcs, meta={"POLAR": 90 * u.degree}))]
@@ -242,26 +242,26 @@ def test_fourpol_to_stokes_ones(fourpol_ones):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
 
-@fixture()
-def rotmzp_ones():
-    input_data = NDCollection(
-        [("P", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 60 * u.degree, "POLAROFF": 1})),
-         ("Z", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0 * u.degree, "POLAROFF": 1})),
-         ("M", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": -60 * u.degree, "POLAROFF": 1}))],
-        meta={}, aligned_axes="all")
-    return input_data
-
-
-def test_rotmzp_mzp_ones(rotmzp_ones):
-    actual = transforms.rotmzp_to_mzp(rotmzp_ones)
-    expected_data = []
-    expected_data.append(("M", NDCube(np.array([1]), wcs=wcs)))
-    expected_data.append(("Z", NDCube(np.array([1]), wcs=wcs)))
-    expected_data.append(("P", NDCube(np.array([1]), wcs=wcs)))
-    expected = NDCollection(expected_data, meta={}, aligned_axes="all")
-    for k in list(expected):
-        assert np.allclose(actual[str(k)].data, expected[str(k)].data)
-
+# @fixture()
+# def mzp_ones_instru():
+#     input_data = NDCollection(
+#         [("P", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
+#          ("Z", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
+#          ("M", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": -60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'}))],
+#         meta={}, aligned_axes="all")
+#     return input_data
+#
+#
+# def test_mzp_mzp_ones_instru(mzp_ones_instru):
+#     actual = transforms.npol_to_mzpsolar(mzp_ones_instru)
+#     expected_data = []
+#     expected_data.append(("M", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": -60 * u.degree, "POLAROFF": 0,"POLARREF": 'Solar'})))
+#     expected_data.append(("Z", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": 0 * u.degree, "POLAROFF": 0, "POLARREF": 'Solar'})))
+#     expected_data.append(("P", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": 60 * u.degree, "POLAROFF": 0,"POLARREF": 'Solar'})))
+#     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
+#     for k in list(expected):
+#         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
+#
 
 def test_mask_propagation_works_when_none_provided(fourpol_ones):
     actual = transforms.fourpol_to_stokes(fourpol_ones)

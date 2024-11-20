@@ -7,10 +7,10 @@ from pytest import fixture
 
 wcs = astropy.wcs.WCS(naxis=3)
 wcs.ctype = "WAVE", "HPLT-TAN", "HPLN-TAN"
-wcs.cdelt = 0.2, 0.5, 0.4
+wcs.cdelt = 0.5, 0.5, 0.5
 wcs.cunit = "Angstrom", "deg", "deg"
-wcs.crpix = 0, 2, 2
-wcs.crval = 10, 0.5, 1
+wcs.crpix = 2, 2, 2
+wcs.crval = 0, 0, 0
 
 
 @fixture()
@@ -36,6 +36,14 @@ def mzpsolar_ones():
     data_out = [("P", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 60*u.degree, "POLARREF": 'Solar'})),
                 ("Z", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": 0*u.degree, "POLARREF": 'Solar'})),
                 ("M", NDCube(np.array([[1.0]]), wcs=wcs, meta={"POLAR": -60*u.degree, "POLARREF": 'Solar'}))]
+    return NDCollection(data_out, meta={}, aligned_axes="all")
+
+
+@fixture()
+def mzpsolar_degenerate():
+    data_out = [("P", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs, meta={"POLAR": 60*u.degree, "POLAROFF": -60, "POLARREF": 'Instrument'})),
+                ("Z", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs, meta={"POLAR": 0*u.degree,  "POLAROFF": 0, "POLARREF": 'Instrument'})),
+                ("M", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs, meta={"POLAR": -60*u.degree, "POLAROFF": 60,  "POLARREF": 'Instrument'}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 

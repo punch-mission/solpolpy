@@ -106,6 +106,12 @@ def test_imax_effect_false(mzpinstru_ones):
         assert (result[key].meta["POLARREF"].lower() == 'solar')
 
 
+def test_imax_effect_degenerate(mzpsolar_degenerate):
+    with pytest.raises(ValueError, match="Singular IMAX effect matrix is degenerate"):
+        resolve(mzpsolar_degenerate, "mzpsolar", imax_effect=True)
+
+
+
 def test_imax_effect_unsupported_transformation_input(bpb_data):
     with pytest.raises(UnsupportedTransformationError):
         result = resolve(bpb_data, "MZPsolar", imax_effect=True)

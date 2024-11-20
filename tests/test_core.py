@@ -111,6 +111,13 @@ def test_imax_effect_degenerate(mzpsolar_degenerate):
         resolve(mzpsolar_degenerate, "mzpsolar", imax_effect=True)
 
 
+def test_imax_distortion(mzpinstru_distortion):
+    result = resolve(mzpinstru_distortion, "mzpsolar", imax_effect=True)
+    assert isinstance(result, NDCollection)
+    for key in result.keys():
+        assert np.sum(result[key].data * mzpinstru_distortion[key].data) != 0
+        assert (result[key].meta["POLARREF"].lower() == 'solar')
+
 
 def test_imax_effect_unsupported_transformation_input(bpb_data):
     with pytest.raises(UnsupportedTransformationError):

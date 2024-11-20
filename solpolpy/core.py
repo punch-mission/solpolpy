@@ -281,7 +281,7 @@ def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
                                 for k in ['M', 'Z', 'P']] * u.degree
     else:
         satellite_orientation = 0 * u.degree
-        polarizer_difference = [0,0,0] * u.degree
+        polarizer_difference = [0, 0, 0] * u.degree
 
     for i, key in enumerate(["M", "Z", "P"]):
         data_mzp_camera[:, :, i, 0] = input_data[key].data

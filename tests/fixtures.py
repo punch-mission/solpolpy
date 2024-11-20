@@ -3,6 +3,7 @@ import astropy.wcs
 import numpy as np
 from ndcube import NDCollection, NDCube
 from pytest import fixture
+
 from solpolpy.util import make_empty_distortion_model
 
 wcs = astropy.wcs.WCS(naxis=3)

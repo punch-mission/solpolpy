@@ -294,6 +294,19 @@ def test_mzpsolar_degenerate(mzpsolar_degenerate):
     with pytest.raises(SolpolpyError, match="Conversion matrix is degenerate"):
         transforms.mzpinstru_to_mzpsolar(mzpsolar_degenerate)
 
+
+@fixture()
+def npol_degenerate():
+    data_out = [("60.0 deg", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs, meta={"POLAR": 60*u.degree})),
+                ("0.0 deg", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs, meta={"POLAR": 60*u.degree})),
+                ("-60.0 deg", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs, meta={"POLAR": -60*u.degree}))]
+    return NDCollection(data_out, meta={}, aligned_axes="all")
+
+def test_npol_degenerate(npol_degenerate):
+    with pytest.raises(SolpolpyError, match="Conversion matrix is degenerate"):
+        transforms.npol_to_mzpsolar(npol_degenerate)
+
+
 def test_mask_propagation_works_when_none_provided(fourpol_ones):
     actual = transforms.fourpol_to_stokes(fourpol_ones)
     expected = NDCollection(

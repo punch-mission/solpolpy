@@ -506,7 +506,6 @@ def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwar
         """
     in_list = list(input_collection)
     input_dict = {}
-    # out_angles = ?
 
     for p_angle in in_list:
         if p_angle == "alpha":

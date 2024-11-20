@@ -8,7 +8,7 @@ from solpolpy.util import make_empty_distortion_model
 
 wcs = astropy.wcs.WCS(naxis=3)
 wcs.ctype = "WAVE", "HPLT-TAN", "HPLN-TAN"
-wcs.cdelt = 0.5, 0.5, 0.5
+wcs.cdelt = 0.2, 0.5, 0.4
 wcs.cunit = "Angstrom", "deg", "deg"
 wcs.crpix = 2, 2, 2
 wcs.crval = 0, 0, 0

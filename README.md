@@ -18,26 +18,17 @@ to the Stokes I, Q and U.
 ## Quickstart
 `pip install solpolpy`
 
-We recommend following along the examples in [the documentation](https://punch-mission.github.io/solpolpy/quickstart.html)!
+We recommend following along the examples in [the documentation](https://solpolpy.readthedocs.io/en/latest/quickstart.html)!
 
 ## Getting Help
 Please open a discussion or issue for help.
-
-## Features Coming Soon
-- [x] core transformation capability
-- [x] clearer examples in the documentation
-- [x] more comprehensive support for 4-polarizer systems
-- [x] functions to deal with the IMAX effect in wide-field imagers
-- [ ] quantification and propagation of error
-- [ ] additional plotting utilities
-
 
 ## Contributing
 We encourage all contributions.
 If you have a problem with the code or would like to see a new feature, please open an issue.
 Or you can submit a pull request.
 
-If you're contributing code, please see [this package's deveopment guide](https://punch-mission.github.io/solpolpy/development.html).
+If you're contributing code, please see [this package's deveopment guide](https://solpolpy.readthedocs.io/en/latest/development.html).
 
 ## Code of Conduct
 [Access here](CODE_OF_CONDUCT.md)

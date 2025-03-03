@@ -2,6 +2,10 @@
 
 [Available through GitHub](https://github.com/punch-mission/solpolpy/releases)
 
+## Latest: unreleased
+
+-
+
 ## Version 0.4.0: Nov 22, 2024
 
 - Fix IMAX effect to use offset by @jmbhughes in #175

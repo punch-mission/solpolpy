@@ -89,20 +89,21 @@ def calculate_distortion(distortion, image_shape):
     return distortion_array.reshape(image_shape)
 
 
-def apply_distortion_shift(input_image, wcs: WCS):
-    shift_x = calculate_distortion(wcs.cpdis1, input_image.shape)
-    shift_y = calculate_distortion(wcs.cpdis2, input_image.shape)
+def compute_distortion_shift(image_shape, wcs: WCS):
+    shift_x = calculate_distortion(wcs.cpdis1, image_shape)
+    shift_y = calculate_distortion(wcs.cpdis2, image_shape)
     # Calculate new coordinates for pixel shifts
-    i_coords, j_coords = np.meshgrid(np.arange(input_image.shape[0]), np.arange(input_image.shape[1]), indexing='ij')
+    i_coords, j_coords = np.meshgrid(np.arange(image_shape[0]), np.arange(image_shape[1]), indexing='ij')
     new_x = np.round(j_coords + shift_x).astype(int)
     new_y = np.round(i_coords + shift_y).astype(int)
+    valid_mask = (0 <= new_x) & (new_x < image_shape[1]) & (0 <= new_y) & (new_y < image_shape[0])
 
-    # Create a shifted image
+    return new_x, new_y, valid_mask, i_coords, j_coords
+
+
+def apply_distortion_shift(input_image, new_x, new_y, valid_mask, i_coords, j_coords):
     shifted_image = copy.copy(input_image)
-    valid_mask = (0 <= new_x) & (new_x < input_image.shape[1]) & (0 <= new_y) & (new_y < input_image.shape[0])
-
     shifted_image[new_y[valid_mask], new_x[valid_mask]] = input_image[i_coords[valid_mask], j_coords[valid_mask]]
-
     return shifted_image
 
 

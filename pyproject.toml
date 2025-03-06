@@ -27,7 +27,8 @@ dependencies = [
     "numpy",
     "matplotlib",
     "networkx",
-    "ndcube"
+    "ndcube",
+    "sunkit_image"
 ]
 
 [project.optional-dependencies]

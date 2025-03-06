@@ -3,12 +3,15 @@ import warnings
 import astropy.units as u
 import matplotlib.pyplot as plt
 import numpy as np
+import sunpy.map
 import sunpy.visualization.colormaps as cm  # noqa: F401
 from astropy.io import fits
-from ndcube import NDCollection
+from ndcube import NDCollection, NDCube
+from sunkit_image.radial import nrgf, fnrgf, rhef
+from sunkit_image.utils import equally_spaced_bins
 
 
-def plot_collection(collection: NDCollection,
+def plot_collection(collection,
                     figsize=(8, 8),
                     show_colorbar=False,
                     lat_ticks=None,
@@ -25,7 +28,7 @@ def plot_collection(collection: NDCollection,
 
     Parameters
     ----------
-    collection : NDCollection
+    collection : NDCollection, ndarray, or 3D color_image.
         collection to visualize
     figsize : Tuple[float, float]
         figure size according to Matplotlib
@@ -58,39 +61,56 @@ def plot_collection(collection: NDCollection,
         the plotted figure and axes are returned for any additional edits
 
     """
-    ax_count = len(collection)
-    collection_keys = list(collection.keys())
-
-    if ignore_alpha:
-        collection_keys = [k for k in collection_keys if k != "alpha"]
+    # Check if collection is an NDCollection, ndarray, or color_image
+    if isinstance(collection, dict):
+        collection_keys = list(collection.keys())
+        if ignore_alpha:
+            collection_keys = [k for k in collection_keys if k != "alpha"]
         ax_count = len(collection_keys)
+        first_item = collection[collection_keys[0]]
+        wcs = first_item.wcs  # Assume all elements share the same WCS
+    elif isinstance(collection, np.ndarray):
+        if collection.ndim == 3 and collection.shape[0] in [1, 3]:  # Grayscale or RGB image
+            ax_count = 1
+            wcs = None  # No WCS for raw numpy arrays
+        elif collection.ndim == 3:  # Multi-channel data (N, H, W)
+            ax_count = collection.shape[0]
+            wcs = None
+        else:
+            raise ValueError("Input ndarray must have shape (N, H, W) or (3, H, W) for color images.")
+    else:
+        raise TypeError("collection must be an NDCollection, a 3D NumPy ndarray, or a color_image array.")
 
     if not isinstance(vmin, list):
         vmin = [vmin for _ in range(ax_count)]
-
     if not isinstance(vmax, list):
         vmax = [vmax for _ in range(ax_count)]
 
     if lat_ticks is None:
         lat_ticks = np.arange(-90, 90, 2) * u.degree
-
     if lon_ticks is None:
         lon_ticks = np.arange(-180, 180, 2) * u.degree
 
-    fig, axs = plt.subplots(nrows=1,
-                            ncols=ax_count,
-                            figsize=figsize,
-                            sharey=True,
-                            subplot_kw={"projection": collection[collection_keys[0]].wcs})
+    fig, axs = plt.subplots(nrows=1, ncols=ax_count, figsize=figsize, sharey=True,
+                            subplot_kw={"projection": wcs} if wcs else {})
+    if ax_count == 1:
+        axs = [axs]
+
     for i in range(ax_count):
-        this_cube = collection[collection_keys[i]]
-        this_cube.plot(axes=axs[i], cmap=cmap, vmin=vmin[i], vmax=vmax[i])
-        im = axs[i].get_images()[0]
-        axs[i].set_title(f"{this_cube.meta['POLAR']} at {this_cube.meta['DATE-OBS'][0:16]}")
-        axs[i].coords[0].set_ticks(lon_ticks)
-        axs[i].coords[1].set_ticks(lat_ticks)
-        axs[i].coords[0].set_major_formatter(major_formatter)
-        axs[i].coords[1].set_major_formatter(major_formatter)
+        if isinstance(collection, dict):
+            this_cube = collection[collection_keys[i]]
+            this_cube.plot(axes=axs[i], cmap=cmap, vmin=vmin[i], vmax=vmax[i])
+            im = axs[i].get_images()[0]
+            axs[i].set_title(f"{this_cube.meta['POLAR']} at {this_cube.meta['DATE-OBS'][0:16]}")
+        elif collection.ndim == 3 and collection.shape[0] == 3:  # RGB image
+            im = axs[i].imshow(np.moveaxis(collection, 0, -1))
+        else:
+            im = axs[i].imshow(collection[i], cmap=cmap, vmin=vmin[i], vmax=vmax[i])
+        if wcs:
+            axs[i].coords[0].set_ticks(lon_ticks)
+            axs[i].coords[1].set_ticks(lat_ticks)
+            axs[i].coords[0].set_major_formatter(major_formatter)
+            axs[i].coords[1].set_major_formatter(major_formatter)
         axs[i].set_xlabel(xlabel, fontsize=fontsize)
         axs[i].set_ylabel(ylabel, fontsize=fontsize)
         axs[i].tick_params(axis="both", labelsize=fontsize)
@@ -114,7 +134,6 @@ def get_colormap_str(meta: fits.Header) -> str:
     -------
     str
         name of appropriate colormap
-
     """
     if meta["INSTRUME"] == "LASCO":
         detector_name = meta["DETECTOR"]
@@ -141,3 +160,81 @@ def get_colormap_str(meta: fits.Header) -> str:
         color_map = "soholasco2"
 
     return color_map
+
+
+
+def generate_rgb_image(collection,
+                        inner_radius=1,
+                        outer_radius=32,
+                        mask_radius=6,
+                        display=None,
+                        save_path=None,
+                        enhancement_method='nrgf',
+                        return_outputs=False):
+    """
+    Generate an RGB color image from an NDCollection based on Patel et al. 2023 Res. Notes AAS 7 241.
+
+    Parameters:
+        collection (NDCollection): A collection of NDCube objects containing solar data.
+        inner_radius (float, optional): Inner radius for the radial bin edges in solar radii. Default is 1.
+        outer_radius (float, optional): Outer radius for the radial bin edges in solar radii. Default is 32.
+        mask_radius (float, optional): Application radius for the enhancement mask in solar radii. Default is 6.
+        display (bool, optional): If True, display the generated color image. Default is None.
+        save_path (str, optional): File path to save the image. Default is None.
+        enhancement_method (str, optional): The radial enhancement method to use. Can be 'nrgf', 'fnrgf', 'rhef',
+                or 'none'. Default is 'nrgf'.
+        return_outputs (bool, optional): If True, returns the processed NDCollection object. Default is False.
+
+    Returns:
+        np.ndarray: Generated color image with RGB channels.
+    """
+    out_cube = []
+    collection_keys = list(collection.keys())
+    radial_bin_edges = equally_spaced_bins(inner_radius, outer_radius, collection[collection_keys[0]].data.shape[0] // 4)
+    radial_bin_edges *= u.R_sun
+
+    # Define the enhancement function based on the selected method
+    if enhancement_method == 'nrgf':
+        enhancement_func = nrgf
+    elif enhancement_method == 'fnrgf':
+        enhancement_func = fnrgf
+    elif enhancement_method == 'rhef':
+        enhancement_func = rhef
+    elif enhancement_method == 'none':
+        enhancement_func = None  # No enhancement
+    else:
+        raise ValueError("Invalid enhancement method. Choose 'nrgf', 'fnrgf', 'rhef', or 'none'.")
+
+    for key in collection_keys:
+        inputmap = sunpy.map.Map(collection[key].data, collection[key].meta)
+
+        if enhancement_func:
+            # Apply the selected enhancement method
+            enhanced = enhancement_func(inputmap, radial_bin_edges=radial_bin_edges, application_radius=mask_radius * u.R_sun)
+            masked_enhanced = np.ma.array(enhanced.data, mask=np.isnan(enhanced.data))
+        else:
+            # No enhancement, use the original data
+            masked_enhanced = np.ma.array(inputmap.data, mask=np.isnan(inputmap.data))
+
+        scaled = (np.clip(masked_enhanced, 0, 1) * 255).astype('uint8')
+        out_cube.append((key, NDCube(data=scaled, meta=collection[key].meta, wcs=collection[key].wcs)))
+
+    outputs = NDCollection(out_cube, meta={}, aligned_axes="all")
+    size_im = (scaled.shape[1], scaled.shape[0])
+    color_image = np.zeros((3, size_im[1], size_im[0]), dtype=np.uint8)
+
+    color_image[0, :, :] = outputs['M'].data
+    color_image[1, :, :] = outputs['Z'].data
+    color_image[2, :, :] = outputs['P'].data
+
+    if display:
+        plot_collection(color_image)
+
+    if save_path:
+        plt.savefig(save_path+'rgb_image.png', dpi=300)
+        print(f"Image saved to {save_path}")
+
+    if return_outputs:
+        return color_image, outputs
+    else:
+        return color_image

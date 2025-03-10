@@ -175,18 +175,28 @@ def generate_rgb_image(collection,
     Generate an RGB color image from an NDCollection based on Patel et al. 2023 Res. Notes AAS 7 241.
 
     Parameters:
-        collection (NDCollection): A collection of NDCube objects containing solar data.
-        inner_radius (float, optional): Inner radius for the radial bin edges in solar radii. Default is 1.
-        outer_radius (float, optional): Outer radius for the radial bin edges in solar radii. Default is 32.
-        mask_radius (float, optional): Application radius for the enhancement mask in solar radii. Default is 6.
-        display (bool, optional): If True, display the generated color image. Default is None.
-        save_path (str, optional): File path to save the image. Default is None.
-        enhancement_method (str, optional): The radial enhancement method to use. Can be 'nrgf', 'fnrgf', 'rhef',
-                or 'none'. Default is 'nrgf'.
-        return_outputs (bool, optional): If True, returns the processed NDCollection object. Default is False.
+    ----------
+    collection : NDCollection
+        A collection of NDCube objects containing solar data.
+    inner_radius : float
+        Inner radius for the radial bin edges in solar radii. Default is 1.
+    outer_radius : float
+        Outer radius for the radial bin edges in solar radii. Default is 32.
+    mask_radius : float
+        Application radius for the enhancement mask in solar radii. Default is 6.
+    display : bool
+        If True, display the generated color image. Default is None.
+    save_path : str
+        File path to save the image. Default is None.
+    enhancement_method : str
+        The radial enhancement method to use. Can be 'nrgf', 'fnrgf', 'rhef', or 'none'. Default is 'nrgf'.
+    return_outputs : bool
+        If True, returns the processed NDCollection object. Default is False.
 
     Returns:
-        np.ndarray: Generated color image with RGB channels.
+    -------
+    np.ndarray
+        Generated color image with RGB channels.
     """
     out_cube = []
     collection_keys = list(collection.keys())
@@ -194,15 +204,16 @@ def generate_rgb_image(collection,
     radial_bin_edges *= u.R_sun
 
     # Define the enhancement function based on the selected method
-    if enhancement_method == 'nrgf':
-        enhancement_func = nrgf
-    elif enhancement_method == 'fnrgf':
-        enhancement_func = fnrgf
-    elif enhancement_method == 'rhef':
-        enhancement_func = rhef
-    elif enhancement_method == 'none':
-        enhancement_func = None  # No enhancement
-    else:
+    enhancement_methods = {
+        'nrgf': nrgf,
+        'fnrgf': fnrgf,
+        'rhef': rhef,
+        'none': None  # No enhancement
+    }
+
+    enhancement_func = enhancement_methods.get(enhancement_method)
+
+    if enhancement_method not in enhancement_methods:
         raise ValueError("Invalid enhancement method. Choose 'nrgf', 'fnrgf', 'rhef', or 'none'.")
 
     for key in collection_keys:

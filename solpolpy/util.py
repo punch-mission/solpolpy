@@ -90,6 +90,23 @@ def calculate_distortion(distortion, image_shape):
 
 
 def compute_distortion_shift(image_shape, wcs: WCS):
+    """
+    Calculate shift in pixels due to optical distortion
+
+    Parameters
+    ----------
+    image_shape : Tuple(int, int)
+        shape of input image
+    wcs : WCS
+        WCS from input object
+
+    Returns
+    -------
+    tuple (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray)
+         Tuple containing new x-coordinates, new y-coordinates, valid mask,
+         original i-coordinates, and original j-coordinates.
+
+    """
     shift_x = calculate_distortion(wcs.cpdis1, image_shape)
     shift_y = calculate_distortion(wcs.cpdis2, image_shape)
     # Calculate new coordinates for pixel shifts
@@ -102,6 +119,28 @@ def compute_distortion_shift(image_shape, wcs: WCS):
 
 
 def apply_distortion_shift(input_image, new_x, new_y, valid_mask, i_coords, j_coords):
+    """
+    Apply shift in pixels due to optical distortion
+
+    Parameters
+    ----------
+    input_image : np.ndarray
+        input image on which shift to be applied
+    new_x : np.ndarray
+        The precomputed new x-coordinates after distortion.
+    new_y : np.ndarray
+        The precomputed new y-coordinates after distortion.
+    valid_mask : np.ndarray
+        Boolean mask indicating valid shifts within bounds.
+    i_coords : np.ndarray
+        Original i-coordinates of pixels frpm input_image.
+    j_coords : np.ndarray
+        Original j-coordinates of pixels from input_image.
+    Returns
+    -------
+    np.ndarray
+        Image after applying the distortion shifts.
+    """
     shifted_image = copy.copy(input_image)
     shifted_image[new_y[valid_mask], new_x[valid_mask]] = input_image[i_coords[valid_mask], j_coords[valid_mask]]
     return shifted_image

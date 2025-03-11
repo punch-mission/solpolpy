@@ -217,7 +217,7 @@ def generate_rgb_image(collection,
         raise ValueError("Invalid enhancement method. Choose 'nrgf', 'fnrgf', 'rhef', or 'none'.")
 
     for key in collection_keys:
-        inputmap = sunpy.map.Map(collection[key].data, collection[key].meta)
+        inputmap = sunpy.map.Map(collection[key].data, collection[key].wcs)
 
         if enhancement_func:
             # Apply the selected enhancement method

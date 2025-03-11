@@ -1,12 +1,11 @@
 import os
 import pytest
-import astropy.wcs
 import numpy as np
 
 from solpolpy import resolve
 from solpolpy.instruments import load_data
 from solpolpy.plotting import get_colormap_str, plot_collection, generate_rgb_image
-from ndcube import NDCollection, NDCube
+from ndcube import NDCollection
 
 
 def test_get_colormap_str_stereo():

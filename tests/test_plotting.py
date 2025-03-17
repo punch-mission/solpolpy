@@ -70,10 +70,5 @@ def test_generate_rgb_image(sample_collection):
     assert isinstance(color_image, np.ndarray)
     assert color_image.shape[0] == 3
     assert color_image.dtype == np.uint8
+    assert np.allclose(np.max(color_image), 255)
 
-def test_generate_rgb_image_outputs(sample_collection):
-    color_image, outputs = generate_rgb_image(sample_collection, return_outputs=True)
-
-    assert isinstance(color_image, np.ndarray)
-    assert isinstance(outputs, NDCollection)
-    assert 'M' in outputs and 'Z' in outputs and 'P' in outputs

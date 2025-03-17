@@ -1,5 +1,5 @@
 import copy as copy
-
+import sunpy.map
 import astropy.units as u
 import numpy as np
 from astropy.wcs import WCS, DistortionLookupTable
@@ -178,3 +178,28 @@ def make_empty_distortion_model(num_bins: int, image: np.ndarray) -> (Distortion
         -err_y.astype(np.float32), (0, 0), (err_px[0], err_py[0]), ((err_px[1] - err_px[0]), (err_py[1] - err_py[0]))
     )
     return cpdis1, cpdis2
+
+
+def collection_to_maps(collection):
+    """
+    Convert an NDCollection to a list of SunPy Map objects.
+
+    Parameters:
+    -----------
+    ndcollection : NDCollection
+        The NDCollection containing data, metadata and wcs.
+
+    Returns:
+    --------
+    list of sunpy.map.Map
+        A list of SunPy Map objects created from the NDCollection.
+    """
+    sunpy_maps = []
+
+    for key in collection.keys():
+        data = collection[key].data
+        wcs = collection[key].wcs
+
+        sunpy_maps.append(sunpy.map.Map(data, wcs))
+
+    return sunpy_maps

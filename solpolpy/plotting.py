@@ -7,7 +7,7 @@ import sunpy.map
 import sunpy.visualization.colormaps as cm  # noqa: F401
 from astropy.io import fits
 from ndcube import NDCollection, NDCube
-from sunkit_image.radial import nrgf, fnrgf, rhef
+from sunkit_image.radial import intensity_enhance, nrgf, fnrgf, rhef
 from sunkit_image.utils import equally_spaced_bins
 
 
@@ -23,7 +23,8 @@ def plot_collection(collection,
                     vmax=None,
                     cmap="Greys_r",
                     ignore_alpha=True,
-                    fontsize=18):
+                    fontsize=18,
+                    **kwargs):
     """Plot a solpolpy NDCollection input or output.
 
     Parameters
@@ -54,6 +55,8 @@ def plot_collection(collection,
         whether to plot the alpha array. defaults to True as it is not normally helpful to visualize.
     fontsize : int
         font size for some aspects of the plot
+    **kwargs : Additional imshow keyword arguments.
+            Extra parameters to pass to `imshow()`.
 
     Returns
     -------
@@ -103,9 +106,9 @@ def plot_collection(collection,
             im = axs[i].get_images()[0]
             axs[i].set_title(f"{this_cube.meta['POLAR']} at {this_cube.meta['DATE-OBS'][0:16]}")
         elif collection.ndim == 3 and collection.shape[0] == 3:  # RGB image
-            im = axs[i].imshow(np.moveaxis(collection, 0, -1))
+            im = axs[i].imshow(np.moveaxis(collection, 0, -1), **kwargs)
         else:
-            im = axs[i].imshow(collection[i], cmap=cmap, vmin=vmin[i], vmax=vmax[i])
+            im = axs[i].imshow(collection[i], cmap=cmap, vmin=vmin[i], vmax=vmax[i], **kwargs)
         if wcs:
             axs[i].coords[0].set_ticks(lon_ticks)
             axs[i].coords[1].set_ticks(lat_ticks)
@@ -164,13 +167,9 @@ def get_colormap_str(meta: fits.Header) -> str:
 
 
 def generate_rgb_image(collection,
-                        inner_radius=1,
-                        outer_radius=32,
-                        mask_radius=6,
-                        display=None,
-                        save_path=None,
                         enhancement_method='nrgf',
-                        return_outputs=False):
+                        mask_params=None,
+                        enhancement_params=None):
     """
     Generate an RGB color image from an NDCollection based on Patel et al. 2023 Res. Notes AAS 7 241.
 
@@ -178,50 +177,63 @@ def generate_rgb_image(collection,
     ----------
     collection : NDCollection
         A collection of NDCube objects containing solar data.
-    inner_radius : float
-        Inner radius for the radial bin edges in solar radii. Default is 1.
-    outer_radius : float
-        Outer radius for the radial bin edges in solar radii. Default is 32.
-    mask_radius : float
-        Application radius for the enhancement mask in solar radii. Default is 6.
-    display : bool
-        If True, display the generated color image. Default is None.
-    save_path : str
-        File path to save the image. Default is None.
     enhancement_method : str
-        The radial enhancement method to use. Can be 'nrgf', 'fnrgf', 'rhef', or 'none'. Default is 'nrgf'.
-    return_outputs : bool
-        If True, returns the processed NDCollection object. Default is False.
+        The radial enhancement method to use. Can be 'intensity_enhance', 'nrgf', 'fnrgf', 'rhef', or 'none'.
+        Default is 'nrgf'.
+    mask_params : dict, optional
+        Dictionary of masking parameters for inner and outer radius. Default values are used if not provided.
+        Example:
+        - {'inner_radius': 3, 'outer_radius': 32}
+    enhancement_params: dict, optional
+        Dictionary of parameters specific to enhancement method above.
+        Example (check sunkit_image.radial for further parameters information):
+        - For 'intensity_enhance': {'scale': 1, 'degree': 1}
+        - For 'nrgf': {'inner_radius': 1, 'outer_radius': 32, 'mask_radius': 6}
+        - For 'fnrgf': {'order': 3, 'number_angular_segment': 130}
+        - For 'rhef': {'supsilon': 0.35, 'fill': np.nan}
+        - Empty or None for 'none'.
 
     Returns:
     -------
     np.ndarray
         Generated color image with RGB channels.
     """
+    if mask_params is None:
+        mask_params = {}  # Default to an empty dictionary
+
+    if enhancement_params is None:
+        enhancement_params = {}  # Default to an empty dictionary
+
+    # Extract mask parameters with defaults
+    inner_radius = mask_params.get('inner_radius', 3)
+    outer_radius = mask_params.get('outer_radius', 32)
+
     out_cube = []
     collection_keys = list(collection.keys())
+
     radial_bin_edges = equally_spaced_bins(inner_radius, outer_radius, collection[collection_keys[0]].data.shape[0] // 4)
     radial_bin_edges *= u.R_sun
 
     # Define the enhancement function based on the selected method
     enhancement_methods = {
+        'intensity_enhance': intensity_enhance,
         'nrgf': nrgf,
         'fnrgf': fnrgf,
         'rhef': rhef,
-        'none': None  # No enhancement
+        'none': lambda x: x  # No enhancement
     }
 
     enhancement_func = enhancement_methods.get(enhancement_method)
 
     if enhancement_method not in enhancement_methods:
-        raise ValueError("Invalid enhancement method. Choose 'nrgf', 'fnrgf', 'rhef', or 'none'.")
+        raise ValueError("Invalid enhancement method. Choose 'intensity_enhance', 'nrgf', 'fnrgf', 'rhef', or 'none'.")
 
     for key in collection_keys:
         inputmap = sunpy.map.Map(collection[key].data, collection[key].wcs)
 
         if enhancement_func:
             # Apply the selected enhancement method
-            enhanced = enhancement_func(inputmap, radial_bin_edges=radial_bin_edges, application_radius=mask_radius * u.R_sun)
+            enhanced = enhancement_func(inputmap, radial_bin_edges=radial_bin_edges, **enhancement_params)
             masked_enhanced = np.ma.array(enhanced.data, mask=np.isnan(enhanced.data))
         else:
             # No enhancement, use the original data
@@ -234,18 +246,8 @@ def generate_rgb_image(collection,
     size_im = (scaled.shape[1], scaled.shape[0])
     color_image = np.zeros((3, size_im[1], size_im[0]), dtype=np.uint8)
 
-    color_image[0, :, :] = outputs['M'].data
-    color_image[1, :, :] = outputs['Z'].data
+    color_image[0, :, :] = outputs['Z'].data
+    color_image[1, :, :] = outputs['M'].data
     color_image[2, :, :] = outputs['P'].data
 
-    if display:
-        plot_collection(color_image)
-
-    if save_path:
-        plt.savefig(save_path+'rgb_image.png', dpi=300)
-        print(f"Image saved to {save_path}")
-
-    if return_outputs:
-        return color_image, outputs
-    else:
-        return color_image
+    return color_image

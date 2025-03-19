@@ -42,7 +42,7 @@
 - Fixes doc script by @jmbhughes in #127
 - [pre-commit.ci] pre-commit autoupdate by @pre-commit-ci in #128
 - Add support for arbitrary polarization angles specification and npol system by @jmbhughes in #138
- 
+
 ## Version 0.1.3: Jun 3, 2024
 
 - added short description on IMAX effect by @s0larish in #112

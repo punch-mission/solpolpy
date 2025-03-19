@@ -2,6 +2,7 @@ import copy as copy
 
 import astropy.units as u
 import numpy as np
+import sunpy.map
 from astropy.wcs import WCS, DistortionLookupTable
 from astropy.wcs.utils import proj_plane_pixel_scales
 from ndcube import NDCollection
@@ -89,20 +90,60 @@ def calculate_distortion(distortion, image_shape):
     return distortion_array.reshape(image_shape)
 
 
-def apply_distortion_shift(input_image, wcs: WCS):
-    shift_x = calculate_distortion(wcs.cpdis1, input_image.shape)
-    shift_y = calculate_distortion(wcs.cpdis2, input_image.shape)
+def compute_distortion_shift(image_shape, wcs: WCS):
+    """
+    Calculate shift in pixels due to optical distortion
+
+    Parameters
+    ----------
+    image_shape : Tuple(int, int)
+        shape of input image
+    wcs : WCS
+        WCS from input object
+
+    Returns
+    -------
+    tuple (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray)
+         Tuple containing new x-coordinates, new y-coordinates, valid mask,
+         original i-coordinates, and original j-coordinates.
+
+    """
+    shift_x = calculate_distortion(wcs.cpdis1, image_shape)
+    shift_y = calculate_distortion(wcs.cpdis2, image_shape)
     # Calculate new coordinates for pixel shifts
-    i_coords, j_coords = np.meshgrid(np.arange(input_image.shape[0]), np.arange(input_image.shape[1]), indexing='ij')
+    i_coords, j_coords = np.meshgrid(np.arange(image_shape[0]), np.arange(image_shape[1]), indexing='ij')
     new_x = np.round(j_coords + shift_x).astype(int)
     new_y = np.round(i_coords + shift_y).astype(int)
+    valid_mask = (0 <= new_x) & (new_x < image_shape[1]) & (0 <= new_y) & (new_y < image_shape[0])
 
-    # Create a shifted image
+    return new_x, new_y, valid_mask, i_coords, j_coords
+
+
+def apply_distortion_shift(input_image, new_x, new_y, valid_mask, i_coords, j_coords):
+    """
+    Apply shift in pixels due to optical distortion
+
+    Parameters
+    ----------
+    input_image : np.ndarray
+        input image on which shift to be applied
+    new_x : np.ndarray
+        The precomputed new x-coordinates after distortion.
+    new_y : np.ndarray
+        The precomputed new y-coordinates after distortion.
+    valid_mask : np.ndarray
+        Boolean mask indicating valid shifts within bounds.
+    i_coords : np.ndarray
+        Original i-coordinates of pixels frpm input_image.
+    j_coords : np.ndarray
+        Original j-coordinates of pixels from input_image.
+    Returns
+    -------
+    np.ndarray
+        Image after applying the distortion shifts.
+    """
     shifted_image = copy.copy(input_image)
-    valid_mask = (0 <= new_x) & (new_x < input_image.shape[1]) & (0 <= new_y) & (new_y < input_image.shape[0])
-
     shifted_image[new_y[valid_mask], new_x[valid_mask]] = input_image[i_coords[valid_mask], j_coords[valid_mask]]
-
     return shifted_image
 
 
@@ -138,3 +179,28 @@ def make_empty_distortion_model(num_bins: int, image: np.ndarray) -> (Distortion
         -err_y.astype(np.float32), (0, 0), (err_px[0], err_py[0]), ((err_px[1] - err_px[0]), (err_py[1] - err_py[0]))
     )
     return cpdis1, cpdis2
+
+
+def collection_to_maps(collection):
+    """
+    Convert an NDCollection to a list of SunPy Map objects.
+
+    Parameters:
+    -----------
+    ndcollection : NDCollection
+        The NDCollection containing data, metadata and wcs.
+
+    Returns:
+    --------
+    list of sunpy.map.Map
+        A list of SunPy Map objects created from the NDCollection.
+    """
+    sunpy_maps = []
+
+    for key in collection.keys():
+        data = collection[key].data
+        wcs = collection[key].wcs
+
+        sunpy_maps.append(sunpy.map.Map(data, wcs))
+
+    return sunpy_maps

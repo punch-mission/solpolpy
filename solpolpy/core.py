@@ -13,7 +13,7 @@ from solpolpy.constants import STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.instruments import load_data
 from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
-from solpolpy.util import apply_distortion_shift, extract_crota_from_wcs
+from solpolpy.util import apply_distortion_shift, compute_distortion_shift, extract_crota_from_wcs
 
 
 @u.quantity_input
@@ -244,9 +244,11 @@ def generate_imax_matrix(array_shape: (int, int), cumulative_offset: u.deg, wcs:
 
     # Apply distortion to IMAX matrix
     if wcs.has_distortion:
-        phi_m = apply_distortion_shift(phi_m, wcs)
-        phi_z = apply_distortion_shift(phi_z, wcs)
-        phi_p = apply_distortion_shift(phi_p, wcs)
+        new_x, new_y, valid_mask, i_coords, j_coords = compute_distortion_shift(phi_m.shape, wcs)
+
+        phi_m = apply_distortion_shift(phi_m, new_x, new_y, valid_mask, i_coords, j_coords)
+        phi_z = apply_distortion_shift(phi_z, new_x, new_y, valid_mask, i_coords, j_coords)
+        phi_p = apply_distortion_shift(phi_p, new_x, new_y, valid_mask, i_coords, j_coords)
 
     phi = np.stack([phi_m, phi_z, phi_p])
 

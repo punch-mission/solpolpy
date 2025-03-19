@@ -7,7 +7,7 @@ import sunpy.map
 import sunpy.visualization.colormaps as cm  # noqa: F401
 from astropy.io import fits
 from ndcube import NDCollection, NDCube
-from sunkit_image.radial import intensity_enhance, nrgf, fnrgf, rhef
+from sunkit_image.radial import fnrgf, intensity_enhance, nrgf, rhef
 from sunkit_image.utils import equally_spaced_bins
 
 

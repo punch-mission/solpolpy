@@ -1,10 +1,11 @@
 import os
-import pytest
+
 import numpy as np
+import pytest
 
 from solpolpy import resolve
 from solpolpy.instruments import load_data
-from solpolpy.plotting import get_colormap_str, plot_collection, generate_rgb_image
+from solpolpy.plotting import generate_rgb_image, get_colormap_str, plot_collection
 
 
 def test_get_colormap_str_stereo():
@@ -70,4 +71,3 @@ def test_generate_rgb_image(sample_collection):
     assert color_image.shape[0] == 3
     assert color_image.dtype == np.uint8
     assert np.allclose(np.max(color_image), 255)
-

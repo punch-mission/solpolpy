@@ -85,10 +85,15 @@ def npol_to_mzpsolar(input_collection, reference_angle=0 * u.degree, **kwargs):
 
     data_mzp_solar = np.matmul(conv_matrix_inv, data_npol)
 
-    metas = [{'POLAR': target_angle,
-              'POLARREF': "Solar",
-              "POLAROFF": input_collection[original_angle].meta.get("POLAROFF", 0*u.degree)}
-             for original_angle, target_angle in zip(input_keys, [-60, 0, 60] * u.degree)]
+    metas = [copy.copy(input_collection[input_keys[0]].meta) for _ in range(3)]
+
+    for meta, original_angle, target_angle in zip(metas, input_keys, [-60, 0, 60] * u.degree):
+        meta.update({
+            'POLAR': target_angle,
+            'POLARREF': "Solar",
+            "POLAROFF": input_collection[original_angle].meta.get("POLAROFF", 0 * u.degree)
+        })
+
     mask = combine_all_collection_masks(input_collection)
     cube_list = [(key, NDCube(data_mzp_solar[:, :, i, 0], wcs=input_collection[input_keys[0]].wcs,
                               mask=mask, meta=metas[i])) for i, key in enumerate(["M", "Z", "P"])]

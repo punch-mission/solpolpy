@@ -4,7 +4,7 @@
 
 ## Latest: unreleased
 
--
+- Add RGB image visualization and sped up resolution in https://github.com/punch-mission/solpolpy/pull/185
 
 ## Version 0.4.0: Nov 22, 2024
 

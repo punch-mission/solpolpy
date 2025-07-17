@@ -56,25 +56,25 @@ def load_data(path_list: list[str],
     data_out = []
     for _i, data_path in enumerate(path_list):
         with fits.open(data_path) as hdul:
-            if len(hdul) > 1:
-                hdno = 1
-            else:
-                hdno = 0
+            hdu_index = next((i for i, hdu in enumerate(hdul) if hdu.data is not None), None)
+            if hdu_index is None:
+                raise ValueError(f"No image data found in {data_path}")
+
             wcs = WCS(hdul[0].header)
 
             if use_instrument_mask and mask is None:
-                mask = get_instrument_mask(hdul[hdno].header)
+                mask = get_instrument_mask(hdul[hdu_index].header)
 
             if mask is None:  # make a mask of False if none is provided
-                mask = np.zeros(hdul[hdno].data.shape, dtype=bool)
+                mask = np.zeros(hdul[hdu_index].data.shape, dtype=bool)
 
-            angle = get_data_angle(hdul[hdno].header)
+            angle = get_data_angle(hdul[hdu_index].header)
 
             data_out.append((str(angle),
-                             NDCube(hdul[hdno].data,
+                             NDCube(hdul[hdu_index].data,
                                     mask=mask,
                                     wcs=wcs,
-                                    meta=dict(hdul[hdno].header))))
+                                    meta=dict(hdul[hdu_index].header))))
 
     return NDCollection(data_out, meta={}, aligned_axes="all")
 

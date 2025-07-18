@@ -19,7 +19,7 @@ from packaging.version import Version
 from solpolpy import __version__
 
 project = "solpolpy"
-copyright = "2024, PUNCH Science Operations Center"
+copyright = "2026, PUNCH Science Operations Center"
 author = "PUNCH Science Operations Center"
 
 # The full version, including alpha/beta/rc tags
@@ -38,6 +38,7 @@ if _version.is_devrelease:
 extensions = ["autoapi.extension",
               "sphinx.ext.autodoc",
               "sphinx.ext.napoleon",
+              "sphinx.ext.viewcode",
               "nbsphinx",
               "IPython.sphinxext.ipython_console_highlighting"]
 

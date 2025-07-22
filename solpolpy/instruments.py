@@ -27,7 +27,8 @@ def get_data_angle(header):
 
 def load_data(path_list: list[str],
               mask: np.ndarray | None = None,
-              use_instrument_mask: bool = False) -> NDCollection:
+              use_instrument_mask: bool = False,
+              hdu_index: int = 0) -> NDCollection:
     """Basic loading function. See `load_with_occulter_mask`.
 
     Parameters
@@ -40,6 +41,10 @@ def load_data(path_list: list[str],
 
     use_instrument_mask: bool
         If true, loads an instrument mask for common instruments defined in `get_instrument_mask`.
+
+    hdu_index: int
+        The index of the HDU (zero-based) to load data from.
+        For many spacecraft this should be 0. For PUNCH it should be set to 1.
 
     Returns
     -------
@@ -56,21 +61,21 @@ def load_data(path_list: list[str],
     data_out = []
     for _i, data_path in enumerate(path_list):
         with fits.open(data_path) as hdul:
-            wcs = WCS(hdul[0].header)
+            wcs = WCS(hdul[hdu_index].header)
 
             if use_instrument_mask and mask is None:
-                mask = get_instrument_mask(hdul[0].header)
+                mask = get_instrument_mask(hdul[hdu_index].header)
 
             if mask is None:  # make a mask of False if none is provided
-                mask = np.zeros(hdul[0].data.shape, dtype=bool)
+                mask = np.zeros(hdul[hdu_index].data.shape, dtype=bool)
 
-            angle = get_data_angle(hdul[0].header)
+            angle = get_data_angle(hdul[hdu_index].header)
 
             data_out.append((str(angle),
-                             NDCube(hdul[0].data,
+                             NDCube(hdul[hdu_index].data,
                                     mask=mask,
                                     wcs=wcs,
-                                    meta=dict(hdul[0].header))))
+                                    meta=dict(hdul[hdu_index].header))))
 
     return NDCollection(data_out, meta={}, aligned_axes="all")
 

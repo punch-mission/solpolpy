@@ -2,7 +2,7 @@
 
 [Available through GitHub](https://github.com/punch-mission/solpolpy/releases)
 
-## Latest: unreleased
+## Version 0.4.1: July 22, 2025
 
 - Add RGB image visualization and sped up resolution in https://github.com/punch-mission/solpolpy/pull/185
 - Allows selecting a non-default HDU in https://github.com/punch-mission/solpolpy/pull/189

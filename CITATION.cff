@@ -28,7 +28,7 @@ authors:
 - family-names: "Walbridge"
   given-names: "Bryce"
 title: "solpolpy"
-version: 0.3.1
+version: 0.4.1
 doi: 10.5281/zenodo.10076326
-date-released: 2024-08-06
+date-released: 2025-07-22
 url: "https://github.com/punch-mission/solpolpy"

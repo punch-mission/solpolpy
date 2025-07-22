@@ -43,7 +43,7 @@ def load_data(path_list: list[str],
         If true, loads an instrument mask for common instruments defined in `get_instrument_mask`.
 
     hdu_index: int
-        The index of the HDU (zero-based) to load data from. 
+        The index of the HDU (zero-based) to load data from.
         For many spacecraft this should be 0. For PUNCH it should be set to 1.
 
     Returns

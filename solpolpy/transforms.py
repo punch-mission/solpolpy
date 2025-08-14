@@ -15,7 +15,7 @@ import numpy as np
 from ndcube import NDCollection, NDCube
 
 from solpolpy.errors import InvalidDataError, MissingAlphaError, SolpolpyError
-from solpolpy.util import combine_all_collection_masks, extract_crota_from_wcs
+from solpolpy.util import combine_all_collection_masks, extract_crota_from_wcs, wcs_to_solnorth
 
 System = StrEnum("System", ["bpb", "npol", "stokes", "mzpsolar", "mzpinstru", "btbr", "bthp", "fourpol", "bp3"])
 SYSTEM_REQUIRED_KEYS = {System.bpb: {"B", "pB"},
@@ -549,16 +549,29 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
     Equation 44 in DeForest et al. 2022.
     """
     input_keys = list(input_collection.keys())
-    satellite_orientation = extract_crota_from_wcs(input_collection['Z'])
-    polarizer_difference = [input_collection[k].meta['POLAROFF'] if 'POLAROFF' in input_collection[k].meta else 0
-                            for k in ['M', 'Z', 'P']] * u.degree
-    phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha']*u.degree
-    phi = phi + satellite_orientation + polarizer_difference
-    mzp_angles = [-60, 0, 60] * u.degree    # theta angle in Eq 44
+    polarizer_difference = {k: input_collection[k].meta['POLAROFF']* u.degree if 'POLAROFF' in input_collection[k].meta else 0* u.degree
+                            for k in ['M', 'Z', 'P']}
+    #phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha']*u.degree
+
+    angle_solar_north_m = (-wcs_to_solnorth(input_collection['M'].wcs) - 60*u.degree + polarizer_difference['M']) % -180
+    angle_solar_north_z = (-wcs_to_solnorth(input_collection['Z'].wcs) + polarizer_difference['Z']) % 180
+    angle_solar_north_p = (-wcs_to_solnorth(input_collection['P'].wcs) + 60*u.degree + polarizer_difference['P']) % 180
+
+    phi = np.stack([angle_solar_north_m, angle_solar_north_z, angle_solar_north_p])*u.degree
+    # phi = angle_solar_north + polarizer_difference #phi + satellite_orientation + polarizer_difference
+
+    # phi = phi.flatten()
     data_shape = input_collection[input_keys[0]].data.shape
     data_npol = np.zeros([data_shape[0], data_shape[1], 3, 1])
+
+    mzp_angles = np.array([np.full((data_shape, data_shape), -60), # theta angle in Eq 44
+                            np.full((data_shape, data_shape), 0),
+                            np.full((data_shape, data_shape), 60)]) * u.degree
+
     conv_matrix = np.array([[(4 * np.cos(phi[i] - mzp_angles[j] - reference_angle) ** 2 - 1) / 3
-                             for j in range(3)] for i in range(3)])
+                                 for j in range(3)] for i in range(3)])
+    conv_matrix = conv_matrix.T.reshape((data_shape*data_shape, 3, 3))
+
 
     for i, key in enumerate(key for key in input_keys if key != 'alpha'):
         data_npol[:, :, i, 0] = input_collection[key].data
@@ -568,7 +581,9 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
         if "Singular matrix" in str(err):
             raise SolpolpyError("Conversion matrix is degenerate")
 
-    data_mzp_solar = np.matmul(conv_matrix_inv, data_npol)
+    conv_matrix_inv = conv_matrix_inv.reshape((data_shape, data_shape, 3, 3))#.T
+
+    data_mzp_solar = np.matmul(conv_matrix_inv, data_npol).squeeze()
     mask = combine_all_collection_masks(input_collection)
 
     metas = [{'POLAR': target_angle,

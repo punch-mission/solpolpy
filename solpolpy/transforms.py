@@ -15,7 +15,7 @@ import numpy as np
 from ndcube import NDCollection, NDCube
 
 from solpolpy.errors import InvalidDataError, MissingAlphaError, SolpolpyError
-from solpolpy.util import combine_all_collection_masks, extract_crota_from_wcs, wcs_to_solnorth
+from solpolpy.util import combine_all_collection_masks, extract_crota_from_wcs, solnorth_from_wcs
 
 System = StrEnum("System", ["bpb", "npol", "stokes", "mzpsolar", "mzpinstru", "btbr", "bthp", "fourpol", "bp3"])
 SYSTEM_REQUIRED_KEYS = {System.bpb: {"B", "pB"},
@@ -551,26 +551,25 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
     input_keys = list(input_collection.keys())
     polarizer_difference = {k: input_collection[k].meta['POLAROFF']* u.degree if 'POLAROFF' in input_collection[k].meta else 0* u.degree
                             for k in ['M', 'Z', 'P']}
+    data_shape = input_collection[input_keys[0]].data.shape
     #phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha']*u.degree
 
-    angle_solar_north_m = (-wcs_to_solnorth(input_collection['M'].wcs) - 60*u.degree + polarizer_difference['M']) % -180
-    angle_solar_north_z = (-wcs_to_solnorth(input_collection['Z'].wcs) + polarizer_difference['Z']) % 180
-    angle_solar_north_p = (-wcs_to_solnorth(input_collection['P'].wcs) + 60*u.degree + polarizer_difference['P']) % 180
+    angle_solar_north_m = (-solnorth_from_wcs(input_collection['M'].wcs, shape=data_shape) - 60*u.degree + polarizer_difference['M']) % (-180 * u.degree)
+    angle_solar_north_z = (-solnorth_from_wcs(input_collection['Z'].wcs, shape=data_shape) + polarizer_difference['Z']) % (180 * u.degree)
+    angle_solar_north_p = (-solnorth_from_wcs(input_collection['P'].wcs, shape=data_shape) + 60*u.degree + polarizer_difference['P']) % (180 * u.degree)
 
-    phi = np.stack([angle_solar_north_m, angle_solar_north_z, angle_solar_north_p])*u.degree
+    phi = np.stack([angle_solar_north_m, angle_solar_north_z, angle_solar_north_p])
     # phi = angle_solar_north + polarizer_difference #phi + satellite_orientation + polarizer_difference
 
-    # phi = phi.flatten()
-    data_shape = input_collection[input_keys[0]].data.shape
     data_npol = np.zeros([data_shape[0], data_shape[1], 3, 1])
 
-    mzp_angles = np.array([np.full((data_shape, data_shape), -60), # theta angle in Eq 44
-                            np.full((data_shape, data_shape), 0),
-                            np.full((data_shape, data_shape), 60)]) * u.degree
+    mzp_angles = np.array([np.full(data_shape, -60), # theta angle in Eq 44
+                            np.full(data_shape, 0),
+                            np.full(data_shape, 60)]) * u.degree
 
     conv_matrix = np.array([[(4 * np.cos(phi[i] - mzp_angles[j] - reference_angle) ** 2 - 1) / 3
                                  for j in range(3)] for i in range(3)])
-    conv_matrix = conv_matrix.T.reshape((data_shape*data_shape, 3, 3))
+    conv_matrix = conv_matrix.T.reshape((data_shape[0]*data_shape[1], 3, 3))
 
 
     for i, key in enumerate(key for key in input_keys if key != 'alpha'):
@@ -581,7 +580,7 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
         if "Singular matrix" in str(err):
             raise SolpolpyError("Conversion matrix is degenerate")
 
-    conv_matrix_inv = conv_matrix_inv.reshape((data_shape, data_shape, 3, 3))#.T
+    conv_matrix_inv = conv_matrix_inv.reshape((data_shape[0], data_shape[1], 3, 3))#.T
 
     data_mzp_solar = np.matmul(conv_matrix_inv, data_npol).squeeze()
     mask = combine_all_collection_masks(input_collection)
@@ -591,7 +590,7 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
               "POLAROFF": input_collection[original_angle].meta.get("POLAROFF", 0*u.degree)}
              for original_angle, target_angle in zip(input_keys, [-60, 0, 60] * u.degree)]
 
-    cube_list = [(key, NDCube(data_mzp_solar[:, :, i, 0], wcs=input_collection[input_keys[0]].wcs,
+    cube_list = [(key, NDCube(data_mzp_solar[:, :, i], wcs=input_collection[input_keys[0]].wcs,
                 mask=mask, meta=metas[i])) for i, key in enumerate(["M", "Z", "P"])]
     for p_angle in input_keys:
         if p_angle.lower() == "alpha":

@@ -229,7 +229,6 @@ def solnorth_from_wcs(input_wcs, shape):
 
     # Get solar coordinates (Tx, Ty) for each pixel
     coords = pixel_to_skycoord(x, y, input_wcs)
-    lon = coords.Tx.to_value(u.deg)  # solar X
     lat = coords.Ty.to_value(u.deg)  # solar Y
 
     # Compute gradient of solar latitude (points toward solar north)

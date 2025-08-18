@@ -5,6 +5,7 @@
 ## Latest: unreleased
 
 - Add RGB image visualization and sped up resolution in https://github.com/punch-mission/solpolpy/pull/185
+- Finds solar north at each pixel using WCS information
 
 ## Version 0.4.0: Nov 22, 2024
 

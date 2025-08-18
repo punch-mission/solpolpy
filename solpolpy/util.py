@@ -4,7 +4,7 @@ import astropy.units as u
 import numpy as np
 import sunpy.map
 from astropy.wcs import WCS, DistortionLookupTable
-from astropy.wcs.utils import proj_plane_pixel_scales
+from astropy.wcs.utils import pixel_to_skycoord, proj_plane_pixel_scales
 from ndcube import NDCollection
 
 
@@ -204,3 +204,42 @@ def collection_to_maps(collection):
         sunpy_maps.append(sunpy.map.Map(data, wcs))
 
     return sunpy_maps
+
+
+def solnorth_from_wcs(input_wcs, shape):
+    """
+    Compute the angle of solar north direction at each pixel using the solar WCS.
+
+    Parameters
+    ----------
+    input_wcs : astropy.wcs.WCS
+        WCS object with solar projection (e.g., Helioprojective).
+
+    shape : tuple
+        Shape of the image as (nrows, ncols).
+
+    Returns
+    -------
+    angle_solar_north : 2D numpy.ndarray
+        Angle in degrees from +Y image axis to solar north at each pixel (measured counterclockwise).
+    """
+
+    nrows, ncols = shape
+    y, x = np.mgrid[0:nrows, 0:ncols]
+
+    # Get solar coordinates (Tx, Ty) for each pixel
+    coords = pixel_to_skycoord(x, y, input_wcs)
+    lat = coords.Ty.to_value(u.deg)  # solar Y
+
+    # Compute gradient of solar latitude (points toward solar north)
+    dy_lat, dx_lat = np.gradient(lat)
+
+    # Normalize vectors
+    norm = np.hypot(dx_lat, dy_lat)
+    north_dx = dx_lat / norm
+    north_dy = dy_lat / norm
+
+    # angle from horizontal +X direction
+    angle_solar_north = np.degrees(np.arctan2(north_dy, north_dx)) - 90
+
+    return angle_solar_north * u.degree

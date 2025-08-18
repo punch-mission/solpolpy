@@ -241,23 +241,32 @@ def test_fourpol_to_stokes_ones(fourpol_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+wcs_new = astropy.wcs.WCS(naxis=2)
+wcs_new.wcs.ctype = "HPLN-TAN", "HPLT-TAN"
+wcs_new.wcs.cunit = "deg", "deg"
+wcs_new.wcs.cdelt = 0.5, 0.4
+wcs_new.wcs.crpix = 2, 2
+wcs_new.wcs.crval = 0.5, 1
+wcs_new.wcs.cname = "HPC lon", "HPC lat"
 
 @fixture()
 def mzp_ones_instru():
+    data, _ = np.mgrid[0:5, 0:5]
     input_data = NDCollection(
-        [("P", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
-         ("Z", NDCube(np.array([[0]]), wcs=wcs, meta={"POLAR": 0 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
-         ("M", NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": -60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'}))],
+        [("P", NDCube(data, wcs=wcs_new, meta={"POLAR": 60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
+         ("Z", NDCube(data, wcs=wcs_new, meta={"POLAR": 0 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
+         ("M", NDCube(data, wcs=wcs_new, meta={"POLAR": -60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'}))],
         meta={}, aligned_axes="all")
     return input_data
 
 
 def test_mzp_mzp_ones_instru(mzp_ones_instru):
     actual = transforms.mzpinstru_to_mzpsolar(mzp_ones_instru)
+    data, _ = np.mgrid[0:5, 0:5]
     expected_data = [
-        ("M", NDCube(np.array([[1.01995]]), wcs=wcs, meta={"POLAR": -60 * u.degree, "POLAROFF": 1, "POLARREF": 'Solar'})),
-        ("Z", NDCube(np.array([[0.00041]]), wcs=wcs, meta={"POLAR": 0 * u.degree, "POLAROFF": 1, "POLARREF": 'Solar'})),
-        ("P", NDCube(np.array([[0.97965]]), wcs=wcs, meta={"POLAR": 60 * u.degree, "POLAROFF": 1, "POLARREF": 'Solar'}))]
+        ("M", NDCube(data, wcs=wcs, meta={"POLAR": -60 * u.degree, "POLAROFF": 1, "POLARREF": 'Solar'})),
+        ("Z", NDCube(data, wcs=wcs, meta={"POLAR": 0 * u.degree, "POLAROFF": 1, "POLARREF": 'Solar'})),
+        ("P", NDCube(data, wcs=wcs, meta={"POLAR": 60 * u.degree, "POLAROFF": 1, "POLARREF": 'Solar'}))]
     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data, atol=1.e-5)
@@ -285,9 +294,9 @@ def test_mzp_mzp_ones_solar(mzp_ones_solar):
 
 @fixture()
 def mzpsolar_degenerate():
-    data_out = [("M", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs, meta={"POLAR": -60*u.degree, "POLAROFF": 60, "POLARREF": 'Instrument'})),
-                ("Z", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs, meta={"POLAR": 0*u.degree,  "POLAROFF": 0, "POLARREF": 'Instrument'})),
-                ("P", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs, meta={"POLAR": 60*u.degree, "POLAROFF": -60,  "POLARREF": 'Instrument'}))]
+    data_out = [("M", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs_new, meta={"POLAR": -60*u.degree, "POLAROFF": 60, "POLARREF": 'Instrument'})),
+                ("Z", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs_new, meta={"POLAR": 0*u.degree,  "POLAROFF": 0, "POLARREF": 'Instrument'})),
+                ("P", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs_new, meta={"POLAR": 60*u.degree, "POLAROFF": -60,  "POLARREF": 'Instrument'}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 def test_mzpsolar_degenerate(mzpsolar_degenerate):

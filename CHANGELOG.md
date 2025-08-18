@@ -5,6 +5,7 @@
 ## Version 0.4.1: July 22, 2025
 
 - Add RGB image visualization and sped up resolution in https://github.com/punch-mission/solpolpy/pull/185
+- Finds solar north at each pixel using WCS information
 - Allows selecting a non-default HDU in https://github.com/punch-mission/solpolpy/pull/189
 - Adds docs button to view source in https://github.com/punch-mission/solpolpy/pull/190
 

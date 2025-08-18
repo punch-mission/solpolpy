@@ -13,6 +13,13 @@ wcs.cunit = "Angstrom", "deg", "deg"
 wcs.crpix = 2, 2, 2
 wcs.crval = 0, 0, 0
 
+wcs_new = astropy.wcs.WCS(naxis=2)
+wcs_new.wcs.ctype = "HPLN-TAN", "HPLT-TAN"
+wcs_new.wcs.cunit = "deg", "deg"
+wcs_new.wcs.cdelt = 0.5, 0.4
+wcs_new.wcs.crpix = 2, 2
+wcs_new.wcs.crval = 0.5, 1
+wcs_new.wcs.cname = "HPC lon", "HPC lat"
 
 @fixture()
 def npol_ones():
@@ -149,14 +156,15 @@ def bthp_ones():
 
 @fixture()
 def mzpinstru_ones():
+    data, _ = np.mgrid[0:5, 0:5]
     input_data = NDCollection(
         [(
             "P",
-            NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
+            NDCube(data, wcs=wcs_new, meta={"POLAR": 60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
             ("Z",
-             NDCube(np.array([[1]]), wcs=wcs, meta={"POLAR": 0 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
+             NDCube(data, wcs=wcs_new, meta={"POLAR": 0 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
             ("M",
-             NDCube(np.array([[1]]), wcs=wcs,
+             NDCube(data, wcs=wcs_new,
                     meta={"POLAR": -60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'}))],
         meta={}, aligned_axes="all")
     return input_data
@@ -169,11 +177,11 @@ dist = make_empty_distortion_model(50, np.random.random([50, 50]))
 def mzpinstru_distortion():
     wcs.cpdis1 = dist[0]
     wcs.cpdis2 = dist[1]
-    data_out = [("M", NDCube(np.random.random([50, 50]), wcs=wcs,
+    data_out = [("M", NDCube(np.random.random([50, 50]), wcs=wcs_new,
                              meta={"POLAR": -60 * u.degree, "POLAROFF": 0, "POLARREF": 'Instrument'})),
-                ("Z", NDCube(np.random.random([50, 50]), wcs=wcs,
+                ("Z", NDCube(np.random.random([50, 50]), wcs=wcs_new,
                              meta={"POLAR": 0 * u.degree, "POLAROFF": 0, "POLARREF": 'Instrument'})),
-                ("P", NDCube(np.random.random([50, 50]), wcs=wcs,
+                ("P", NDCube(np.random.random([50, 50]), wcs=wcs_new,
                              meta={"POLAR": 60 * u.degree, "POLAROFF": 0, "POLARREF": 'Instrument'}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 

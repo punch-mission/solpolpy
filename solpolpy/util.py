@@ -4,7 +4,7 @@ import astropy.units as u
 import numpy as np
 import sunpy.map
 from astropy.wcs import WCS, DistortionLookupTable
-from astropy.wcs.utils import proj_plane_pixel_scales, pixel_to_skycoord
+from astropy.wcs.utils import pixel_to_skycoord, proj_plane_pixel_scales
 from ndcube import NDCollection
 
 

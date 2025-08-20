@@ -6,6 +6,7 @@
 
 - Add RGB image visualization and sped up resolution in https://github.com/punch-mission/solpolpy/pull/185
 - Finds solar north at each pixel using WCS information
+- Fixed the order of polarizers w.r.t. solar north
 - Allows selecting a non-default HDU in https://github.com/punch-mission/solpolpy/pull/189
 - Adds docs button to view source in https://github.com/punch-mission/solpolpy/pull/190
 

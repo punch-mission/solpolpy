@@ -554,9 +554,9 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
     data_shape = input_collection[input_keys[0]].data.shape
     #phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha']*u.degree
 
-    angle_solar_north_m = (-solnorth_from_wcs(input_collection['M'].wcs, shape=data_shape) - 60*u.degree + polarizer_difference['M']) % (-180 * u.degree)
+    angle_solar_north_m = (-solnorth_from_wcs(input_collection['M'].wcs, shape=data_shape) + 60*u.degree + polarizer_difference['M']) % (-180 * u.degree)
     angle_solar_north_z = (-solnorth_from_wcs(input_collection['Z'].wcs, shape=data_shape) + polarizer_difference['Z']) % (180 * u.degree)
-    angle_solar_north_p = (-solnorth_from_wcs(input_collection['P'].wcs, shape=data_shape) + 60*u.degree + polarizer_difference['P']) % (180 * u.degree)
+    angle_solar_north_p = (-solnorth_from_wcs(input_collection['P'].wcs, shape=data_shape) - 60*u.degree + polarizer_difference['P']) % (180 * u.degree)
 
     phi = np.stack([angle_solar_north_m, angle_solar_north_z, angle_solar_north_p])
     # phi = angle_solar_north + polarizer_difference #phi + satellite_orientation + polarizer_difference

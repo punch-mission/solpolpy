@@ -211,8 +211,6 @@ def generate_rgb_image(collection,
     out_cube = []
     collection_keys = list(collection.keys())
 
-    radial_bin_edges = equally_spaced_bins(inner_radius, outer_radius, collection[collection_keys[0]].data.shape[0] // 4)
-    radial_bin_edges *= u.R_sun
 
     # Define the enhancement function based on the selected method
     enhancement_methods = {
@@ -233,21 +231,24 @@ def generate_rgb_image(collection,
 
         if enhancement_func:
             # Apply the selected enhancement method
+            radial_bin_edges = equally_spaced_bins(inner_radius, outer_radius,
+                                                   collection[collection_keys[0]].data.shape[0] // 4)
+            radial_bin_edges *= u.R_sun
             enhanced = enhancement_func(inputmap, radial_bin_edges=radial_bin_edges, **enhancement_params)
             masked_enhanced = np.ma.array(enhanced.data, mask=np.isnan(enhanced.data))
         else:
             # No enhancement, use the original data
             masked_enhanced = np.ma.array(inputmap.data, mask=np.isnan(inputmap.data))
 
-        scaled = (np.clip(masked_enhanced, 0, 1) * 255).astype('uint8')
+        scaled = (np.clip(masked_enhanced, 0, 1) * 255).astype('float32')
         out_cube.append((key, NDCube(data=scaled, meta=collection[key].meta, wcs=collection[key].wcs)))
 
     outputs = NDCollection(out_cube, meta={}, aligned_axes="all")
     size_im = (scaled.shape[1], scaled.shape[0])
-    color_image = np.zeros((3, size_im[1], size_im[0]), dtype=np.uint8)
+    color_image = np.zeros((3, size_im[1], size_im[0]), dtype=np.uint16)
 
-    color_image[0, :, :] = outputs['Z'].data
-    color_image[1, :, :] = outputs['M'].data
+    color_image[0, :, :] = outputs['M'].data
+    color_image[1, :, :] = outputs['Z'].data
     color_image[2, :, :] = outputs['P'].data
 
     return color_image

@@ -541,63 +541,52 @@ def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwar
 
 @transform(System.mzpinstru, System.mzpsolar, use_alpha=False)
 def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs):
-    """
-    Notes
-    ------
-    For rotating frames like NFI, ASPIICS, CODEX
-    Input has MZP in instrument reference.
-    Equation 44 in DeForest et al. 2022.
-    """
-    input_keys = list(input_collection.keys())
-    polarizer_difference = {k: input_collection[k].meta['POLAROFF']* u.degree if 'POLAROFF' in input_collection[k].meta else 0* u.degree
-                            for k in ['M', 'Z', 'P']}
-    data_shape = input_collection[input_keys[0]].data.shape
-    #phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha']*u.degree
+     """Notes
+     -----
+     Equation 45 in DeForest et al. 2022.
+     angles: list of input angles in degree
+     """
+     in_list = list(input_collection)
+     input_dict = {}
 
-    angle_solar_north_m = (-solnorth_from_wcs(input_collection['M'].wcs, shape=data_shape) + 60*u.degree + polarizer_difference['M']) % (-180 * u.degree)
-    angle_solar_north_z = (-solnorth_from_wcs(input_collection['Z'].wcs, shape=data_shape) + polarizer_difference['Z']) % (180 * u.degree)
-    angle_solar_north_p = (-solnorth_from_wcs(input_collection['P'].wcs, shape=data_shape) - 60*u.degree + polarizer_difference['P']) % (180 * u.degree)
+     for p_angle in in_list:
+         if p_angle == "alpha":
+             break
+         input_dict[input_collection[p_angle].meta["POLAR"]] = input_collection[p_angle].data
 
-    phi = np.stack([angle_solar_north_m, angle_solar_north_z, angle_solar_north_p])
-    # phi = angle_solar_north + polarizer_difference #phi + satellite_orientation + polarizer_difference
+     input_keys = list(input_collection.keys())
+     polarizer_difference = {k: input_collection[k].meta['POLAROFF'] * u.degree if 'POLAROFF' in input_collection[
+         k].meta else 0 * u.degree for k in ['M', 'Z', 'P']}
 
-    data_npol = np.zeros([data_shape[0], data_shape[1], 3, 1])
+     data_shape = input_collection[input_keys[0]].data.shape
 
-    mzp_angles = np.array([np.full(data_shape, -60), # theta angle in Eq 44
-                            np.full(data_shape, 0),
-                            np.full(data_shape, 60)]) * u.degree
+     angle_solar_north_m = (solnorth_from_wcs(input_collection['M'].wcs, shape=data_shape) + 60 * u.degree +
+                            polarizer_difference['M']) % (-180 * u.degree)
+     angle_solar_north_z = (solnorth_from_wcs(input_collection['Z'].wcs, shape=data_shape) + polarizer_difference[
+         'Z']) % (180 * u.degree)
+     angle_solar_north_p = (solnorth_from_wcs(input_collection['P'].wcs, shape=data_shape) - 60 * u.degree +
+                            polarizer_difference['P']) % (180 * u.degree)
 
-    conv_matrix = np.array([[(4 * np.cos(phi[i] - mzp_angles[j] - reference_angle) ** 2 - 1) / 3
-                                 for j in range(3)] for i in range(3)])
-    conv_matrix = conv_matrix.T.reshape((data_shape[0]*data_shape[1], 3, 3))
+     out_angles = np.stack([angle_solar_north_m, angle_solar_north_z, angle_solar_north_p])
 
+     output_cubes = []
+     mask = combine_all_collection_masks(input_collection)
+     first_meta = input_collection[in_list[0]].meta
+     first_wcs = input_collection[in_list[0]].wcs
+     for out_angle, key in zip(out_angles, ["M", "P", "Z"]):
+         value = (1 / 3) * np.sum(
+             [input_cube.data * (4 * np.square(np.cos(out_angle - input_angle - reference_angle)) - 1)
+              for input_angle, input_cube in input_dict.items()], axis=0)
+         out_meta = copy.copy(first_meta)
+         out_meta['POLARREF'] = "Solar"
+         output_cubes.append((key,
+                              NDCube(value, wcs=first_wcs, mask=mask, meta=out_meta)))
 
-    for i, key in enumerate(key for key in input_keys if key != 'alpha'):
-        data_npol[:, :, i, 0] = input_collection[key].data
-    try:
-        conv_matrix_inv = np.linalg.inv(conv_matrix)
-    except np.linalg.LinAlgError as err:
-        if "Singular matrix" in str(err):
-            raise SolpolpyError("Conversion matrix is degenerate")
+     if "alpha" in input_collection:
+         alpha = input_collection["alpha"].data * u.radian
+         output_cubes.append(("alpha", NDCube(alpha, wcs=input_collection[in_list[0]].wcs, mask=mask)))
 
-    conv_matrix_inv = conv_matrix_inv.reshape((data_shape[0], data_shape[1], 3, 3))#.T
-
-    data_mzp_solar = np.matmul(conv_matrix_inv, data_npol).squeeze()
-    mask = combine_all_collection_masks(input_collection)
-
-    metas = [{'POLAR': target_angle,
-              'POLARREF': "Solar",
-              "POLAROFF": input_collection[original_angle].meta.get("POLAROFF", 0*u.degree)}
-             for original_angle, target_angle in zip(input_keys, [-60, 0, 60] * u.degree)]
-
-    cube_list = [(key, NDCube(data_mzp_solar[:, :, i], wcs=input_collection[input_keys[0]].wcs,
-                mask=mask, meta=metas[i])) for i, key in enumerate(["M", "Z", "P"])]
-    for p_angle in input_keys:
-        if p_angle.lower() == "alpha":
-            cube_list.append(("alpha", NDCube(input_collection["alpha"].data * u.radian,
-                                              wcs=input_collection[input_keys[0]].wcs,
-                                              meta=input_collection["alpha"].meta)))
-    return NDCollection(cube_list, meta={}, aligned_axes="all")
+     return NDCollection(output_cubes, meta={}, aligned_axes="all")
 
 # Build the graph at the bottom so all transforms are defined
 transform_graph = nx.DiGraph()

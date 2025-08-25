@@ -292,17 +292,6 @@ def test_mzp_mzp_ones_solar(mzp_ones_solar):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
         assert (actual[str(k)].meta["POLARREF"] == expected[str(k)].meta["POLARREF"])
 
-@fixture()
-def mzpsolar_degenerate():
-    data_out = [("M", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs_new, meta={"POLAR": -60*u.degree, "POLAROFF": 60, "POLARREF": 'Instrument'})),
-                ("Z", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs_new, meta={"POLAR": 0*u.degree,  "POLAROFF": 0, "POLARREF": 'Instrument'})),
-                ("P", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs_new, meta={"POLAR": 60*u.degree, "POLAROFF": -60,  "POLARREF": 'Instrument'}))]
-    return NDCollection(data_out, meta={}, aligned_axes="all")
-
-def test_mzpsolar_degenerate(mzpsolar_degenerate):
-    with pytest.raises(SolpolpyError, match="Conversion matrix is degenerate"):
-        transforms.mzpinstru_to_mzpsolar(mzpsolar_degenerate)
-
 
 @fixture()
 def npol_degenerate():

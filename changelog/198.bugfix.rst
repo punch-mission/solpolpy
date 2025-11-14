@@ -1,0 +1,1 @@
+Changed alpha reference to solar north.

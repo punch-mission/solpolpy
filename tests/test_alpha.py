@@ -10,5 +10,5 @@ def test_radial_north(shape):
     alpha = radial_north(shape)
     assert isinstance(alpha, np.ndarray)
     assert alpha.shape == shape
-    assert np.isclose(alpha.min(), 0.0*u.radian, atol=0.01)
-    assert np.isclose(alpha.max(), 2*np.pi*u.radian, atol=0.01)
+    assert np.isclose(alpha.min(), -np.pi*u.radian, atol=0.01)
+    assert np.isclose(alpha.max(), np.pi*u.radian, atol=0.01)

@@ -1,5 +1,21 @@
-0.5.0 (2025-08-28)
-==================
+Version 0.5.1: December 9, 2025
+===============================
+
+Bug Fixes
+---------
+
+- Require sunkit-image >= 0.6 because we use features from it. (`#196 <https://github.com/punch-mission/solpolpy/pull/196>`__)
+- Changed alpha reference to solar north. (`#198 <https://github.com/punch-mission/solpolpy/pull/198>`__)
+
+
+Internal Changes
+----------------
+
+- Update pre-commit. (`#197 <https://github.com/punch-mission/solpolpy/pull/197>`__)
+
+
+Version 0.5.0: August 28, 2025
+==============================
 
 Fixes parity problems in MZP instrument and solar conversion.
 

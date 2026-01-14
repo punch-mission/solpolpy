@@ -465,7 +465,11 @@ def mzpsolar_to_npol(input_collection, out_angles: u.degree, reference_angle=0 *
                                      for input_angle, input_cube in input_dict.items()], axis=0)
         out_meta = copy.copy(first_meta)
         out_meta.update(POLAR=out_angle)
-        output_cubes.append((str(out_angle),
+        if out_angle.ndim > 1:
+            key = str(np.mean(out_angle))
+        else:
+            key = str(out_angle)
+        output_cubes.append((key,
                            NDCube(value, wcs=first_wcs, mask=mask, meta=out_meta)))
 
     if "alpha" in input_collection:

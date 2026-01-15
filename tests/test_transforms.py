@@ -213,6 +213,20 @@ def test_mzp_to_npol_custom():
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
 
+def test_mzp_to_npol_many_angles():
+    """M, Z, P = 0, 1, 0 conversion"""
+    input_data = NDCollection(
+        [("P", NDCube(np.array([[1, 2], [3, 4]]), wcs=wcs, meta={"POLAR": 60 * u.degree})),
+         ("Z", NDCube(np.array([[5, 6], [7, 8]]), wcs=wcs, meta={"POLAR": 0 * u.degree})),
+         ("M", NDCube(np.array([[9, 10], [11, 12]]), wcs=wcs, meta={"POLAR": -60 * u.degree}))],
+        meta={}, aligned_axes="all")
+    actual = transforms.mzpsolar_to_npol(input_data, out_angles= np.stack([[0, 45], [-60, -15], [60, 105]]) * u.degree)
+
+    expected_keys = [str(22.0), str(-38.0), str(82.0)]
+
+    for k in range(3):
+        assert list(actual)[k] == expected_keys[k]
+
 
 @fixture()
 def fourpol_ones():

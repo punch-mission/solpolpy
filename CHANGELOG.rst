@@ -1,3 +1,19 @@
+Version 0.5.2: February 20, 2026
+================================
+
+New Features
+------------
+
+- Modified NDCube Keys for npol to support 2D target angle arrays (`#202 <https://github.com/punch-mission/solpolpy/pull/202>`__)
+
+
+Internal Changes
+----------------
+
+- Add Python 3.14 to testing matrix. (`#200 <https://github.com/punch-mission/solpolpy/pull/200>`__)
+- Update pre-commit version. (`#201 <https://github.com/punch-mission/solpolpy/pull/201>`__)
+
+
 Version 0.5.1: December 9, 2025
 ===============================
 

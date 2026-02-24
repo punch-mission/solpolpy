@@ -82,56 +82,13 @@ def test_btbr_to_npol_missing_out_angles(btbr_ones):
         resolve(btbr_ones, "npol")
 
 
-def test_imax_effect(mzpsolar_ones):
-    result = resolve(mzpsolar_ones, "mzpsolar", imax_effect=True)
-    assert isinstance(result, NDCollection)
-    for key in result.keys():
-        assert np.sum(result[key].data * mzpsolar_ones[key].data) != 0
-        assert (result[key].meta["POLARREF"].lower() == 'solar')
-
-
-def test_imax_effect_instru(mzpinstru_ones):
-    result = resolve(mzpinstru_ones, "mzpsolar", imax_effect=True)
-    assert isinstance(result, NDCollection)
-    for key in result.keys():
-        assert np.sum(result[key].data * mzpinstru_ones[key].data) != 0
-        assert (result[key].meta["POLARREF"].lower() == 'solar')
-
-
-def test_imax_effect_false(mzpinstru_ones):
-    result = resolve(mzpinstru_ones, "mzpsolar", imax_effect=False)
-    assert isinstance(result, NDCollection)
-    for key in result.keys():
-        assert np.sum(result[key].data * mzpinstru_ones[key].data) != 0
-        assert (result[key].meta["POLARREF"].lower() == 'solar')
-
-
-def test_imax_effect_degenerate(mzpsolar_degenerate):
-    with pytest.raises(ValueError, match="Singular IMAX effect matrix is degenerate"):
-        resolve(mzpsolar_degenerate, "mzpsolar", imax_effect=True)
-
-
-def test_imax_distortion(mzpinstru_distortion):
-    result = resolve(mzpinstru_distortion, "mzpsolar", imax_effect=True)
-    assert isinstance(result, NDCollection)
-    for key in result.keys():
-        assert np.sum(result[key].data * mzpinstru_distortion[key].data) != 0
-        assert (result[key].meta["POLARREF"].lower() == 'solar')
-
-
-def test_imax_effect_unsupported_transformation_input(bpb_data):
-    with pytest.raises(UnsupportedTransformationError):
-        result = resolve(bpb_data, "MZPsolar", imax_effect=True)
-        assert isinstance(result, NDCollection)
-
-
 def test_mzp_to_mzp_is_constant(mzp_ones_other_order):
-    result = resolve(mzp_ones_other_order, "mzpsolar", imax_effect=False)
+    result = resolve(mzp_ones_other_order, "mzpsolar")
     assert result == mzp_ones_other_order
 
 
 def test_mzp_to_npol_as_mzp_is_constant(mzpsolar_ones):
-    result = resolve(mzpsolar_ones, "npol", out_angles=[-60, 0, 60] * u.degree, imax_effect=False)
+    result = resolve(mzpsolar_ones, "npol", out_angles=[-60, 0, 60] * u.degree)
     assert np.allclose(result['60.0 deg'].data, mzpsolar_ones["P"].data)
     assert np.allclose(result['-60.0 deg'].data, mzpsolar_ones["M"].data)
     assert np.allclose(result['0.0 deg'].data, mzpsolar_ones["Z"].data)

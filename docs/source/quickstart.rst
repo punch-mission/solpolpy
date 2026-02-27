@@ -46,8 +46,7 @@ presentation which use linear polarizer systems and a wide screen.
 In ``solpolpy``, the IMAX effect is corrected in input data using equation 44 from `Deforest et al. 2022`_.
 Details about IMAX effect on WFI data will be soon published as a research article.
 
-solpolpy supports this correction with the ``imax_effect`` keyword on the `~solpolpy.resolve` function.
-If set to true, it corrects for the IMAX effect and converts the apparent non-ideal angle to ideal MZP configuration.
+solpolpy supports this correction for the ``imax_effect`` within the `~solpolpy.resolve` function.
 
 Plotting results
 -----------------

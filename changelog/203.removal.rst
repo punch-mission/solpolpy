@@ -1,0 +1,1 @@
+Removed IMAX effect function because it is baked into the MZPinstru to MZPsolar conversion

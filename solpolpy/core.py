@@ -1,11 +1,8 @@
 """Core transformation functions for solpolpy."""
-import copy
 import typing as t
 
 import astropy.units as u
 import networkx as nx
-import numpy as np
-from astropy.wcs import WCS
 from ndcube import NDCollection, NDCube
 
 from solpolpy.alpha import radial_north
@@ -13,13 +10,11 @@ from solpolpy.constants import STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.instruments import load_data
 from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
-from solpolpy.util import apply_distortion_shift, compute_distortion_shift, extract_crota_from_wcs
 
 
 @u.quantity_input
 def resolve(input_data: list[str] | NDCollection,
             out_system: str,
-            imax_effect: bool = False,
             out_angles: u.degree = None,
             reference_angle: u.degree = None) -> NDCollection:
     """Apply a polarization transformation to a set of input dataframes.
@@ -43,11 +38,6 @@ def resolve(input_data: list[str] | NDCollection,
         - "bthp": Total brightness, angle and degree of polarization.
         - "fourpol": For observations taken at sequence of four polarizer angles, i.e. 0°, 45°, 90° and 135°.
         - "npol": Set of images taken at than arbitrary polarizing angles other than MZP
-
-    imax_effect : Boolean
-        The 'IMAX effect' describes the change in apparent measured polarization angle as an result of foreshortening effects.
-        This effect becomes more pronounced for wide field polarized imagers - see Patel et al (2024, in preparation)
-        If True, applies the IMAX effect for wide field imagers as part of the resolution process.
 
     out_angles : u.degree
         Angles to use when converting to npol or some arbitrary system
@@ -74,13 +64,6 @@ def resolve(input_data: list[str] | NDCollection,
 
     if getattr(equation, "uses_out_angles", False) and out_angles is None:
         raise ValueError("Out angles must be specified for this transform.")
-
-    if imax_effect:
-        if input_kind in ('mzpsolar', 'mzpinstru'):
-            input_data = resolve_imax_effect(input_data)
-        else:
-            msg = "IMAX effect applies only for transformations starting from MZP."
-            raise UnsupportedTransformationError(msg)
 
     if requires_alpha(equation) and "alpha" not in input_keys:
         input_data = add_alpha(input_data)
@@ -207,114 +190,6 @@ def requires_alpha(func: t.Callable) -> bool:
     """
     return getattr(func, "uses_alpha", False)
 
-
-@u.quantity_input
-def generate_imax_matrix(array_shape: (int, int), cumulative_offset: u.deg, wcs: WCS) -> np.ndarray:
-    """Define an A matrix with which to convert MZP^ (camera coords) = A x MZP (solar coords).
-
-    Parameters
-    ----------
-    array_shape
-        Defined input WCS array shape for matrix generation
-
-    Returns
-    -------
-    ndarray
-        Output A matrix used in converting between camera coordinates and solar coordinates
-
-    """
-    # Ideal MZP wrt Solar North
-    # TODO fix variable name
-    if len(cumulative_offset) != 3:
-        msg = "Three angles must be provided for the polarizer difference."
-        raise ValueError(msg)
-
-    thmzp = [-60, 0, 60] * u.degree + cumulative_offset
-    # Define the A matrix
-    mat_a = np.empty((array_shape[0], array_shape[1], 3, 3))
-
-    long_extent, lat_extent = wcs.wcs.cdelt[0] * array_shape[0], wcs.wcs.cdelt[1] * array_shape[1]
-    long_arr, lat_arr = np.meshgrid(np.linspace(-long_extent / 2, long_extent / 2, array_shape[0]),
-                                    np.linspace(-lat_extent / 2, lat_extent, array_shape[1]))
-
-    # Foreshortening (IMAX) effect on polarizer angle
-    phi_m = np.arctan2(np.tan(thmzp[0]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
-    phi_z = np.arctan2(np.tan(thmzp[1]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
-    phi_p = np.arctan2(np.tan(thmzp[2]) * np.cos(long_arr * u.degree), np.cos(lat_arr * u.degree)).to(u.degree)
-
-    # Apply distortion to IMAX matrix
-    if wcs.has_distortion:
-        new_x, new_y, valid_mask, i_coords, j_coords = compute_distortion_shift(phi_m.shape, wcs)
-
-        phi_m = apply_distortion_shift(phi_m, new_x, new_y, valid_mask, i_coords, j_coords)
-        phi_z = apply_distortion_shift(phi_z, new_x, new_y, valid_mask, i_coords, j_coords)
-        phi_p = apply_distortion_shift(phi_p, new_x, new_y, valid_mask, i_coords, j_coords)
-
-    phi = np.stack([phi_m, phi_z, phi_p])
-
-    for i in range(3):
-        for j in range(3):
-            mat_a[:, :, i, j] = (4 * np.cos(phi[i] - thmzp[j]) ** 2 - 1) / 3
-
-    return mat_a
-
-
-def resolve_imax_effect(input_data: NDCollection) -> NDCollection:
-    """Resolves the IMAX effect for provided input data, correcting measured polarization angles for wide FOV imagers.
-
-    Parameters
-    ----------
-    input_data : NDCollection
-        Input data on which to correct foreshortened polarization angles
-
-    Returns
-    -------
-    NDCollection
-        Output data with corrected polarization angles
-
-    """
-    data_shape = _determine_image_shape(input_data)
-    data_mzp_camera = np.zeros([data_shape[0], data_shape[1], 3, 1])
-    input_keys = list(input_data.keys())
-
-    if input_data['M'].meta['POLARREF'].lower() == 'instrument':
-        satellite_orientation = extract_crota_from_wcs(input_data['M'])
-        polarizer_difference = [input_data[k].meta['POLAROFF'] if 'POLAROFF' in input_data[k].meta else 0
-                                for k in ['M', 'Z', 'P']] * u.degree
-    else:
-        satellite_orientation = 0 * u.degree
-        polarizer_difference = [0, 0, 0] * u.degree
-
-    for i, key in enumerate(["M", "Z", "P"]):
-        data_mzp_camera[:, :, i, 0] = input_data[key].data
-
-    imax_matrix = generate_imax_matrix(data_shape, polarizer_difference + satellite_orientation, input_data['M'].wcs)
-    try:
-        imax_matrix_inv = np.linalg.inv(imax_matrix)
-    except np.linalg.LinAlgError as err:
-        if "Singular matrix" in str(err):
-            msg = "Singular IMAX effect matrix is degenerate"
-            raise ValueError(msg)
-        else:
-            raise
-
-    data_mzp_solar = np.matmul(imax_matrix_inv, data_mzp_camera)
-
-    metaM, metaZ, metaP = (copy.copy(input_data[key].meta) for key in ["M", "Z", "P"])
-    for meta in [metaM, metaZ, metaP]:
-        meta.update(POLARREF='Solar')
-
-    cube_list = [
-        (key, NDCube(data_mzp_solar[:, :, i, 0], wcs=input_data[key].wcs, meta=meta))
-        for i, (key, meta) in enumerate(zip(["M", "Z", "P"], [metaM, metaZ, metaP]))
-    ]
-
-    for p_angle in input_keys:
-        if p_angle.lower() == "alpha":
-            cube_list.append(("alpha", NDCube(input_data["alpha"].data * u.radian,
-                                              wcs=input_data[input_keys[0]].wcs,
-                                              meta=input_data["alpha"].meta)))
-    return NDCollection(cube_list, meta={}, aligned_axes="all")
 
 
 def _determine_image_shape(input_collection: NDCollection) -> tuple[int, int]:

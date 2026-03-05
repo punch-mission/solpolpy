@@ -58,14 +58,18 @@ def transform(source_system, target_system, use_alpha):
 
 @transform(System.npol, System.mzpsolar, use_alpha=False)
 @u.quantity_input
-def npol_to_mzpsolar(input_collection, reference_angle=0 * u.degree, **kwargs):
+def npol_to_mzpsolar(input_collection, in_angles: u.degree, reference_angle=0 * u.degree, **kwargs):
     """
     Notes
     ------
     Equation 44 in DeForest et al. 2022.
     """
     input_keys = list(input_collection.keys())
-    phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha'] * u.degree
+    if in_angles.ndim > 1:
+        phi = in_angles
+    else:
+        phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha'] * u.degree
+
     mzp_angles = [-60, 0, 60] * u.degree  # theta angle in Eq 44
 
     data_shape = input_collection[input_keys[0]].data.shape

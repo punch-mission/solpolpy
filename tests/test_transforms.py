@@ -329,7 +329,7 @@ def npol_degenerate():
 
 def test_npol_degenerate(npol_degenerate):
     with pytest.raises(SolpolpyError, match="Conversion matrix is degenerate"):
-        transforms.npol_to_mzpsolar(npol_degenerate)
+        transforms.npol_to_mzpsolar(npol_degenerate, in_angles=None)
 
 
 def test_mask_propagation_works_when_none_provided(fourpol_ones):

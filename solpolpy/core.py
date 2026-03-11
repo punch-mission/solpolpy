@@ -15,6 +15,7 @@ from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
 @u.quantity_input
 def resolve(input_data: list[str] | NDCollection,
             out_system: str,
+            in_angles: u.degree = None,
             out_angles: u.degree = None,
             reference_angle: u.degree = None) -> NDCollection:
     """Apply a polarization transformation to a set of input dataframes.
@@ -42,6 +43,9 @@ def resolve(input_data: list[str] | NDCollection,
     out_angles : u.degree
         Angles to use when converting to npol or some arbitrary system
 
+    in_angles : u.degree
+        Angles to use when converting to from npol or some arbitrary system to mzpsolar
+
     reference_angle : u.degree
         Reference angle used for the polarizer offset. If None, it will try to determine it from the metadata.
 
@@ -65,6 +69,9 @@ def resolve(input_data: list[str] | NDCollection,
     if getattr(equation, "uses_out_angles", False) and out_angles is None:
         raise ValueError("Out angles must be specified for this transform.")
 
+    if getattr(equation, "uses_in_angles", False) and in_angles is None:
+        raise ValueError("In angles must be specified for this transform.")
+
     if requires_alpha(equation) and "alpha" not in input_keys:
         input_data = add_alpha(input_data)
 
@@ -72,6 +79,7 @@ def resolve(input_data: list[str] | NDCollection,
 
     return equation(input_data,
                     reference_angle=reference_angle,
+                    in_angles=in_angles,
                     out_angles=out_angles)
 
 

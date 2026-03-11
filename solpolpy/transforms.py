@@ -35,10 +35,14 @@ def transform(source_system, target_system, use_alpha):
     def decorator(transform_function):
         transform_parameters = signature(transform_function).parameters
         uses_out_angles = "out_angles" in transform_parameters
+        uses_in_angles = "in_angles" in transform_parameters
 
         def wrapper(input_collection, *args, **kwargs):
             if uses_out_angles and "out_angles" not in transform_parameters:
                 msg = "Out angles is expected but not provided for this function"
+                raise InvalidDataError(msg)
+            if uses_in_angles and "in_angles" not in transform_parameters:
+                msg = "In angles is expected but not provided for this function"
                 raise InvalidDataError(msg)
             if use_alpha and "alpha" not in input_collection:
                 msg = "alpha expected in input_collection but not found."
@@ -51,6 +55,7 @@ def transform(source_system, target_system, use_alpha):
             return transform_function(input_collection, *args, **kwargs)
 
         wrapper.uses_out_angles = uses_out_angles
+        wrapper.uses_in_angles = uses_in_angles
         wrapper.uses_alpha = use_alpha
         return wrapper
     return decorator
@@ -58,7 +63,7 @@ def transform(source_system, target_system, use_alpha):
 
 @transform(System.npol, System.mzpsolar, use_alpha=False)
 @u.quantity_input
-def npol_to_mzpsolar(input_collection, in_angles = None, reference_angle=0 * u.degree, **kwargs):
+def npol_to_mzpsolar(input_collection, in_angles: u.degree = None, reference_angle=0 * u.degree, **kwargs):
     """
     Notes
     ------
@@ -76,14 +81,18 @@ def npol_to_mzpsolar(input_collection, in_angles = None, reference_angle=0 * u.d
     data_shape = input_collection[input_keys[0]].data.shape
     data_npol = np.zeros([data_shape[0], data_shape[1], 3, 1])
 
-    conv_matrix = np.array([[(4 * np.cos(phi[i] - mzp_angles[j] - reference_angle) ** 2 - 1) / 3
-                             for j in range(3)] for i in range(3)])
+    conv_matrix = np.array([[(4 * np.cos(phi[j] - mzp_angles[i] - reference_angle) ** 2 - 1)
+                           for i in range(3)] for j in range(3)]) / 3
 
     for i, key in enumerate(key for key in input_keys if key != 'alpha'):
         data_npol[:, :, i, 0] = input_collection[key].data
 
+    if conv_matrix.ndim > 2:
+        conv_matrix_pix = np.moveaxis(conv_matrix, (0, 1), (-2, -1))  # (ny, nx, 3, 3) type; moving the first two axes to the end
+    else:
+        conv_matrix_pix = conv_matrix
     try:
-        conv_matrix_inv = np.linalg.inv(conv_matrix)
+        conv_matrix_inv = np.linalg.inv(conv_matrix_pix)
     except np.linalg.LinAlgError as err:
         if "Singular matrix" in str(err):
             raise SolpolpyError("Conversion matrix is degenerate")

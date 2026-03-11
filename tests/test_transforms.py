@@ -233,13 +233,48 @@ def test_npol_to_mzp_many_angles():
          ("20", NDCube(np.array([[5, 6, 15], [7, 8, 16]]), wcs=wcs, meta={"POLAR": 20 * u.degree})),
          ("55", NDCube(np.array([[9, 10, 17], [11, 12, 18]]), wcs=wcs, meta={"POLAR": 55 * u.degree}))],
         meta={}, aligned_axes="all")
-    actual = transforms.npol_to_mzpsolar(input_data, in_angles= np.stack([[0, 45, 90], [-60, -15, 135], [60, 105, 0]]) * u.degree)
+
+    phi = np.stack([np.array([[10.0, 20.0, 30.0], [40.0, 50.0, 60.0]]),
+                np.array([[15.0, 25.0, 35.0], [45.0, 55.0, 65.0]]),
+                np.array([[5.0, 15.0, 25.0], [35.0, 45.0, 55.0]])]) * u.degree
+
+    actual = transforms.npol_to_mzpsolar(input_data, in_angles= phi)
 
     expected_keys = ["M", "Z", "P"]
+
+    mzp_angles = np.array([-60, 0, 60]) * u.degree
+
+    conv_matrix = np.array([[(4 * np.cos(phi[j] - mzp_angles[i]) ** 2 - 1)
+          for i in range(3)] for j in range(3)]) / 3
+
+    expected = np.matmul(np.linalg.inv(np.moveaxis(conv_matrix, (0, 1), (-2, -1))),
+        np.stack([input_data[k].data for k in input_data], axis=-1)[..., None])
+
+    np.testing.assert_allclose(np.stack([actual[k].data for k in ["M", "Z", "P"]], axis=-1),
+        expected[..., 0], rtol=1e-12)
 
     for k in range(3):
         assert list(actual)[k] == expected_keys[k]
 
+def test_npol_to_mzp_phi_1D():
+    input_data = NDCollection(
+        [("45", NDCube(np.array([[1, 2, 13], [3, 4, 14]]), wcs=wcs, meta={"POLAR": 45 * u.degree})),
+         ("20", NDCube(np.array([[5, 6, 15], [7, 8, 16]]), wcs=wcs, meta={"POLAR": 20 * u.degree})),
+         ("55", NDCube(np.array([[9, 10, 17], [11, 12, 18]]), wcs=wcs, meta={"POLAR": 55 * u.degree}))],
+        meta={}, aligned_axes="all")
+
+    phi = np.array([10.0, 25.0, 40.0]) * u.degree
+    mzp_angles = np.array([-60, 0, 60]) * u.deg
+
+    actual = transforms.npol_to_mzpsolar(input_data, in_angles= phi)
+
+    conv_matrix = ((4 * np.cos(phi[:, None] - mzp_angles[None, :]) ** 2 - 1) / 3)
+
+    expected = np.matmul(np.linalg.inv(conv_matrix), np.stack([input_data[k].data
+                                for k in input_data], axis=-1)[..., None])
+
+    np.testing.assert_allclose(np.stack([actual[k].data for k in ["M", "Z", "P"]],
+                                        axis=-1), expected[..., 0])
 
 @fixture()
 def fourpol_ones():

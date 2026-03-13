@@ -71,7 +71,7 @@ def npol_to_mzpsolar(input_collection, in_angles: u.degree = None, reference_ang
     """
     input_keys = list(input_collection.keys())
     if in_angles is not None:
-            phi = in_angles
+        phi = in_angles
     else:
         phi = [input_collection[key].meta['POLAR'] for key in input_keys if key != 'alpha'] * u.degree
 

@@ -1,1 +1,0 @@
-Modified npol_to_mzpsolar function to ingest 2d input angle arrays

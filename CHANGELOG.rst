@@ -1,3 +1,18 @@
+0.6.0: March 13, 2026
+=====================
+
+Removals
+--------
+
+- Removed IMAX effect function because it is baked into the MZPinstru to MZPsolar conversion (`#203 <https://github.com/punch-mission/solpolpy/pull/203>`__)
+
+
+New Features
+------------
+
+- Modified npol_to_mzpsolar function to ingest 2d input angle arrays (`#204 <https://github.com/punch-mission/solpolpy/pull/204>`__)
+
+
 Version 0.5.2: February 20, 2026
 ================================
 

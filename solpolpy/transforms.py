@@ -537,7 +537,7 @@ def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwar
 
     output_cubes = []
     mask = combine_all_collection_masks(input_collection)
-    satellite_orientation = extract_crota_from_wcs(input_collection['Z'])
+    satellite_orientation = extract_crota_from_wcs(input_collection['Z'].wcs)
     mzp_angles = [input_collection[key].meta['POLAR'] for key in input_collection.keys() if key != 'alpha']*u.degree
     out_angles = mzp_angles + satellite_orientation
 

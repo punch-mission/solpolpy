@@ -15,7 +15,7 @@ import numpy as np
 from ndcube import NDCollection, NDCube
 
 from solpolpy.errors import InvalidDataError, MissingAlphaError, SolpolpyError
-from solpolpy.util import combine_all_collection_masks, extract_crota_from_wcs, solnorth_from_wcs
+from solpolpy.util import combine_all_collection_masks, extract_crota_from_wcs, solnorth_from_wcs, compute_lats
 
 System = StrEnum("System", ["bpb", "npol", "stokes", "mzpsolar", "mzpinstru", "btbr", "bthp", "fourpol", "bp3"])
 SYSTEM_REQUIRED_KEYS = {System.bpb: {"B", "pB"},
@@ -57,6 +57,7 @@ def transform(source_system, target_system, use_alpha):
         wrapper.uses_out_angles = uses_out_angles
         wrapper.uses_in_angles = uses_in_angles
         wrapper.uses_alpha = use_alpha
+        wrapper.fcn = transform_function
         return wrapper
     return decorator
 
@@ -577,12 +578,13 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
 
      data_shape = input_collection[input_keys[0]].data.shape
 
-     angle_solar_north_m = (solnorth_from_wcs(input_collection['M'].wcs, shape=data_shape) + 60 * u.degree +
-                            polarizer_difference['M']) % (-180 * u.degree)
-     angle_solar_north_z = (solnorth_from_wcs(input_collection['Z'].wcs, shape=data_shape) + polarizer_difference[
-         'Z']) % (180 * u.degree)
-     angle_solar_north_p = (solnorth_from_wcs(input_collection['P'].wcs, shape=data_shape) - 60 * u.degree +
-                            polarizer_difference['P']) % (180 * u.degree)
+     lats = compute_lats(input_collection['Z'].wcs, data_shape)
+     angle_solar_north_m = (solnorth_from_wcs(input_collection['M'].wcs, shape=data_shape, precomputed_lats=lats)
+                            + (60 * u.degree + polarizer_difference['M'])) % (-180 * u.degree)
+     angle_solar_north_z = (solnorth_from_wcs(input_collection['Z'].wcs, shape=data_shape, precomputed_lats=lats)
+                            + polarizer_difference['Z']) % (180 * u.degree)
+     angle_solar_north_p = (solnorth_from_wcs(input_collection['P'].wcs, shape=data_shape, precomputed_lats=lats)
+                            - (60 * u.degree + polarizer_difference['P'])) % (180 * u.degree)
 
      out_angles = np.stack([angle_solar_north_m, angle_solar_north_z, angle_solar_north_p])
 

@@ -248,7 +248,7 @@ def solnorth_from_wcs(input_wcs, shape, precomputed_lats=None):
     north_dx = dx_lat / norm
     north_dy = dy_lat / norm
 
-    # angle from horizontal +X direction
+    # angle from +Y direction
     angle_solar_north = np.degrees(np.arctan2(north_dy, north_dx)) - 90
 
     return angle_solar_north * u.degree

@@ -545,7 +545,7 @@ def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwar
         value = (1 / 3) * np.sum(
             [input_cube.data * (4 * np.square(np.cos(out_angle - input_angle - reference_angle)) - 1)
              for input_angle, input_cube in input_dict.items()], axis=0)
-        out_meta = copy.copy(input_collection[key].meta)
+        out_meta = copy.deepcopy(input_collection[key].meta)
         out_meta.update(POLARREF="Instrument")
         output_cubes.append((key,
                              NDCube(value, wcs=input_collection[key].wcs, mask=mask, meta=out_meta)))
@@ -596,7 +596,7 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
          value = (1 / 3) * np.sum(
              [input_cube.data * (4 * np.square(np.cos(out_angle - input_angle - reference_angle)) - 1)
               for input_angle, input_cube in input_dict.items()], axis=0)
-         out_meta = copy.copy(first_meta)
+         out_meta = copy.deepcopy(first_meta)
          out_meta['POLARREF'] = "Solar"
          output_cubes.append((key,
                               NDCube(value, wcs=first_wcs, mask=mask, meta=out_meta)))

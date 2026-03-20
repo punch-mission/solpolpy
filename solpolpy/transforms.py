@@ -536,15 +536,15 @@ def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwar
 
     output_cubes = []
     mask = combine_all_collection_masks(input_collection)
-    satellite_orientation = extract_crota_from_wcs(input_collection['Z'])
-    mzp_angles = [input_collection[key].meta['POLAR'] for key in list(input_collection.keys()) if key != 'alpha']*u.degree
+    satellite_orientation = extract_crota_from_wcs(input_collection['Z'].wcs)
+    mzp_angles = [input_collection[key].meta['POLAR'] for key in ["M", "P", "Z"] if key != 'alpha']*u.degree
     out_angles = mzp_angles + satellite_orientation
 
-    for out_angle, key in zip(out_angles, ["M", "Z", "P"]):
+    for out_angle, key in zip(out_angles, ["M", "P", "Z"]):
         value = (1 / 3) * np.sum(
             [input_cube.data * (4 * np.square(np.cos(out_angle - input_angle - reference_angle)) - 1)
              for input_angle, input_cube in input_dict.items()], axis=0)
-        out_meta = copy.copy(input_collection[key].meta)
+        out_meta = copy.deepcopy(input_collection[key].meta)
         out_meta.update(POLARREF="Instrument")
         output_cubes.append((key,
                              NDCube(value, wcs=input_collection[key].wcs, mask=mask, meta=out_meta)))
@@ -594,7 +594,7 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
          value = (1 / 3) * np.sum(
              [input_cube.data * (4 * np.square(np.cos(out_angle - input_angle - reference_angle)) - 1)
               for input_angle, input_cube in input_dict.items()], axis=0)
-         out_meta = copy.copy(first_meta)
+         out_meta = copy.deepcopy(first_meta)
          out_meta['POLARREF'] = "Solar"
          output_cubes.append((key,
                               NDCube(value, wcs=first_wcs, mask=mask, meta=out_meta)))

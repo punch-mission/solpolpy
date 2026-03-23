@@ -535,18 +535,29 @@ def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwar
             break
         input_dict[input_collection[p_angle].meta["POLAR"]] = input_collection[p_angle].data
 
+    input_keys = list(input_collection.keys())
+    polarizer_difference = {k: input_collection[k].meta['POLAROFF'] * u.degree if 'POLAROFF' in input_collection[
+         k].meta else 0 * u.degree for k in ['M', 'Z', 'P']}
+
+    data_shape = input_collection[input_keys[0]].data.shape
+
+    lats = compute_lats(input_collection['Z'].wcs, data_shape)
+    angle_solar_north_m = (solnorth_from_wcs(input_collection['M'].wcs, shape=data_shape, precomputed_lats=lats)
+                           + (60 * u.degree + polarizer_difference['M'])) % (-180 * u.degree)
+    angle_solar_north_z = (solnorth_from_wcs(input_collection['Z'].wcs, shape=data_shape, precomputed_lats=lats)
+                           + polarizer_difference['Z']) % (180 * u.degree)
+    angle_solar_north_p = (solnorth_from_wcs(input_collection['P'].wcs, shape=data_shape, precomputed_lats=lats)
+                           - (60 * u.degree + polarizer_difference['P'])) % (180 * u.degree)
+    in_angles = np.stack([angle_solar_north_m, angle_solar_north_z, angle_solar_north_p])
+
     output_cubes = []
     mask = combine_all_collection_masks(input_collection)
-    satellite_orientation = extract_crota_from_wcs(input_collection['Z'].wcs)
-    mzp_angles = [input_collection[key].meta['POLAR'] for key in ["M", "P", "Z"] if key != 'alpha']*u.degree
-    out_angles = mzp_angles + satellite_orientation
-
-    for out_angle, key in zip(out_angles, ["M", "P", "Z"]):
+    for out_angle, key in zip([-60, 0, 60] * u.deg, ["M", "Z", "P"]):
         value = (1 / 3) * np.sum(
-            [input_cube.data * (4 * np.square(np.cos(out_angle - input_angle - reference_angle)) - 1)
-             for input_angle, input_cube in input_dict.items()], axis=0)
+            [input_collection[angle].data * (4 * np.square(np.cos(out_angle - input_angle - reference_angle)) - 1)
+             for input_angle, angle in zip(in_angles, ["M", "Z", "P"])], axis=0)
         out_meta = copy.deepcopy(input_collection[key].meta)
-        out_meta.update(POLARREF="Instrument")
+        out_meta['POLARREF'] = "Solar"
         output_cubes.append((key,
                              NDCube(value, wcs=input_collection[key].wcs, mask=mask, meta=out_meta)))
 

@@ -206,7 +206,18 @@ def collection_to_maps(collection):
     return sunpy_maps
 
 
-def solnorth_from_wcs(input_wcs, shape):
+def compute_lats(wcs, shape):
+    nrows, ncols = shape
+    y, x = np.mgrid[0:nrows, 0:ncols]
+
+    # Get solar coordinates (Tx, Ty) for each pixel
+    coords = pixel_to_skycoord(x, y, wcs)
+    lat = coords.Ty.to_value(u.deg)  # solar Y
+    return lat
+
+
+
+def solnorth_from_wcs(input_wcs, shape, precomputed_lats=None):
     """
     Compute the angle of solar north direction at each pixel using the solar WCS.
 
@@ -224,12 +235,10 @@ def solnorth_from_wcs(input_wcs, shape):
         Angle in degrees from +Y image axis to solar north at each pixel (measured counterclockwise).
     """
 
-    nrows, ncols = shape
-    y, x = np.mgrid[0:nrows, 0:ncols]
-
-    # Get solar coordinates (Tx, Ty) for each pixel
-    coords = pixel_to_skycoord(x, y, input_wcs)
-    lat = coords.Ty.to_value(u.deg)  # solar Y
+    if precomputed_lats is None:
+        lat = compute_lats(input_wcs, shape)
+    else:
+        lat = precomputed_lats
 
     # Compute gradient of solar latitude (points toward solar north)
     dy_lat, dx_lat = np.gradient(lat)

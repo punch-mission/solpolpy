@@ -557,7 +557,7 @@ def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwar
             [input_collection[angle].data * (4 * np.square(np.cos(out_angle - input_angle - reference_angle)) - 1)
              for input_angle, angle in zip(in_angles, ["M", "Z", "P"])], axis=0)
         out_meta = copy.deepcopy(input_collection[key].meta)
-        out_meta['POLARREF'] = "Solar"
+        out_meta['POLARREF'] = "Instrument"
         output_cubes.append((key,
                              NDCube(value, wcs=input_collection[key].wcs, mask=mask, meta=out_meta)))
 

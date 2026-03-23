@@ -592,7 +592,7 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
      mask = combine_all_collection_masks(input_collection)
      first_meta = input_collection[in_list[0]].meta
      first_wcs = input_collection[in_list[0]].wcs
-     for out_angle, key in zip(out_angles, ["M", "P", "Z"]):
+     for out_angle, key in zip(out_angles, ["M", "Z", "P"]):
          value = (1 / 3) * np.sum(
              [input_cube.data * (4 * np.square(np.cos(out_angle - input_angle - reference_angle)) - 1)
               for input_angle, input_cube in input_dict.items()], axis=0)

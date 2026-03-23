@@ -315,12 +315,12 @@ wcs_sol.wcs.cname = "HPC lon", "HPC lat"
 
 # Celestial WCS
 wcs_cel = astropy.wcs.WCS(naxis=2)
-wcs_cel.wcs.ctype = ["RA---TAN", "DEC--TAN"]
-wcs_cel.wcs.cunit = ["deg", "deg"]
-wcs_cel.wcs.cdelt = [-0.5, 0.4]
-wcs_cel.wcs.crpix = [2.0, 2.0]
-wcs_cel.wcs.crval = [10.0, 20.0]
-wcs_cel.wcs.cname = ["RA", "DEC"]
+wcs_cel.wcs.ctype = "RA---TAN", "DEC--TAN"
+wcs_cel.wcs.cunit = "deg", "deg"
+wcs_cel.wcs.cdelt = -0.5, 0.4
+wcs_cel.wcs.crpix = 2.0, 2.0
+wcs_cel.wcs.crval = 10.0, 20.0
+wcs_cel.wcs.cname = "RA", "DEC"
 
 hdr = fits.Header()
 hdr.update(wcs_sol.to_header())

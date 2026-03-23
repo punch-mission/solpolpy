@@ -3,6 +3,7 @@
 
 import astropy.units as u
 import astropy.wcs
+from astropy.io import fits
 import numpy as np
 import pytest
 from ndcube import NDCollection, NDCube
@@ -12,12 +13,29 @@ from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.transforms import System
 from tests.fixtures import *
 
-wcs = astropy.wcs.WCS(naxis=3)
-wcs.ctype = "WAVE", "HPLT-TAN", "HPLN-TAN"
-wcs.cdelt = 0.2, 0.5, 0.4
-wcs.cunit = "Angstrom", "deg", "deg"
-wcs.crpix = 0, 2, 2
-wcs.crval = 10, 0.5, 1
+# Solar WCS
+wcs_sol = astropy.wcs.WCS(naxis=2)
+wcs_sol.wcs.ctype = "HPLN-TAN", "HPLT-TAN"
+wcs_sol.wcs.cunit = "deg", "deg"
+wcs_sol.wcs.cdelt = 0.5, 0.4
+wcs_sol.wcs.crpix = 2, 2
+wcs_sol.wcs.crval = 0.5, 1
+wcs_sol.wcs.cname = "HPC lon", "HPC lat"
+
+# Celestial WCS
+wcs_cel = astropy.wcs.WCS(naxis=2)
+wcs_cel.wcs.ctype = "RA---TAN", "DEC--TAN"
+wcs_cel.wcs.cunit = "deg", "deg"
+wcs_cel.wcs.cdelt = -0.5, 0.4
+wcs_cel.wcs.crpix = 2.0, 2.0
+wcs_cel.wcs.crval = 10.0, 20.0
+wcs_cel.wcs.cname = "RA", "DEC"
+
+hdr = fits.Header()
+hdr.update(wcs_sol.to_header())
+hdr.update(wcs_cel.to_header(key="A"))
+
+wcs = astropy.wcs.WCS(hdr)
 
 
 def test_determine_image_shape():

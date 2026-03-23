@@ -245,6 +245,7 @@ def solnorth_from_wcs(input_wcs, shape, precomputed_lats=None):
 
     # Normalize vectors
     norm = np.hypot(dx_lat, dy_lat)
+    norm[norm == 0] = np.nan
     north_dx = dx_lat / norm
     north_dy = dy_lat / norm
 

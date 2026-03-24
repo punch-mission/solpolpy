@@ -1,7 +1,7 @@
 import astropy.units as u
 import astropy.wcs
-from astropy.io import fits
 import numpy as np
+from astropy.io import fits
 from ndcube import NDCollection, NDCube
 from pytest import fixture
 

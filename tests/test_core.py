@@ -3,9 +3,9 @@
 
 import astropy.units as u
 import astropy.wcs
-from astropy.io import fits
 import numpy as np
 import pytest
+from astropy.io import fits
 from ndcube import NDCollection, NDCube
 
 from solpolpy.core import _determine_image_shape, add_alpha, determine_input_kind, get_transform_path, resolve

@@ -120,7 +120,12 @@ def determine_input_kind(input_data: NDCollection) -> System:
     for valid_kind, param_set in SYSTEM_REQUIRED_KEYS.items():
         if valid_kind in [System.mzpinstru, System.mzpsolar] and param_set == input_keys:
             polarref_value = input_data['Z'].meta.get("POLARREF", "solar").lower()
-            return System.mzpinstru if polarref_value == "instrument" else System.mzpsolar
+            if polarref_value == "instrument":
+                return System.mzpinstru
+            elif polarref_value == "solar":
+              return System.mzpsolar
+            else:
+                raise ValueError(f"Unrecognized POALRREF value: {polarref_value}")
         if valid_kind != System.npol and param_set == input_keys:
             return valid_kind
     try:

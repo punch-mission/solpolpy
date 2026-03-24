@@ -103,9 +103,9 @@ def test_btbr_mzp_ways(btbr_ones):
 def test_mzp_stokes_ones(mzpsolar_ones):
     actual = transforms.mzpsolar_to_stokes(mzpsolar_ones)
     expected_data = []
-    expected_data.append(("I", NDCube(np.array([2]), wcs=wcs)))
-    expected_data.append(("Q", NDCube(np.array([0]), wcs=wcs)))
-    expected_data.append(("U", NDCube(np.array([0]), wcs=wcs)))
+    expected_data.append(("I", NDCube(np.arange(0, 10, 2)[:, None] * np.ones((1, 5)), wcs=wcs)))
+    expected_data.append(("Q", NDCube(np.zeros((5,5)), wcs=wcs)))
+    expected_data.append(("U", NDCube(np.zeros((5,5)), wcs=wcs)))
     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)

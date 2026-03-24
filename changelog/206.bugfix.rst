@@ -1,1 +1,1 @@
-Bugfixes for mzpsolar_to_mzpinstru and updating tests
+mzpsolar_to_mzpinstru now handles per pixel calculation of solar north.

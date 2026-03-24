@@ -105,7 +105,7 @@ def npol_to_mzpsolar(input_collection, in_angles: u.degree = None, reference_ang
         meta.update({
             'POLAR': target_angle,
             'POLARREF': "Solar",
-            "POLAROFF": input_collection[original_angle].meta.get("POLAROFF", 0 * u.degree)
+            "POLAROFF": input_collection[original_angle].meta.get("POLAROFF", 0 )
         })
 
     mask = combine_all_collection_masks(input_collection)

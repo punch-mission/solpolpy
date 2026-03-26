@@ -15,8 +15,8 @@ from solpolpy.physics import (
     MZP_ANGLES,
     angle_difference_radians,
     as_angle,
-    bp3_from_analyzer_brightness,
-    bp3_to_analyzer_brightness,
+    bp3_from_polarizer_brightness,
+    bp3_to_polarizer_brightness,
     clone_meta,
     combine_mask,
     data_keys,
@@ -175,7 +175,7 @@ def _mzp_cubes_from_stack(data_stack, input_collection: NDCollection, mask=None,
     return cubes
 
 
-def _instrument_frame_analyzer_angles(input_collection: NDCollection):
+def _instrument_frame_polarizer_angles(input_collection: NDCollection):
     data_shape = template_cube(input_collection, preferred_key="Z").data.shape
     lats = compute_lats(input_collection["Z"].wcs, data_shape)
 
@@ -214,8 +214,8 @@ def mzpsolar_to_bpb(input_collection, **kwargs):
 
     """""
     alpha = _alpha_data(input_collection)
-    analyzer_stack = np.stack(stack_data(input_collection, ["M", "Z", "P"]), axis=0)
-    B, pB, pBp = bp3_from_analyzer_brightness(analyzer_stack, MZP_ANGLES, alpha)
+    polarizer_stack = np.stack(stack_data(input_collection, ["M", "Z", "P"]), axis=0)
+    B, pB, pBp = bp3_from_polarizer_brightness(polarizer_stack, MZP_ANGLES, alpha)
     _warn_if_information_is_lost(pBp, B, "mzpsolar_to_bpb")
 
     mask = combine_mask(input_collection)
@@ -237,7 +237,7 @@ def bpb_to_mzpsolar(input_collection, **kwargs):
     """
     alpha = _alpha_data(input_collection)
     B, pB = input_collection["B"].data, input_collection["pB"].data
-    mzp_stack = bp3_to_analyzer_brightness(B, pB, np.zeros_like(pB), alpha, MZP_ANGLES)
+    mzp_stack = bp3_to_polarizer_brightness(B, pB, np.zeros_like(pB), alpha, MZP_ANGLES)
     mask = combine_mask(input_collection)
     cubes = _mzp_cubes_from_stack(mzp_stack, input_collection, mask=mask, preferred_key="B")
     _append_alpha(cubes, input_collection, mask=mask)
@@ -345,8 +345,8 @@ def mzpsolar_to_bp3(input_collection, **kwargs):
     Equation 7, 9 and 10 in DeForest et al. 2022.
     """""
     alpha = _alpha_data(input_collection)
-    analyzer_stack = np.stack(stack_data(input_collection, ["M", "Z", "P"]), axis=0)
-    B, pB, pBp = bp3_from_analyzer_brightness(analyzer_stack, MZP_ANGLES, alpha)
+    polarizer_stack = np.stack(stack_data(input_collection, ["M", "Z", "P"]), axis=0)
+    B, pB, pBp = bp3_from_polarizer_brightness(polarizer_stack, MZP_ANGLES, alpha)
 
     mask = combine_mask(input_collection)
     template = template_cube(input_collection, preferred_key="M")
@@ -369,7 +369,7 @@ def bp3_to_mzpsolar(input_collection, **kwargs):
     """""
     B, pB, pBp = input_collection["B"].data, input_collection["pB"].data, input_collection["pBp"].data
     alpha = _alpha_data(input_collection)
-    mzp_stack = bp3_to_analyzer_brightness(B, pB, pBp, alpha, MZP_ANGLES)
+    mzp_stack = bp3_to_polarizer_brightness(B, pB, pBp, alpha, MZP_ANGLES)
 
     mask = combine_mask(input_collection)
     cubes = _mzp_cubes_from_stack(mzp_stack, input_collection, mask=mask, preferred_key="B")

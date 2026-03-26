@@ -41,25 +41,25 @@ def _as_radians(angles):
     return as_angle(angles, u.radian).to_value(u.radian)
 
 
-def bp3_to_analyzer_brightness(B, pB, pBp, alpha, analyzer_angles):
-    """Evaluate analyzer brightness at the requested analyzer angles."""
+def bp3_to_polarizer_brightness(B, pB, pBp, alpha, polarizer_angles):
+    """Evaluate polarizer brightness at the requested polarizer angles."""
     alpha_rad = _as_radians(alpha)
     angle_stack = []
-    for angle in u.Quantity(analyzer_angles):
+    for angle in u.Quantity(polarizer_angles):
         delta = angle_difference_radians(angle, alpha)
         angle_stack.append(0.5 * (B - pB * np.cos(2 * delta) - pBp * np.sin(2 * delta)))
     return np.stack(angle_stack, axis=0)
 
 
-def bp3_from_analyzer_brightness(brightness_stack, analyzer_angles, alpha):
-    """Recover B, pB, and pBp from analyzer brightness measurements."""
+def bp3_from_polarizer_brightness(brightness_stack, polarizer_angles, alpha):
+    """Recover B, pB, and pBp from polarizer brightness measurements."""
     alpha_rad = _as_radians(alpha)
     brightness_stack = np.asarray(brightness_stack)
     B = (2.0 / 3.0) * np.sum(brightness_stack, axis=0)
 
     cos_terms = []
     sin_terms = []
-    for brightness, angle in zip(brightness_stack, u.Quantity(analyzer_angles), strict=False):
+    for brightness, angle in zip(brightness_stack, u.Quantity(polarizer_angles), strict=False):
         delta = angle_difference_radians(angle, alpha)
         cos_terms.append(brightness * np.cos(2 * delta))
         sin_terms.append(brightness * np.sin(2 * delta))
@@ -103,7 +103,7 @@ def solve_three_polarizer_brightness(observed_brightness, observed_angles, solve
 
 
 def project_three_polarizer_brightness(source_brightness, source_angles, target_angles, reference_angle=0 * u.degree):
-    """Project three-polarizer brightness measurements onto new analyzer angles."""
+    """Project three-polarizer brightness measurements onto new polarizer angles."""
     projected = []
     reference = _as_radians(reference_angle)
 

@@ -8,9 +8,18 @@ import pytest
 from astropy.io import fits
 from ndcube import NDCollection, NDCube
 
-from solpolpy.core import _determine_image_shape, add_alpha, determine_input_kind, get_transform_path, resolve
+from solpolpy.alpha import radial_north
+from solpolpy.core import (
+    _determine_image_shape,
+    add_alpha,
+    determine_input_kind,
+    get_transform_equation,
+    get_transform_path,
+    resolve,
+)
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.transforms import System
+from solpolpy.util import solnorth_from_wcs
 from tests.fixtures import *
 
 # Solar WCS
@@ -89,9 +98,12 @@ def test_check_all_paths_resolve(request):
                     pass  # skip any time the transform shouldn't be possible
                 else:
                     print(source_system, target_system, path)
+                    kwargs = {"out_angles": [0] * u.deg}
+                    if getattr(get_transform_equation(path), "uses_in_angles", False):
+                        kwargs["in_angles"] = [0, 60, 120] * u.deg
                     result = resolve(request.getfixturevalue(f"{source_system}_ones"),
                                      target_system,
-                                     out_angles=[0] * u.deg)
+                                     **kwargs)
                     assert isinstance(result, NDCollection)
 
 
@@ -110,3 +122,117 @@ def test_mzp_to_npol_as_mzp_is_constant(mzpsolar_ones):
     assert np.allclose(result['60.0 deg'].data, mzpsolar_ones["P"].data)
     assert np.allclose(result['-60.0 deg'].data, mzpsolar_ones["M"].data)
     assert np.allclose(result['0.0 deg'].data, mzpsolar_ones["Z"].data)
+
+
+def test_add_alpha_uses_wcs_information():
+    collection = NDCollection(
+        [
+            ("B", NDCube(np.zeros((6, 6)), wcs=wcs, meta={"POLAR": "B"})),
+            ("pB", NDCube(np.zeros((6, 6)), wcs=wcs, meta={"POLAR": "pB"})),
+        ],
+        meta={},
+        aligned_axes="all",
+    )
+
+    out = add_alpha(collection)
+
+    assert "alpha" in out
+    assert out["alpha"].data.shape == (6, 6)
+    assert not np.allclose(u.Quantity(out["alpha"].data, unit=u.radian).value, 0)
+
+
+def test_add_alpha_is_north_referenced_for_north_up_wcs():
+    north_up_wcs = astropy.wcs.WCS(naxis=2)
+    north_up_wcs.wcs.ctype = "HPLN-TAN", "HPLT-TAN"
+    north_up_wcs.wcs.cunit = "deg", "deg"
+    north_up_wcs.wcs.cdelt = 0.2, -0.2
+    north_up_wcs.wcs.crpix = 3, 3
+    north_up_wcs.wcs.crval = 0, 0
+
+    collection = NDCollection(
+        [
+            ("B", NDCube(np.zeros((5, 5)), wcs=north_up_wcs, meta={"POLAR": "B"})),
+            ("pB", NDCube(np.zeros((5, 5)), wcs=north_up_wcs, meta={"POLAR": "pB"})),
+        ],
+        meta={},
+        aligned_axes="all",
+    )
+
+    out = add_alpha(collection)
+    alpha = u.Quantity(out["alpha"].data, unit=u.radian).to_value(u.radian)
+
+    np.testing.assert_allclose(alpha[0, 2], 0.0, atol=5e-3)
+    np.testing.assert_allclose(alpha[2, 0], np.pi / 2, atol=5e-3)
+    np.testing.assert_allclose(alpha[2, 4], -np.pi / 2, atol=5e-3)
+
+
+def test_add_alpha_uses_wcs_for_off_center_partial_frame():
+    off_center_wcs = astropy.wcs.WCS(naxis=2)
+    off_center_wcs.wcs.ctype = "HPLN-TAN", "HPLT-TAN"
+    off_center_wcs.wcs.cunit = "deg", "deg"
+    off_center_wcs.wcs.cdelt = 0.2, -0.2
+    off_center_wcs.wcs.crpix = 3, 3
+    off_center_wcs.wcs.crval = 1.0, 0.0
+
+    collection = NDCollection(
+        [
+            ("B", NDCube(np.zeros((5, 5)), wcs=off_center_wcs, meta={"POLAR": "B"})),
+            ("pB", NDCube(np.zeros((5, 5)), wcs=off_center_wcs, meta={"POLAR": "pB"})),
+        ],
+        meta={},
+        aligned_axes="all",
+    )
+
+    out = add_alpha(collection)
+    alpha = u.Quantity(out["alpha"].data, unit=u.radian).to_value(u.radian)
+
+    np.testing.assert_allclose(alpha[2, 2], -np.pi / 2, atol=5e-3)
+    assert not np.allclose(alpha, radial_north((5, 5)).to_value(u.radian))
+
+
+def test_solnorth_from_wcs_uses_north_zero_ccw_positive():
+    north_up_wcs = astropy.wcs.WCS(naxis=2)
+    north_up_wcs.wcs.ctype = "HPLN-TAN", "HPLT-TAN"
+    north_up_wcs.wcs.cunit = "deg", "deg"
+    north_up_wcs.wcs.cdelt = 0.2, -0.2
+    north_up_wcs.wcs.crpix = 3, 3
+    north_up_wcs.wcs.crval = 0, 0
+
+    north_up = solnorth_from_wcs(north_up_wcs, (5, 5)).to_value(u.deg)
+    np.testing.assert_allclose(north_up[2, 2], 0.0, atol=5e-3)
+
+    rotated_wcs = astropy.wcs.WCS(naxis=2)
+    rotated_wcs.wcs.ctype = "HPLN-TAN", "HPLT-TAN"
+    rotated_wcs.wcs.cunit = "deg", "deg"
+    rotated_wcs.wcs.cdelt = 0.2, -0.2
+    rotated_wcs.wcs.crpix = 3, 3
+    rotated_wcs.wcs.crval = 0, 0
+    rotated_wcs.wcs.pc = np.array([[0, 1], [-1, 0]])
+
+    rotated = solnorth_from_wcs(rotated_wcs, (5, 5)).to_value(u.deg)
+    np.testing.assert_allclose(rotated[2, 2], 90.0, atol=5e-3)
+
+
+def test_solnorth_from_wcs_matches_latitude_gradient_direction():
+    north_up_wcs = astropy.wcs.WCS(naxis=2)
+    north_up_wcs.wcs.ctype = "HPLN-TAN", "HPLT-TAN"
+    north_up_wcs.wcs.cunit = "deg", "deg"
+    north_up_wcs.wcs.cdelt = 0.2, -0.2
+    north_up_wcs.wcs.crpix = 3, 3
+    north_up_wcs.wcs.crval = 0, 0
+
+    shape = (5, 5)
+    y, x = np.mgrid[0:shape[0], 0:shape[1]]
+    angle = solnorth_from_wcs(north_up_wcs, shape).to_value(u.rad)
+
+    coords = astropy.wcs.utils.pixel_to_skycoord(x, y, north_up_wcs)
+    lat = coords.Ty.to_value(u.deg)
+    dy_lat, dx_lat = np.gradient(lat)
+    norm = np.hypot(dx_lat, dy_lat)
+    norm[norm == 0] = np.nan
+
+    vx_from_angle = np.sin(angle)
+    vy_from_angle = np.cos(angle)
+
+    np.testing.assert_allclose(vx_from_angle, dx_lat / norm, atol=1e-12, rtol=1e-12)
+    np.testing.assert_allclose(vy_from_angle, -dy_lat / norm, atol=1e-12, rtol=1e-12)

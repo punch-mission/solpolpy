@@ -110,10 +110,11 @@ def construct_mask(inner_radius: float,
         (those with radius less than `inner_radius` or greater than `outer_radius`) as True
 
     """
-    xx, yy = np.ogrid[0:shape[0], 0:shape[1]]
+    yy, xx = np.ogrid[0:shape[0], 0:shape[1]]
+    radius_sq = (xx - center_x) ** 2 + (yy - center_y) ** 2
     mask = np.zeros(shape, dtype=bool)
-    mask[(xx - center_x) ** 2 + (yy - center_y) ** 2 < inner_radius] = True
-    mask[(xx - center_x) ** 2 + (yy - center_y) ** 2 > outer_radius] = True
+    mask[radius_sq < inner_radius] = True
+    mask[radius_sq > outer_radius] = True
     return mask
 
 
@@ -164,7 +165,6 @@ def get_instrument_mask(header: fits.Header) -> np.ndarray:
         msg = "The data in this file is not formatted according to a known instrument."
         raise UnsupportedInstrumentError(msg)
 
-    y_array = [(j_step - center_y) / R_sun for j_step in range(y_shape)]
-    outer_edge = np.max(y_array) * R_sun
+    outer_edge = min(center_x, center_y, x_shape - center_x - 1, y_shape - center_y - 1)
 
     return construct_mask((radius * R_sun) ** 2, outer_edge ** 2, center_x, center_y, (x_shape, y_shape))

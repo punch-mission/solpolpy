@@ -9,8 +9,8 @@ from solpolpy.errors import SolpolpyError
 from solpolpy.physics import (
     MZP_ANGLES,
     as_angle,
-    bp3_from_analyzer_brightness,
-    bp3_to_analyzer_brightness,
+    bp3_from_polarizer_brightness,
+    bp3_to_polarizer_brightness,
     calculate_angle_difference,
     clone_meta,
     get_data_keys,
@@ -84,14 +84,14 @@ def test_calculate_angle_difference_wraps_quantity_inputs():
     np.testing.assert_allclose(actual.value, 20)
 
 
-def test_bp3_analyzer_brightness_roundtrip_recovers_inputs():
+def test_bp3_polarizer_brightness_roundtrip_recovers_inputs():
     B = np.array([[10.0, 12.0], [8.0, 9.0]])
     pB = np.array([[1.0, 1.5], [0.5, 0.75]])
     pBp = np.array([[0.2, -0.3], [0.1, -0.2]])
     alpha = np.full((2, 2), 15.0) * u.degree
 
-    brightness = bp3_to_analyzer_brightness(B, pB, pBp, alpha, MZP_ANGLES)
-    recovered = bp3_from_analyzer_brightness(brightness, MZP_ANGLES, alpha)
+    brightness = bp3_to_polarizer_brightness(B, pB, pBp, alpha, MZP_ANGLES)
+    recovered = bp3_from_polarizer_brightness(brightness, MZP_ANGLES, alpha)
 
     np.testing.assert_allclose(recovered[0], B, atol=1e-12)
     np.testing.assert_allclose(recovered[1], pB, atol=1e-12)

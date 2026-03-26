@@ -57,33 +57,33 @@ def _angle_difference_radians(target_angle: u.Quantity, source_angle: u.Quantity
     return calculate_angle_difference(as_angle(target_angle, u.radian), as_angle(source_angle, u.radian)).to_value(u.radian)
 
 
-def bp3_to_analyzer_brightness(
+def bp3_to_polarizer_brightness(
     B: np.ndarray,
     pB: np.ndarray,
     pBp: np.ndarray,
     alpha: u.Quantity,
-    analyzer_angles: u.Quantity,
+    polarizer_angles: u.Quantity,
 ) -> np.ndarray:
-    """Evaluate analyzer brightness at the requested analyzer angles."""
+    """Evaluate polarizer brightness at the requested polarizer angles."""
     angle_stack = []
-    for angle in u.Quantity(analyzer_angles):
+    for angle in u.Quantity(polarizer_angles):
         delta = _angle_difference_radians(angle, alpha)
         angle_stack.append(0.5 * (B - pB * np.cos(2 * delta) - pBp * np.sin(2 * delta)))
     return np.stack(angle_stack, axis=0)
 
 
-def bp3_from_analyzer_brightness(
+def bp3_from_polarizer_brightness(
     brightness_stack: np.ndarray,
-    analyzer_angles: u.Quantity,
+    polarizer_angles: u.Quantity,
     alpha: u.Quantity,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Recover B, pB, and pBp from analyzer brightness measurements."""
+    """Recover B, pB, and pBp from polarizer brightness measurements."""
     brightness_stack = np.asarray(brightness_stack)
     B = (2.0 / 3.0) * np.sum(brightness_stack, axis=0)
 
     cos_terms = []
     sin_terms = []
-    for brightness, angle in zip(brightness_stack, u.Quantity(analyzer_angles), strict=False):
+    for brightness, angle in zip(brightness_stack, u.Quantity(polarizer_angles), strict=False):
         delta = _angle_difference_radians(angle, alpha)
         cos_terms.append(brightness * np.cos(2 * delta))
         sin_terms.append(brightness * np.sin(2 * delta))
@@ -98,7 +98,7 @@ def _three_polarizer_matrix(
     target_angles: u.Quantity,
     reference_angle: u.Quantity = 0 * u.degree,
 ) -> np.ndarray:
-    """Return the Equation 44 projection matrix for three analyzer angles."""
+    """Return the Equation 44 projection matrix for three polarizer angles."""
     source = u.Quantity(source_angles)
     target = u.Quantity(target_angles)
     reference = _as_radians(reference_angle)
@@ -145,7 +145,7 @@ def project_three_polarizer_brightness(
     target_angles: u.Quantity,
     reference_angle: u.Quantity = 0 * u.degree,
 ) -> np.ndarray:
-    """Project three-polarizer brightness measurements onto new analyzer angles."""
+    """Project three-polarizer brightness measurements onto new polarizer angles."""
     projected = []
     reference = _as_radians(reference_angle)
 

@@ -393,12 +393,12 @@ def test_mzpsolar_to_bpb_matches_equations_7_and_9():
 
     actual = transforms.mzpsolar_to_bpb(mzp)
 
-    analyzer_stack = np.stack([mzp[key].data for key in ["M", "Z", "P"]], axis=0)
-    expected_B = (2.0 / 3.0) * np.sum(analyzer_stack, axis=0)
+    polarizer_stack = np.stack([mzp[key].data for key in ["M", "Z", "P"]], axis=0)
+    expected_B = (2.0 / 3.0) * np.sum(polarizer_stack, axis=0)
     expected_pB = (-4.0 / 3.0) * np.sum(
         [
             data * np.cos(2 * (angle.to_value(u.radian) - alpha))
-            for data, angle in zip(analyzer_stack, MZP_ANGLES, strict=False)
+            for data, angle in zip(polarizer_stack, MZP_ANGLES, strict=False)
         ],
         axis=0,
     )
@@ -767,7 +767,7 @@ def test_mzpsolar_to_mzpinstru_matches_equation_45_projection():
         np.testing.assert_allclose(actual[key].data, expected[key], rtol=1e-12, atol=1e-12)
 
 
-def test_instrument_frame_analyzer_angles_match_solar_north_convention():
+def test_instrument_frame_polarizer_angles_match_solar_north_convention():
     solar = NDCollection(
         [
             ("M", NDCube(np.ones((2, 2)), wcs=wcs_new, meta={"POLAR": -60 * u.degree, "POLAROFF": 1, "POLARREF": "Solar"})),
@@ -778,7 +778,7 @@ def test_instrument_frame_analyzer_angles_match_solar_north_convention():
         aligned_axes="all",
     )
 
-    actual = transforms._instrument_frame_analyzer_angles(solar)
+    actual = transforms._instrument_frame_polarizer_angles(solar)
     shape = solar["Z"].data.shape
     lats = transforms.compute_lats(solar["Z"].wcs, shape)
     expected = np.stack(

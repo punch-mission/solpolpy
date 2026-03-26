@@ -243,13 +243,14 @@ def solnorth_from_wcs(input_wcs, shape, precomputed_lats=None):
     # Compute gradient of solar latitude (points toward solar north)
     dy_lat, dx_lat = np.gradient(lat)
 
-    # Normalize vectors
+    # Normalize vectors in image coordinates: +x is right, +y is down (python convention).
     norm = np.hypot(dx_lat, dy_lat)
     norm[norm == 0] = np.nan
     north_dx = dx_lat / norm
     north_dy = dy_lat / norm
 
-    # angle from +Y direction
-    angle_solar_north = np.degrees(np.arctan2(north_dy, north_dx)) - 90
+    # Convert to the package convention in a sky-style basis:
+    # +x is right, +y is up, north = 0, positive angles are counterclockwise.
+    angle_solar_north = np.degrees(np.arctan2(north_dx, -north_dy))
 
     return angle_solar_north * u.degree

@@ -2,10 +2,12 @@
 
 import astropy.units as u
 import numpy as np
+import sunpy.coordinates  # noqa: F401
+from astropy.wcs.utils import pixel_to_skycoord
 
 
 def radial_north(shape):
-    """An alpha array oriented north.
+    """An alpha array referenced to north with counterclockwise-positive angles.
 
     Parameters
     ----------
@@ -21,16 +23,40 @@ def radial_north(shape):
     -----
     - assumes solar north is up
     - assumes polarizer 0 is along solar north axis
-    - creates radial polarization map
-    - angles increase in counterclockwise direction
+    - uses NumPy image indexing: row 0 is the top of the image, column 0 is the left
+    - returns the radial axis angle measured from north = 0, increasing counterclockwise
 
     """
-    x_size, y_size = shape
-    x = np.arange(-x_size // 2, x_size // 2)
-    y = np.arange(-y_size // 2, y_size // 2)
-    xx, yy = np.meshgrid(x, y)
-    return np.fliplr(np.rot90(np.flipud(np.arctan2(yy, xx)), k=1))*u.radian
+    nrows, ncols = shape
+    center_row = (nrows - 1) / 2.0
+    center_col = (ncols - 1) / 2.0
+
+    row_indices, col_indices = np.indices(shape, dtype=float)
+    dx = col_indices - center_col
+    dy_up = center_row - row_indices
+
+    # Angle from north with counterclockwise-positive rotation.
+    return np.arctan2(-dx, dy_up) * u.radian
+
+
+def radial_from_wcs(wcs, shape):
+    """Construct an alpha array from solar coordinates in the WCS.
+
+    This computes the radial direction from solar center for each pixel,
+    measured from solar north = 0 with counterclockwise-positive rotation.
+    For partial-frame images, this samples the relevant subset of the full
+    solar-centered alpha field instead of assuming the Sun is at image center.
+    """
+    nrows, ncols = shape
+    row_indices, col_indices = np.mgrid[0:nrows, 0:ncols]
+    coords = pixel_to_skycoord(col_indices, row_indices, wcs)
+
+    tx = coords.Tx.to_value(u.deg)
+    ty = coords.Ty.to_value(u.deg)
+
+    return np.arctan2(-tx, ty) * u.radian
 
 
 ALPHA_FUNCTIONS = {"radial_north": radial_north,
+                   "radial_from_wcs": radial_from_wcs,
                    "zeros": np.zeros}

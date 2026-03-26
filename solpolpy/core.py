@@ -1,15 +1,18 @@
 """Core transformation functions for solpolpy."""
 import typing as t
+import warnings
 
 import astropy.units as u
 import networkx as nx
 from ndcube import NDCollection, NDCube
 
-from solpolpy.alpha import radial_north
+from solpolpy.alpha import radial_from_wcs, radial_north
 from solpolpy.constants import STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.instruments import load_data
+from solpolpy.physics import wrap_pm_pi
 from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
+from solpolpy.util import solnorth_from_wcs
 
 
 @u.quantity_input
@@ -66,10 +69,10 @@ def resolve(input_data: list[str] | NDCollection,
     transform_path = get_transform_path(input_kind, out_system)
     equation = get_transform_equation(transform_path)
 
-    if getattr(equation, "uses_out_angles", False) and out_angles is None:
+    if getattr(equation, "requires_out_angles", False) and out_angles is None:
         raise ValueError("Out angles must be specified for this transform.")
 
-    if getattr(equation, "uses_in_angles", False) and in_angles is None:
+    if getattr(equation, "requires_in_angles", False) and in_angles is None:
         raise ValueError("In angles must be specified for this transform.")
 
     if requires_alpha(equation) and "alpha" not in input_keys:
@@ -125,7 +128,7 @@ def determine_input_kind(input_data: NDCollection) -> System:
             return valid_kind
     try:
         input_keys_quantities = [u.Quantity(key) for key in input_keys]
-    except TypeError:
+    except (TypeError, ValueError):
         pass
     else:
         if all(u.get_physical_type(q) == "angle" for q in input_keys_quantities):
@@ -239,7 +242,18 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
     meta = input_data[keys[0]].meta
 
     if len(img_shape) == 2:  # it's an image and not just an array
-        alpha = radial_north(img_shape)
+        try:
+            alpha = radial_from_wcs(wcs, img_shape)
+        except Exception as err:  # pragma: no cover - best-effort fallback
+            alpha = radial_north(img_shape)
+            try:
+                alpha = wrap_pm_pi(alpha + solnorth_from_wcs(wcs, img_shape).to(u.radian))
+            except Exception:
+                pass
+            warnings.warn(
+                f"Falling back to image-centered alpha approximation because WCS-based solar-center calculation failed: {err}",
+                stacklevel=2,
+            )
     else:
         msg = f"Data must be an image with 2 dimensions, found {len(img_shape)}."
         raise ValueError(msg)
@@ -271,6 +285,9 @@ def _compose2(f: t.Callable, g: t.Callable) -> t.Callable:
 
     out.uses_alpha = getattr(f, "uses_alpha", False) or getattr(g, "uses_alpha", False)
     out.uses_out_angles = getattr(f, "uses_out_angles", False) or getattr(g, "uses_out_angles", False)
+    out.uses_in_angles = getattr(f, "uses_in_angles", False) or getattr(g, "uses_in_angles", False)
+    out.requires_out_angles = getattr(f, "requires_out_angles", False) or getattr(g, "requires_out_angles", False)
+    out.requires_in_angles = getattr(f, "requires_in_angles", False) or getattr(g, "requires_in_angles", False)
 
     return out
 

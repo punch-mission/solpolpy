@@ -4,7 +4,7 @@ import pytest
 from ndcube import NDCollection
 
 from solpolpy.errors import TooFewFilesError
-from solpolpy.instruments import get_instrument_mask, load_data
+from solpolpy.instruments import construct_mask, get_instrument_mask, load_data
 
 
 def test_load_data():
@@ -52,3 +52,11 @@ def test_use_instrument_mask_overrides_in_load():
 
     assert out["0.0 deg"].mask.dtype == bool
     assert out["0.0 deg"].mask.shape == (2048, 2048)
+
+
+def test_construct_mask_respects_x_y_centers():
+    mask = construct_mask(inner_radius=1, outer_radius=9, center_x=3, center_y=1, shape=(4, 6))
+
+    assert mask[1, 3]  # inner radius masks the center pixel
+    assert not mask[1, 1]  # a valid annulus pixel stays unmasked
+    assert mask[0, 0]  # far edge lies outside the outer radius

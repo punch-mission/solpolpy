@@ -1,1 +1,0 @@
-Fail if an unrecognized POLARREF value is passed in.

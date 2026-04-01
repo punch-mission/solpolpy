@@ -1,1 +1,0 @@
-Calculate latitudes only once when resolving polarization of a triplet.

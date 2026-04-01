@@ -1,3 +1,20 @@
+0.6.1: April 1, 2026
+====================
+
+New Features
+------------
+
+- Calculate latitudes only once when resolving polarization of a triplet. (`#205 <https://github.com/punch-mission/solpolpy/pull/205>`__)
+
+
+Bug Fixes
+---------
+
+- Properly order the layers for resolution. (`#206 <https://github.com/punch-mission/solpolpy/pull/206>`__)
+- mzpsolar_to_mzpinstru now handles per pixel calculation of solar north. (`#206 <https://github.com/punch-mission/solpolpy/pull/206>`__)
+- Fail if an unrecognized POLARREF value is passed in. (`#207 <https://github.com/punch-mission/solpolpy/pull/207>`__)
+
+
 0.6.0: March 13, 2026
 =====================
 

@@ -1,8 +1,9 @@
 """Equation-based helpers for linear polarization transforms."""
 
+from __future__ import annotations
+
 import astropy.units as u
 import numpy as np
-from __future__ import annotations
 
 from solpolpy.errors import SolpolpyError
 

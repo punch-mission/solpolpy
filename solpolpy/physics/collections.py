@@ -1,9 +1,10 @@
 """Helpers for building and reading NDCollection-based transform inputs."""
 
+from __future__ import annotations
+
 import copy
 
 import astropy.units as u
-from __future__ import annotations
 from ndcube import NDCollection
 
 from solpolpy.util import combine_all_collection_masks

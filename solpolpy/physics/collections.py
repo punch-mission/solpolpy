@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 from typing import Any
 
+import astropy.units as u
 from ndcube import NDCollection
 
 
@@ -27,6 +28,23 @@ def stack_data(collection: NDCollection, keys: list[str]) -> list[Any]:
 
 def clone_meta(cube: Any, **updates: Any) -> Any:
     """Deep copy a cube metadata mapping and update it."""
+    normalized_updates = {}
+    for key, value in updates.items():
+        if isinstance(value, u.Quantity):
+            normalized_updates[key] = value.value
+        else:
+            normalized_updates[key] = value
+
     meta = copy.deepcopy(cube.meta)
-    meta.update(updates)
+    if hasattr(meta, "update"):
+        meta.update(normalized_updates)
+        return meta
+
+    if hasattr(cube.meta, "to_fits_header"):
+        meta = cube.meta.to_fits_header(cube.wcs)
+        meta.update(normalized_updates)
+        return meta
+
+    meta = {key: copy.deepcopy(cube.meta[key]) for key in cube.meta.keys()}
+    meta.update(normalized_updates)
     return meta

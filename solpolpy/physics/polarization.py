@@ -17,6 +17,8 @@ def as_angle(angles, default_unit: u.Unit = u.radian) -> u.Quantity:
     helper is intentionally more permissive than ``quantity_input`` because
     FITS metadata and older call sites can provide plain numeric angle values.
     """
+    if not isinstance(angles, u.Quantity) and hasattr(angles, "value"):
+        angles = angles.value
     quantity = u.Quantity(angles)
     if quantity.unit == u.dimensionless_unscaled:
         quantity = quantity * default_unit

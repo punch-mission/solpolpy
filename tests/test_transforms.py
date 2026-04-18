@@ -20,6 +20,11 @@ wcs.crval = 10, 0.5, 1
 wcs.cname = "wavelength", "HPC lat", "HPC lon"
 
 
+class _MetaValue:
+    def __init__(self, value):
+        self.value = value
+
+
 def test_bpb_mzp_zeros(bpb_zeros):
     actual = transforms.bpb_to_mzpsolar(bpb_zeros)
     expected_data = []
@@ -653,6 +658,7 @@ def fourpol_ones():
 
 
 def test_fourpol_to_stokes_ones(fourpol_ones):
+    """All-equal polarizer brightnesses -> Q=0, U=0 (sign-agnostic sanity check)."""
     actual = transforms.fourpol_to_stokes(fourpol_ones)
     expected_data = []
     expected_data.append(("I", NDCube(np.array([2]), wcs=wcs)))
@@ -661,6 +667,194 @@ def test_fourpol_to_stokes_ones(fourpol_ones):
     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
+
+
+def _make_fourpol(B0, B45, B90, B135, wcs_obj=None):
+    """Helper: build a fourpol NDCollection from scalar brightnesses."""
+    _wcs = wcs_obj or wcs
+    data_out = [
+        (str(0   * u.degree), NDCube(np.array([B0  ]), wcs=_wcs, meta={"POLAR": 0  })),
+        (str(45  * u.degree), NDCube(np.array([B45 ]), wcs=_wcs, meta={"POLAR": 45 })),
+        (str(90  * u.degree), NDCube(np.array([B90 ]), wcs=_wcs, meta={"POLAR": 90 })),
+        (str(135 * u.degree), NDCube(np.array([B135]), wcs=_wcs, meta={"POLAR": 135})),
+    ]
+    return NDCollection(key_data_pairs=data_out, meta={}, aligned_axes="all")
+
+
+def test_fourpol_to_stokes_sign_convention():
+    """Q = B0-B90 (positive for N-S), U = B45-B135 (positive for NE-SW).
+
+    Uses Eq. 11 with alpha=0 to generate physically motivated polarizer
+    brightnesses, then checks that fourpol_to_stokes matches mzpsolar_to_stokes.
+    """
+    alpha = 0.0          # radial direction = solar north
+    B, pB, pBp = 3.0, 1.2, 0.7
+    phi4 = np.array([0, 45, 90, 135]) * np.pi / 180
+    B4 = 0.5 * (B - pB * np.cos(2 * (phi4 - alpha)) - pBp * np.sin(2 * (phi4 - alpha)))
+    B0v, B45v, B90v, B135v = B4.tolist()
+
+    fp = _make_fourpol(B0v, B45v, B90v, B135v)
+    actual = transforms.fourpol_to_stokes(fp)
+
+    # Expected: Q = B0-B90 (IAU / mzpsolar consistent), U = B45-B135
+    assert np.isclose(actual["I"].data[0], B0v + B90v)
+    assert np.isclose(actual["Q"].data[0], B0v - B90v)
+    assert np.isclose(actual["U"].data[0], B45v - B135v)
+
+
+def test_fourpol_to_stokes_consistent_with_mzpsolar_path():
+    """Stokes (I,Q,U) from 4-pol path must match the mzpsolar_to_stokes path.
+
+    Physical state: B=3, pB=1, pBp=0.6, alpha=0.
+    Both paths should produce the same (I, Q, U) to machine precision.
+    """
+    alpha = 0.0
+    B_val, pB_val, pBp_val = 3.0, 1.0, 0.6
+
+    # 4-pol path
+    phi4 = np.array([0, 45, 90, 135]) * np.pi / 180
+    B4 = 0.5 * (B_val - pB_val * np.cos(2 * (phi4 - alpha)) - pBp_val * np.sin(2 * (phi4 - alpha)))
+    fp = _make_fourpol(*B4.tolist())
+    stokes_4pol = transforms.fourpol_to_stokes(fp)
+
+    # mzpsolar_to_stokes path
+    mzp_angles_rad = np.array([-60, 0, 60]) * np.pi / 180
+    B_mzp = 0.5 * (B_val - pB_val * np.cos(2 * (mzp_angles_rad - alpha))
+                   - pBp_val * np.sin(2 * (mzp_angles_rad - alpha)))
+    mzp_col = NDCollection(
+        [("M", NDCube(np.array([B_mzp[0]]), wcs=wcs, meta={"POLAR": -60 * u.degree})),
+         ("Z", NDCube(np.array([B_mzp[1]]), wcs=wcs, meta={"POLAR":   0 * u.degree})),
+         ("P", NDCube(np.array([B_mzp[2]]), wcs=wcs, meta={"POLAR":  60 * u.degree}))],
+        meta={}, aligned_axes="all")
+    stokes_mzp = transforms.mzpsolar_to_stokes(mzp_col)
+
+    for key in ["I", "Q", "U"]:
+        np.testing.assert_allclose(
+            stokes_4pol[key].data, stokes_mzp[key].data,
+            rtol=1e-10, atol=1e-10,
+            err_msg=f"Stokes {key}: fourpol path != mzpsolar path")
+
+
+def test_stokes_to_fourpol_roundtrip(fourpol_ones):
+    """fourpol -> stokes -> fourpol recovers original brightnesses."""
+    stokes = transforms.fourpol_to_stokes(fourpol_ones)
+    recovered = transforms.stokes_to_fourpol(stokes)
+    for key in [str(0 * u.degree), str(45 * u.degree), str(90 * u.degree), str(135 * u.degree)]:
+        np.testing.assert_allclose(
+            recovered[key].data, fourpol_ones[key].data, rtol=1e-12, atol=1e-12)
+
+
+def test_stokes_to_fourpol_specific_values():
+    """stokes_to_fourpol produces correct B0,B45,B90,B135 from known I,Q,U."""
+    I_v, Q_v, U_v = 4.0, -1.0, 0.5
+    stokes_col = NDCollection(
+        [("I", NDCube(np.array([I_v]), wcs=wcs, meta={"POLAR": "Stokes I"})),
+         ("Q", NDCube(np.array([Q_v]), wcs=wcs, meta={"POLAR": "Stokes Q"})),
+         ("U", NDCube(np.array([U_v]), wcs=wcs, meta={"POLAR": "Stokes U"}))],
+        meta={}, aligned_axes="all")
+
+    actual = transforms.stokes_to_fourpol(stokes_col)
+
+    assert np.isclose(actual[str(0.0   * u.degree)].data[0], (I_v + Q_v) / 2)
+    assert np.isclose(actual[str(45.0  * u.degree)].data[0], (I_v + U_v) / 2)
+    assert np.isclose(actual[str(90.0  * u.degree)].data[0], (I_v - Q_v) / 2)
+    assert np.isclose(actual[str(135.0 * u.degree)].data[0], (I_v - U_v) / 2)
+
+
+def test_stokes_to_fourpol_then_back_to_stokes():
+    """stokes -> fourpol -> stokes is an exact roundtrip."""
+    I_v, Q_v, U_v = 3.5, 0.8, -0.3
+    stokes_col = NDCollection(
+        [("I", NDCube(np.array([I_v]), wcs=wcs, meta={"POLAR": "Stokes I"})),
+         ("Q", NDCube(np.array([Q_v]), wcs=wcs, meta={"POLAR": "Stokes Q"})),
+         ("U", NDCube(np.array([U_v]), wcs=wcs, meta={"POLAR": "Stokes U"}))],
+        meta={}, aligned_axes="all")
+
+    fourpol = transforms.stokes_to_fourpol(stokes_col)
+    recovered = transforms.fourpol_to_stokes(fourpol)
+
+    np.testing.assert_allclose(recovered["I"].data, [I_v], rtol=1e-12, atol=1e-12)
+    np.testing.assert_allclose(recovered["Q"].data, [Q_v], rtol=1e-12, atol=1e-12)
+    np.testing.assert_allclose(recovered["U"].data, [U_v], rtol=1e-12, atol=1e-12)
+
+
+def _make_bthp(B_val, theta_val_rad, p_val, alpha_val_rad):
+    """Helper: build a bthp NDCollection from scalar values."""
+    alpha_cube = NDCube(np.array([alpha_val_rad]) * u.radian, wcs=wcs)
+    col = NDCollection(
+        [("B",     NDCube(np.array([B_val]),         wcs=wcs, meta={"POLAR": "B"})),
+         ("theta", NDCube(np.array([theta_val_rad]), wcs=wcs, meta={"POLAR": "Theta"})),
+         ("p",     NDCube(np.array([p_val]),          wcs=wcs, meta={"POLAR": "p"})),
+         ("alpha", alpha_cube)],
+        meta={}, aligned_axes="all")
+    return col
+
+
+def test_bthp_to_bp3_roundtrip():
+    """bp3 -> bthp -> bp3 is an exact roundtrip across several cases."""
+    cases = [
+        {"B": 2.0, "pB":  0.8, "pBp":  0.5, "alpha": 0.3},
+        {"B": 3.0, "pB": -0.6, "pBp":  0.9, "alpha": -0.4},
+        {"B": 1.5, "pB":  0.0, "pBp": -0.3, "alpha": 0.0},
+        {"B": 4.0, "pB":  1.2, "pBp": -1.0, "alpha": 1.1},
+    ]
+    for c in cases:
+        bp3_in = NDCollection(
+            [("B",    NDCube(np.array([c["B"]  ]), wcs=wcs, meta={"POLAR": "B"  })),
+             ("pB",   NDCube(np.array([c["pB"] ]), wcs=wcs, meta={"POLAR": "pB" })),
+             ("pBp",  NDCube(np.array([c["pBp"]]), wcs=wcs, meta={"POLAR": "pBp"})),
+             ("alpha", NDCube(np.array([c["alpha"]]) * u.radian, wcs=wcs))],
+            meta={}, aligned_axes="all")
+
+        bthp = transforms.bp3_to_bthp(bp3_in)
+        bp3_out = transforms.bthp_to_bp3(bthp)
+
+        np.testing.assert_allclose(bp3_out["B"].data,   [c["B"]  ], rtol=1e-12, atol=1e-12,
+                                   err_msg=f"B mismatch for case {c}")
+        np.testing.assert_allclose(bp3_out["pB"].data,  [c["pB"] ], rtol=1e-12, atol=1e-12,
+                                   err_msg=f"pB mismatch for case {c}")
+        np.testing.assert_allclose(bp3_out["pBp"].data, [c["pBp"]], rtol=1e-12, atol=1e-12,
+                                   err_msg=f"pBp mismatch for case {c}")
+
+
+def test_bthp_to_bp3_specific_values():
+    """bthp_to_bp3 recovers correct pB/pBp from known theta, p, alpha."""
+    B_v, pB_v, pBp_v, alpha_v = 2.0, 0.8, 0.5, 0.3
+
+    # Compute theta and p the same way bp3_to_bthp does
+    theta_v = transforms.wrap_linear_polarization(
+        0.5 * np.arctan2(pBp_v, pB_v) * u.radian + np.pi / 2 * u.radian + alpha_v * u.radian
+    ).to_value(u.radian)
+    p_v = np.sqrt(pB_v**2 + pBp_v**2) / B_v
+
+    bthp = _make_bthp(B_v, theta_v, p_v, alpha_v)
+    result = transforms.bthp_to_bp3(bthp)
+
+    np.testing.assert_allclose(result["B"].data,   [B_v  ], rtol=1e-12, atol=1e-12)
+    np.testing.assert_allclose(result["pB"].data,  [pB_v ], rtol=1e-12, atol=1e-12)
+    np.testing.assert_allclose(result["pBp"].data, [pBp_v], rtol=1e-12, atol=1e-12)
+
+
+def test_bthp_to_bp3_alpha_is_preserved_in_output():
+    """bthp_to_bp3 must carry the alpha cube through to the output."""
+    bthp = _make_bthp(2.0, 0.3, 0.6, 0.1)
+    result = transforms.bthp_to_bp3(bthp)
+    assert "alpha" in result
+    alpha_data = result["alpha"].data
+    # alpha may be stored as a Quantity or a plain array; handle both
+    if hasattr(alpha_data, "to_value"):
+        alpha_val = alpha_data.to_value(u.radian)
+    else:
+        alpha_val = np.asarray(alpha_data)
+    np.testing.assert_allclose(alpha_val, [0.1], rtol=1e-12, atol=1e-12)
+
+
+def test_bthp_to_bp3_zero_polarization():
+    """When p=0 the output pB and pBp are both zero regardless of theta."""
+    bthp = _make_bthp(3.0, 0.5, 0.0, 0.2)   # p = 0
+    result = transforms.bthp_to_bp3(bthp)
+    np.testing.assert_allclose(result["pB"].data,  [0.0], atol=1e-15)
+    np.testing.assert_allclose(result["pBp"].data, [0.0], atol=1e-15)
 
 # Solar WCS
 wcs_sol = astropy.wcs.WCS(naxis=2)
@@ -703,9 +897,9 @@ def test_mzp_mzp_ones_instru(mzp_ones_instru):
     for key in ["M", "Z", "P"]:
         np.testing.assert_allclose(outinstru[key].data, mzp_ones_instru[key].data, rtol=1e-12, atol=1e-12)
         assert actual[key].meta["POLARREF"] == "Solar"
-        assert u.Quantity(actual[key].meta["POLAROFF"]).to_value(u.degree) == 1.0
-        assert u.Quantity(outinstru[key].meta["POLAR"]).to_value(u.degree) in (-60.0, 0.0, 60.0)
-        assert u.Quantity(outinstru[key].meta["POLAROFF"]).to_value(u.degree) == 1.0
+        assert transforms.as_angle(actual[key].meta["POLAROFF"], u.degree).to_value(u.degree) == 1.0
+        assert transforms.as_angle(outinstru[key].meta["POLAR"], u.degree).to_value(u.degree) in (-60.0, 0.0, 60.0)
+        assert transforms.as_angle(outinstru[key].meta["POLAROFF"], u.degree).to_value(u.degree) == 1.0
 
 @fixture()
 def mzp_ones_solar():
@@ -767,32 +961,46 @@ def test_mzpsolar_to_mzpinstru_matches_equation_45_projection():
         np.testing.assert_allclose(actual[key].data, expected[key], rtol=1e-12, atol=1e-12)
 
 
-def test_instrument_frame_polarizer_angles_match_solar_north_convention():
-    solar = NDCollection(
+def test_instrument_frame_polarizer_angles_are_uniform_in_image_frame():
+    instru = NDCollection(
         [
-            ("M", NDCube(np.ones((2, 2)), wcs=wcs_new, meta={"POLAR": -60 * u.degree, "POLAROFF": 1, "POLARREF": "Solar"})),
-            ("Z", NDCube(np.ones((2, 2)), wcs=wcs_new, meta={"POLAR": 0 * u.degree, "POLAROFF": 1, "POLARREF": "Solar"})),
-            ("P", NDCube(np.ones((2, 2)), wcs=wcs_new, meta={"POLAR": 60 * u.degree, "POLAROFF": 1, "POLARREF": "Solar"})),
+            ("M", NDCube(np.ones((2, 2)), wcs=wcs_new, meta={"POLAR": -60 * u.degree, "POLAROFF": 1, "POLARREF": "Instrument"})),
+            ("Z", NDCube(np.ones((2, 2)), wcs=wcs_new, meta={"POLAR": 0 * u.degree, "POLAROFF": 1, "POLARREF": "Instrument"})),
+            ("P", NDCube(np.ones((2, 2)), wcs=wcs_new, meta={"POLAR": 60 * u.degree, "POLAROFF": 1, "POLARREF": "Instrument"})),
         ],
         meta={},
         aligned_axes="all",
     )
 
-    actual = transforms._instrument_frame_polarizer_angles(solar)
-    shape = solar["Z"].data.shape
-    lats = transforms.compute_lats(solar["Z"].wcs, shape)
+    actual = transforms._instrument_frame_polarizer_angles(instru)
     expected = np.stack(
         [
             transforms.wrap_linear_polarization(
-                transforms.solnorth_from_wcs(solar[key].wcs, shape=shape, precomputed_lats=lats)
-                + angle
                 + 1 * u.degree
+                + angle
             )
-            for key, angle in zip(["M", "Z", "P"], MZP_ANGLES, strict=False)
+            * np.ones((2, 2))
+            for angle in MZP_ANGLES
         ]
     )
 
     np.testing.assert_allclose(actual.to_value(u.degree), expected.to_value(u.degree), rtol=1e-12, atol=1e-12)
+
+
+def test_solar_north_angles_vary_locally_for_solar_frame():
+    solar = NDCollection(
+        [
+            ("M", NDCube(np.ones((5, 5)), wcs=wcs_new, meta={"POLAR": -60 * u.degree, "POLARREF": "Solar"})),
+            ("Z", NDCube(np.ones((5, 5)), wcs=wcs_new, meta={"POLAR": 0 * u.degree, "POLARREF": "Solar"})),
+            ("P", NDCube(np.ones((5, 5)), wcs=wcs_new, meta={"POLAR": 60 * u.degree, "POLARREF": "Solar"})),
+        ],
+        meta={},
+        aligned_axes="all",
+    )
+
+    solar_north = transforms._solar_north_angles(solar)["Z"].to_value(u.deg)
+    assert np.all(np.isfinite(solar_north))
+    assert not np.allclose(solar_north, solar_north[0, 0], atol=1e-6)
 
 
 def test_mzpinstru_mzpsolar_equation_45_roundtrip_with_dummy_values():
@@ -835,6 +1043,25 @@ def test_mzpinstru_mzpsolar_roundtrip_with_nontrivial_data_and_offset():
 
     for key in ["M", "Z", "P"]:
         np.testing.assert_allclose(recovered[key].data, instru[key].data, rtol=1e-12, atol=1e-12)
+
+
+def test_mzpinstru_to_mzpsolar_accepts_metadata_objects_with_value_attribute():
+    instru = NDCollection(
+        [
+            ("M", NDCube(np.array([[1.1, 1.1], [1.1, 1.1]]), wcs=wcs_new,
+                         meta={"POLAR": _MetaValue(-60), "POLAROFF": _MetaValue(0), "POLARREF": "Instrument"})),
+            ("Z", NDCube(np.array([[0.6, 0.6], [0.6, 0.6]]), wcs=wcs_new,
+                         meta={"POLAR": _MetaValue(0), "POLAROFF": _MetaValue(0), "POLARREF": "Instrument"})),
+            ("P", NDCube(np.array([[1.7, 1.7], [1.7, 1.7]]), wcs=wcs_new,
+                         meta={"POLAR": _MetaValue(60), "POLAROFF": _MetaValue(0), "POLARREF": "Instrument"})),
+        ],
+        meta={},
+        aligned_axes="all",
+    )
+
+    solar = transforms.mzpinstru_to_mzpsolar(instru)
+
+    assert list(solar.keys())[:3] == ["M", "Z", "P"]
 
 
 def test_reference_angle_changes_mzpsolar_to_mzpinstru():
@@ -964,6 +1191,7 @@ def test_mask_propagation_works_when_none_provided(fourpol_ones):
         (transforms.btbr_to_bpb, "btbr_ones"),
         (transforms.stokes_to_mzpsolar, "stokes_ones"),
         (transforms.fourpol_to_stokes, "fourpol_ones"),
+        (transforms.stokes_to_fourpol, "stokes_ones"),
     ],
 )
 def test_reference_angle_is_inert_for_transforms_that_do_not_use_it(transform_fn, input_collection, request):
@@ -1063,3 +1291,130 @@ def test_mask_propagation_works_when_not_all_specified(fourpol_ones):
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)
         assert actual[str(k)].mask is None
+
+
+# ---------------------------------------------------------------------------
+# mzpsolar <-> mzpinstru physical scenario tests
+# ---------------------------------------------------------------------------
+
+def _make_mzpsolar_physical(B_arr, pB_arr, alpha_rad, polaroff_deg=0, wcs_obj=None):
+    """Build a mzpsolar NDCollection from physical (B, pB) and radial angle alpha.
+
+    B_arr, pB_arr must be broadcastable numpy arrays (shape (nrows, ncols)).
+    polaroff_deg is a scalar mechanical offset applied to all three polarizers.
+    """
+    _wcs = wcs_obj or wcs
+    mzp_rad = np.array([-60, 0, 60]) * np.pi / 180
+    cubes = []
+    for key, phi in zip(["M", "Z", "P"], mzp_rad):
+        data = 0.5 * (B_arr - pB_arr * np.cos(2 * (phi - alpha_rad)))
+        cubes.append((
+            key,
+            NDCube(data, wcs=_wcs, meta={
+                "POLAR": float(np.degrees(phi)) * u.degree,
+                "POLAROFF": polaroff_deg * u.degree,
+                "POLARREF": "Solar",
+            }),
+        ))
+    return NDCollection(cubes, meta={}, aligned_axes="all")
+
+
+def test_mzpinstru_physical_scenario_camera_roll():
+    """Numerically verify mzpsolar->mzpinstru->mzpsolar with a 30-deg camera roll.
+
+    Strategy:
+    1.  Start from a known physical scene: B=3, pB=1, radial alpha=10 deg.
+    2.  Build solar-frame MZP brightnesses analytically.
+    3.  Convert to instrument frame (camera rolled 30 deg CCW, POLAROFF=5 deg).
+    4.  Verify that instrument-frame brightnesses match an *independent* direct
+        calculation using the full instrument-frame angles and alpha in that frame.
+    5.  Convert back to solar frame and verify roundtrip to 1e-10.
+
+    This test exercises the angle algebra end-to-end without relying on the
+    code's own forward/inverse being trivially consistent; step 4 provides an
+    independent cross-check.
+    """
+    # wcs_new is the combined HPLN/HPLT + RA/DEC wcs used by all mzpinstru tests.
+    # It is defined at module level and uses a 5x5 grid (see mzp_ones_instru fixture).
+    shape = (5, 5)
+    B_phys  = np.full(shape, 3.0)
+    pB_phys = np.full(shape, 1.0)
+    # radial direction in solar frame (position angle from solar north, CCW)
+    alpha_solar = 10.0 * np.pi / 180
+
+    polaroff_deg = 5.0   # mechanical polarizer wheel offset
+
+    # solar-frame MZP angles
+    mzp_solar_deg = np.array([-60, 0, 60], dtype=float)
+    mzp_solar_rad = mzp_solar_deg * np.pi / 180
+
+    # Build solar-frame MZP
+    B_solar = [0.5 * (B_phys - pB_phys * np.cos(2 * (phi - alpha_solar)))
+               for phi in mzp_solar_rad]
+
+    solar_col = NDCollection(
+        [(key, NDCube(B_solar[i], wcs=wcs_new,
+                      meta={"POLAR": float(mzp_solar_deg[i]) * u.degree,
+                            "POLAROFF": polaroff_deg * u.degree,
+                            "POLARREF": "Solar"}))
+         for i, key in enumerate(["M", "Z", "P"])],
+        meta={}, aligned_axes="all",
+    )
+
+    instru_col = transforms.mzpsolar_to_mzpinstru(solar_col)
+
+    # --- roundtrip back to solar frame (primary assertion) -----------------
+    recovered_solar = transforms.mzpinstru_to_mzpsolar(instru_col)
+    for i, key in enumerate(["M", "Z", "P"]):
+        np.testing.assert_allclose(
+            recovered_solar[key].data, B_solar[i],
+            rtol=1e-10, atol=1e-10,
+            err_msg=f"solar roundtrip failed for {key}",
+        )
+        assert recovered_solar[key].meta["POLARREF"] == "Solar"
+
+    # --- verify instrument-frame values match Eq. 11 independently ---------
+    # Compute the true solar_north per-pixel via the same helper the code uses
+    lats = transforms.compute_lats(solar_col["Z"].wcs, shape)
+    solar_north_map = {
+        key: transforms.solnorth_from_wcs(solar_col[key].wcs, shape=shape, precomputed_lats=lats)
+        for key in ["M", "Z", "P"]
+    }
+
+    mzp_instru_angles_deg = mzp_solar_deg + polaroff_deg
+    mzp_instru_angles_rad = mzp_instru_angles_deg * np.pi / 180
+
+    for i, key in enumerate(["M", "Z", "P"]):
+        # Effective solar-frame angle of this instrument polarizer
+        phi_solar = mzp_instru_angles_rad[i] - solar_north_map[key].to_value(u.radian)
+        # Independent expected brightness (Eq. 11 with pBp=0)
+        expected = 0.5 * (B_phys - pB_phys * np.cos(2 * (phi_solar - alpha_solar)))
+        np.testing.assert_allclose(
+            instru_col[key].data, expected,
+            rtol=1e-10, atol=1e-10,
+            err_msg=f"instrument-frame {key} does not match independent calculation",
+        )
+
+
+def test_mzpinstru_mzpsolar_roundtrip_zero_roll():
+    """With zero roll and zero offset, mzpsolar -> mzpinstru -> mzpsolar = identity."""
+    data_shape = (5, 5)
+    rng = np.random.default_rng(42)
+    solar_col = NDCollection(
+        [("M", NDCube(rng.uniform(0.5, 2.0, data_shape), wcs=wcs_new,
+                      meta={"POLAR": -60 * u.degree, "POLAROFF": 0 * u.degree, "POLARREF": "Solar"})),
+         ("Z", NDCube(rng.uniform(0.5, 2.0, data_shape), wcs=wcs_new,
+                      meta={"POLAR":   0 * u.degree, "POLAROFF": 0 * u.degree, "POLARREF": "Solar"})),
+         ("P", NDCube(rng.uniform(0.5, 2.0, data_shape), wcs=wcs_new,
+                      meta={"POLAR":  60 * u.degree, "POLAROFF": 0 * u.degree, "POLARREF": "Solar"}))],
+        meta={}, aligned_axes="all",
+    )
+
+    instru  = transforms.mzpsolar_to_mzpinstru(solar_col)
+    recovered = transforms.mzpinstru_to_mzpsolar(instru)
+
+    for key in ["M", "Z", "P"]:
+        np.testing.assert_allclose(
+            recovered[key].data, solar_col[key].data, rtol=1e-11, atol=1e-11,
+            err_msg=f"identity roundtrip failed for {key}")
+        assert recovered[key].meta["POLARREF"] == "Solar"

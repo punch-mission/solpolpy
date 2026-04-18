@@ -1,9 +1,8 @@
 """Equation-based helpers for linear polarization transforms."""
 
-from __future__ import annotations
-
 import astropy.units as u
 import numpy as np
+from __future__ import annotations
 
 from solpolpy.errors import SolpolpyError
 
@@ -12,6 +11,8 @@ MZP_ANGLES = np.array([-60.0, 0.0, 60.0]) * u.degree
 
 def as_angle(angles, default_unit=u.radian):
     """Return an input as an angular quantity."""
+    if not isinstance(angles, u.Quantity) and hasattr(angles, "value"):
+        angles = angles.value
     quantity = u.Quantity(angles)
     if quantity.unit == u.dimensionless_unscaled:
         quantity = quantity * default_unit
@@ -43,7 +44,6 @@ def _as_radians(angles):
 
 def bp3_to_polarizer_brightness(B, pB, pBp, alpha, polarizer_angles):
     """Evaluate polarizer brightness at the requested polarizer angles."""
-    alpha_rad = _as_radians(alpha)
     angle_stack = []
     for angle in u.Quantity(polarizer_angles):
         delta = angle_difference_radians(angle, alpha)
@@ -53,7 +53,6 @@ def bp3_to_polarizer_brightness(B, pB, pBp, alpha, polarizer_angles):
 
 def bp3_from_polarizer_brightness(brightness_stack, polarizer_angles, alpha):
     """Recover B, pB, and pBp from polarizer brightness measurements."""
-    alpha_rad = _as_radians(alpha)
     brightness_stack = np.asarray(brightness_stack)
     B = (2.0 / 3.0) * np.sum(brightness_stack, axis=0)
 

@@ -7,24 +7,25 @@ from astropy.wcs.utils import pixel_to_skycoord
 
 
 def radial_north(shape):
-    """An alpha array referenced to north with counterclockwise-positive angles.
+    """Construct an image-centered alpha angle field.
 
     Parameters
     ----------
     shape : tuple[int, int]
-        how big the array should be
+        Image shape as ``(nrows, ncols)``.
 
     Returns
     -------
     np.ndarray
-        alpha array used in calculations
+        Alpha angle field in radians.
 
     Notes
     -----
-    - assumes solar north is up
-    - assumes polarizer 0 is along solar north axis
+    - assumes solar north is up in the image
+    - assumes polarizer 0 is aligned with the solar north axis
     - uses NumPy image indexing: row 0 is the top of the image, column 0 is the left
-    - returns the radial axis angle measured from north = 0, increasing counterclockwise
+    - returns the per-pixel alpha angle with north = 0 and counterclockwise-positive rotation
+    - represents the simple image-centered form of the alpha field
 
     """
     nrows, ncols = shape
@@ -36,16 +37,17 @@ def radial_north(shape):
     dy_up = center_row - row_indices
 
     # Angle from north with counterclockwise-positive rotation.
-    return np.arctan2(-dx, dy_up) * u.radian
+    return np.flipud(np.arctan2(-dx, dy_up) * u.radian)
 
 
 def radial_from_wcs(wcs, shape):
-    """Construct an alpha array from solar coordinates in the WCS.
+    """Construct a WCS-aware alpha angle field.
 
-    This computes the radial direction from solar center for each pixel,
-    measured from solar north = 0 with counterclockwise-positive rotation.
-    For partial-frame images, this samples the relevant subset of the full
-    solar-centered alpha field instead of assuming the Sun is at image center.
+    This computes the per-pixel alpha angle from helioprojective coordinates,
+    with solar north = 0 and counterclockwise-positive rotation. For
+    partial-frame images, it samples the appropriate subset of the larger
+    solar-centered alpha field instead of assuming the Sun is centered in the
+    image array.
     """
     nrows, ncols = shape
     row_indices, col_indices = np.mgrid[0:nrows, 0:ncols]

@@ -177,21 +177,17 @@ def _mzp_cubes_from_stack(data_stack, input_collection: NDCollection, mask=None,
 
 def _instrument_frame_polarizer_angles(input_collection: NDCollection):
     data_shape = template_cube(input_collection, preferred_key="Z").data.shape
-    lats = compute_lats(input_collection["Z"].wcs, data_shape)
-
-    polarizer_difference = {
-        key: as_angle(input_collection[key].meta.get("POLAROFF", 0), u.degree) for key in ["M", "Z", "P"]
-    }
-    solar_north = {
-        key: solnorth_from_wcs(input_collection[key].wcs, shape=data_shape, precomputed_lats=lats)
-        for key in ["M", "Z", "P"]
-    }
-
     return np.stack(
         [
-            wrap_linear_polarization(solar_north["M"] + MZP_ANGLES[0] + polarizer_difference["M"]),
-            wrap_linear_polarization(solar_north["Z"] + MZP_ANGLES[1] + polarizer_difference["Z"]),
-            wrap_linear_polarization(solar_north["P"] + MZP_ANGLES[2] + polarizer_difference["P"]),
+            np.full(
+                data_shape,
+                wrap_linear_polarization(
+                    as_angle(input_collection[key].meta["POLAR"], u.degree)
+                    + as_angle(input_collection[key].meta.get("POLAROFF", 0), u.degree)
+                ).to_value(u.degree),
+            )
+            * u.degree
+            for key in ["M", "Z", "P"]
         ]
     )
 
@@ -406,6 +402,12 @@ def bp3_to_bthp(input_collection, **kwargs):
     Notes
     ------
     Equations 9, 15, 16 in DeForest et al. 2022.
+
+    Forward direction: (B, pB, pBp, alpha) -> (B, theta, p).
+
+    theta is the polarization position angle measured CCW from solar north,
+    wrapped to [-pi/2, pi/2) (linear-polarization axis convention).
+    p is the fractional degree of linear polarization in [0, 1].
     """""
     B, pB, pBp = input_collection["B"].data, input_collection["pB"].data, input_collection["pBp"].data
     alpha = _alpha_data(input_collection)
@@ -425,6 +427,45 @@ def bp3_to_bthp(input_collection, **kwargs):
         ("theta", NDCube(theta, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR="Theta"))),
         ("p", NDCube(p, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR="Degree of Polarization"))),
     ]
+    _append_alpha(cubes, input_collection, mask=mask)
+    return _collection_from_cubes(cubes)
+
+
+@transform(System.bthp, System.bp3, use_alpha=True)
+def bthp_to_bp3(input_collection, **kwargs):
+    """
+    Notes
+    ------
+    Inverse of Equations 15 and 16 in DeForest et al. 2022.
+
+    Recovers (pB, pBp) from (theta, p, B, alpha) by reversing the
+    bp3_to_bthp mapping::
+
+        psi  = wrap_pm_pi(2 * (theta - pi/2 - alpha))
+        pB   = p * B * cos(psi)
+        pBp  = p * B * sin(psi)
+
+    The wrapping to [-pi, pi) ensures the unique pre-image under
+    wrap_linear_polarization used in the forward direction.
+    """""
+    B = input_collection["B"].data
+    theta = as_angle(input_collection["theta"].data, u.radian).to_value(u.radian)
+    p = input_collection["p"].data
+    alpha = _alpha_data(input_collection).to_value(u.radian)
+
+    psi = ((2 * (theta - np.pi / 2 - alpha)) + np.pi) % (2 * np.pi) - np.pi
+    total_pol = p * B
+    pB = total_pol * np.cos(psi)
+    pBp = total_pol * np.sin(psi)
+
+    mask = combine_mask(input_collection)
+    template = template_cube(input_collection, preferred_key="B")
+    cubes = [
+        ("B", NDCube(B, wcs=template.wcs, mask=mask, meta=template.meta)),
+        ("pB", NDCube(pB, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR="pB"))),
+        ("pBp", NDCube(pBp, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR="pB-prime"))),
+    ]
+    _append_alpha(cubes, input_collection, mask=mask)
     return _collection_from_cubes(cubes)
 
 
@@ -533,10 +574,18 @@ def fourpol_to_stokes(input_collection, **kwargs):
     ------
     Table 1 in DeForest et al. 2022.
 
+    Sign convention (IAU / consistent with ``mzpsolar_to_stokes``)::
+
+        I = B_0  + B_90
+        Q = B_0  - B_90    (positive for N-S / along-north polarization)
+        U = B_45 - B_135   (positive for NE-SW polarization)
+
+    Q < 0 for tangential (east-west) Thomson-scattered coronal light,
+    matching the sign produced by ``mzpsolar_to_stokes``.
     """""
     Bi = input_collection[str(0 * u.degree)].data + input_collection[str(90 * u.degree)].data
-    Bq = input_collection[str(90 * u.degree)].data - input_collection[str(0 * u.degree)].data
-    Bu = input_collection[str(135 * u.degree)].data - input_collection[str(45 * u.degree)].data
+    Bq = input_collection[str(0 * u.degree)].data - input_collection[str(90 * u.degree)].data
+    Bu = input_collection[str(45 * u.degree)].data - input_collection[str(135 * u.degree)].data
 
     mask = combine_mask(input_collection)
     template = template_cube(input_collection, preferred_key=str(0 * u.degree))
@@ -548,13 +597,83 @@ def fourpol_to_stokes(input_collection, **kwargs):
     return _collection_from_cubes(cubes)
 
 
+@transform(System.stokes, System.fourpol, use_alpha=False)
+def stokes_to_fourpol(input_collection, **kwargs):
+    """
+    Notes
+    ------
+    Inverse of ``fourpol_to_stokes``.  Recovers four-polarizer brightness
+    values from Stokes (I, Q, U) using the IAU sign convention::
+
+        B_0   = (I + Q) / 2
+        B_45  = (I + U) / 2
+        B_90  = (I - Q) / 2
+        B_135 = (I - U) / 2
+
+    Roundtrip with ``fourpol_to_stokes`` is exact.
+    """
+    Bi = input_collection["I"].data
+    Bq = input_collection["Q"].data
+    Bu = input_collection["U"].data
+
+    B0   = (Bi + Bq) / 2
+    B45  = (Bi + Bu) / 2
+    B90  = (Bi - Bq) / 2
+    B135 = (Bi - Bu) / 2
+
+    mask = combine_mask(input_collection)
+    template = template_cube(input_collection, preferred_key="I")
+    pol_0   = str(0.0   * u.degree)
+    pol_45  = str(45.0  * u.degree)
+    pol_90  = str(90.0  * u.degree)
+    pol_135 = str(135.0 * u.degree)
+    cubes = [
+        (pol_0,   NDCube(B0,   wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR=0.0   * u.degree))),
+        (pol_45,  NDCube(B45,  wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR=45.0  * u.degree))),
+        (pol_90,  NDCube(B90,  wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR=90.0  * u.degree))),
+        (pol_135, NDCube(B135, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR=135.0 * u.degree))),
+    ]
+    return _collection_from_cubes(cubes)
+
+
 @transform(System.mzpsolar, System.mzpinstru, use_alpha=False)
 def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwargs):
-    """Notes
-        -----
-        Equation 45 in DeForest et al. 2022.
-        out_angles: list of target angles in degree
-        """
+    """Convert solar-frame MZP to instrument-frame MZP.
+
+    Notes
+    -----
+    Equation 45 in DeForest et al. 2022.
+
+    **Angle convention**
+
+    *Solar frame (mzpsolar)*
+        - ``POLAR`` stores the solar position angle of each polarizer:
+          M = −60°, Z = 0°, P = +60°, measured CCW from solar north.
+        - ``POLARREF = "Solar"`` flags that ``POLAR`` is relative to solar north.
+        - ``POLAROFF`` is an optional mechanical misalignment of the polarizer
+          wheel *within* the instrument, not yet accounted for.
+
+    *Instrument frame (mzpinstru)*
+        - ``POLAR`` stores the same nominal solar-origin angle (−60 / 0 / 60).
+        - ``POLARREF = "Instrument"`` flags that the *effective* angle in the
+          image plane is ``POLAR + POLAROFF`` (i.e. after applying the wheel
+          offset).
+        - The brightness values themselves are what the physical polarizer
+          (at instrument angle ``POLAR + POLAROFF``) would record, expressed
+          in the coordinate system of the *instrument* rather than the Sun.
+
+    **Projection step**
+        For each target polarizer *j* (at instrument angle
+        ``alpha_j = POLAR_j + POLAROFF_j``)::
+
+            phi_j = alpha_j - solar_north        # solar-frame angle of pol. j
+            B_j   = (1/3) * sum_i [B_i * (4*cos²(phi_j − theta_i) − 1)]
+
+        where ``theta_i`` are the *solar-frame* angles of the source (solar)
+        polarizers (−60°, 0°, +60°) and ``solar_north`` is the pixel-by-pixel
+        position angle of solar north in the instrument/image frame (computed
+        from the WCS gradient).
+    """
     mask = combine_mask(input_collection)
     solar_north = _solar_north_angles(input_collection)
     cubes = []
@@ -596,10 +715,32 @@ def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwar
 
 @transform(System.mzpinstru, System.mzpsolar, use_alpha=False)
 def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs):
-    """Notes
+    """Convert instrument-frame MZP to solar-frame MZP.
+
+    Notes
     -----
     Equation 45 in DeForest et al. 2022.
-    angles: list of input angles in degree
+
+    **Angle convention** — see :func:`mzpsolar_to_mzpinstru` for full
+    definitions of ``POLAR``, ``POLAROFF``, and ``POLARREF``.
+
+    **Projection step**
+        The *effective instrument angle* of source polarizer *i* is::
+
+            theta_i = POLAR_i + POLAROFF_i
+
+        For each target solar polarizer *k* (at solar angle ``mzp_angle_k``
+        ∈ {−60°, 0°, +60°}) the corresponding *instrument-frame* angle is::
+
+            phi_k = solar_north + mzp_angle_k
+
+        The brightness is then obtained by projecting the instrument-frame
+        measurements onto ``phi_k`` via Eq. 45::
+
+            B_k = (1/3) * sum_i [B_i * (4*cos²(phi_k − theta_i) − 1)]
+
+        ``solar_north`` is the pixel-by-pixel position angle of solar north
+        in the instrument/image frame (from the WCS gradient).
     """
     mask = combine_mask(input_collection)
     solar_north = _solar_north_angles(input_collection)

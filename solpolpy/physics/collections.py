@@ -1,9 +1,9 @@
 """Helpers for building and reading NDCollection-based transform inputs."""
 
-from __future__ import annotations
-
 import copy
 
+import astropy.units as u
+from __future__ import annotations
 from ndcube import NDCollection
 
 from solpolpy.util import combine_all_collection_masks
@@ -28,8 +28,25 @@ def stack_data(collection: NDCollection, keys: list[str]) -> list:
 
 def clone_meta(cube, **updates):
     """Deep copy a cube metadata mapping and update it."""
+    normalized_updates = {}
+    for key, value in updates.items():
+        if isinstance(value, u.Quantity):
+            normalized_updates[key] = value.value
+        else:
+            normalized_updates[key] = value
+
     meta = copy.deepcopy(cube.meta)
-    meta.update(updates)
+    if hasattr(meta, "update"):
+        meta.update(normalized_updates)
+        return meta
+
+    if hasattr(cube.meta, "to_fits_header"):
+        meta = cube.meta.to_fits_header(cube.wcs)
+        meta.update(normalized_updates)
+        return meta
+
+    meta = {key: copy.deepcopy(cube.meta[key]) for key in cube.meta.keys()}
+    meta.update(normalized_updates)
     return meta
 
 

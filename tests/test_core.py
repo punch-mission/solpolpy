@@ -26,7 +26,7 @@ from solpolpy.core import (
 )
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.transforms import System
-from solpolpy.util import solnorth_from_wcs
+from solpolpy.util import angle_to_image_vectors, angle_to_sky_vectors, compute_lats, solnorth_from_wcs
 from tests.fixtures import *
 
 # Solar WCS
@@ -299,16 +299,21 @@ def test_solnorth_from_wcs_matches_latitude_gradient_direction():
     north_up_wcs.wcs.crval = 0, 0
 
     shape = (5, 5)
-    y, x = np.mgrid[0:shape[0], 0:shape[1]]
     angle = solnorth_from_wcs(north_up_wcs, shape).to_value(u.rad)
 
-    coords = astropy.wcs.utils.pixel_to_skycoord(x, y, north_up_wcs)
-    lat = coords.Ty.to_value(u.deg)
+    lat = compute_lats(north_up_wcs, shape)
     dy_lat, dx_lat = np.gradient(lat)
     norm = np.hypot(dx_lat, dy_lat)
     norm[norm == 0] = np.nan
 
-    vx_from_angle = -np.sin(angle)
-    vy_from_angle = np.cos(angle)
+    vx_from_angle, vy_from_angle = angle_to_sky_vectors(angle * u.radian)
     np.testing.assert_allclose(vx_from_angle, dx_lat / norm, atol=1e-12, rtol=1e-12)
     np.testing.assert_allclose(vy_from_angle, -dy_lat / norm, atol=1e-12, rtol=1e-12)
+
+
+def test_angle_to_image_vectors_match_origin_upper_plotting():
+    angle = np.array([0.0, np.pi / 2, -np.pi / 2]) * u.radian
+    vx, vy = angle_to_image_vectors(angle)
+
+    np.testing.assert_allclose(vx, np.array([0.0, -1.0, 1.0]), atol=1e-12)
+    np.testing.assert_allclose(vy, np.array([-1.0, 0.0, 0.0]), atol=1e-12)

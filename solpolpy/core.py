@@ -258,17 +258,25 @@ def _determine_image_shape(input_collection: NDCollection) -> tuple[int, int]:
 
 
 def add_alpha(input_data: NDCollection) -> NDCollection:
-    """Adds an alpha array to an image NDCollection.
+    """Add an alpha angle field to an image NDCollection.
 
     Parameters
     ----------
     input_data : NDCollection
-        dataset to append alpha to
+        Dataset to append alpha to.
 
     Returns
     -------
     NDCollection
-        dataset with alpha array appended
+        Dataset with an ``alpha`` cube appended.
+
+    Notes
+    -----
+    ``alpha`` is the per-pixel angle field used by the polarization transforms.
+    It is referenced to solar north with north = 0 and counterclockwise-positive
+    rotation. When the WCS contains usable solar coordinates, the alpha field is
+    constructed from that WCS so partial-frame images inherit the correct subset
+    of the larger solar-centered geometry.
 
     """
     # Prefer a WCS-derived radial direction so partial frames keep the correct
@@ -288,11 +296,14 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
         except (AttributeError, KeyError, TypeError, ValueError) as err:  # pragma: no cover - best-effort fallback
             alpha = radial_north(img_shape)
             try:
-                alpha = wrap_pm_pi(alpha + solnorth_from_wcs(wcs, img_shape).to(u.radian))
+                # ``radial_north`` is already north-referenced; subtract the
+                # WCS north rotation to express the same radial field in the
+                # image frame used by the polarizer equations.
+                alpha = wrap_pm_pi(alpha - solnorth_from_wcs(wcs, img_shape).to(u.radian))
             except (AttributeError, KeyError, TypeError, ValueError):
                 pass
             warnings.warn(
-                f"Falling back to image-centered alpha approximation because WCS-based solar-center calculation failed: {err}",
+                f"Falling back to an image-centered alpha approximation because WCS-based alpha construction failed: {err}",
                 stacklevel=2,
             )
     else:

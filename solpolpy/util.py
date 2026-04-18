@@ -210,10 +210,38 @@ def compute_lats(wcs, shape):
     nrows, ncols = shape
     y, x = np.mgrid[0:nrows, 0:ncols]
 
-    # Get solar coordinates (Tx, Ty) for each pixel
+    # Use helioprojective latitude, which is defined across the full image and
+    # whose local gradient gives the image-plane direction of solar north.
     coords = pixel_to_skycoord(x, y, wcs)
-    lat = coords.Ty.to_value(u.deg)  # solar Y
-    return lat
+    return coords.Ty.to_value(u.deg)
+
+
+def angle_to_sky_vectors(angle):
+    """Convert package angles to sky-plane unit vectors.
+
+    Angles follow the package convention:
+    solar north = 0 and positive angles increase counterclockwise.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        x-right and y-up components.
+    """
+    angle_rad = u.Quantity(angle).to_value(u.radian)
+    return -np.sin(angle_rad), np.cos(angle_rad)
+
+
+def angle_to_image_vectors(angle):
+    """Convert package angles to image-plane unit vectors for ``origin='upper'`` plots.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        x-right and y-down components suitable for ``imshow(..., origin='upper')``
+        together with ``quiver``.
+    """
+    vx, vy_up = angle_to_sky_vectors(angle)
+    return vx, -vy_up
 
 
 
@@ -240,10 +268,8 @@ def solnorth_from_wcs(input_wcs, shape, precomputed_lats=None):
     else:
         lat = precomputed_lats
 
-    # Compute gradient of solar latitude (points toward solar north)
+    # Compute the local direction of increasing helioprojective latitude.
     dy_lat, dx_lat = np.gradient(lat)
-
-    # Normalize vectors in image coordinates: +x is right, +y is down (python convention).
     norm = np.hypot(dx_lat, dy_lat)
     norm[norm == 0] = np.nan
     north_dx = dx_lat / norm

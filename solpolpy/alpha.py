@@ -7,17 +7,17 @@ from astropy.wcs.utils import pixel_to_skycoord
 
 
 def radial_north(shape):
-    """An alpha array referenced to north with counterclockwise-positive angles.
+    """Construct an image-centered alpha angle field.
 
     Parameters
     ----------
     shape : tuple[int, int]
-        how big the array should be
+        Image shape as ``(nrows, ncols)``.
 
     Returns
     -------
     np.ndarray
-        alpha array used in calculations
+        Alpha angle field in radians.
 
     Notes
     -----
@@ -41,7 +41,7 @@ def radial_north(shape):
 
 
 def radial_from_wcs(wcs, shape):
-    """Construct an alpha array from solar coordinates in the WCS.
+    """Construct a WCS-aware alpha angle field.
 
     This computes the per-pixel alpha angle from helioprojective coordinates,
     with solar north = 0 and counterclockwise-positive rotation. For

@@ -4,10 +4,11 @@ import warnings
 
 import astropy.units as u
 import networkx as nx
+import numpy as np
 from ndcube import NDCollection, NDCube
 
 from solpolpy.alpha import radial_from_wcs, radial_north
-from solpolpy.constants import STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
+from solpolpy.constants import ASPIICS_REFERENCE_ANGLE, LASCO_REFERENCE_ANGLE, STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.instruments import load_data
 from solpolpy.physics import wrap_pm_pi
@@ -89,15 +90,40 @@ def resolve(input_data: list[str] | NDCollection,
 def determine_reference_angle(input_collection: NDCollection) -> u.degree:
     """Get the instrument specific offset angle."""
     first_key = next(iter(input_collection.keys()))
-    match input_collection[first_key].meta.get("OBSRVTRY", "BLANK"):
+    meta = input_collection[first_key].meta
+    match meta.get("OBSRVTRY", "BLANK"):
         case "STEREO_A":
             reference_angle = STEREOA_REFERENCE_ANGLE
         case "STEREO_B":
             reference_angle = STEREOB_REFERENCE_ANGLE
         case _:
-            reference_angle = 0 * u.degree
+            if _is_aspiics(input_collection):
+                reference_angle = _aspiics_reference_angle(input_collection)
+            elif meta.get("INSTRUME") == "LASCO" or meta.get("TELESCOP") == "SOHO":
+                reference_angle = LASCO_REFERENCE_ANGLE
+            else:
+                reference_angle = 0 * u.degree
 
     return reference_angle
+
+
+def _is_aspiics(input_collection: NDCollection) -> bool:
+    first_key = next(iter(input_collection.keys()))
+    meta = input_collection[first_key].meta
+    return meta.get("OBSRVTRY") == "PROBA-3" or meta.get("INSTRUME") == "ASPIICS"
+
+
+def _aspiics_reference_angle(input_collection: NDCollection) -> u.degree:
+    """Return the ASPIICS +x-referenced polarizer angle offset."""
+    first_key = next(iter(input_collection.keys()))
+    cube = input_collection[first_key]
+    return ASPIICS_REFERENCE_ANGLE - solnorth_from_wcs(cube.wcs, cube.data.shape)
+
+
+def _uses_stereo_alpha_orientation(input_collection: NDCollection) -> bool:
+    """Return whether WCS alpha should use SECCHI/COR2 row orientation."""
+    first_key = next(iter(input_collection.keys()))
+    return input_collection[first_key].meta.get("OBSRVTRY") in {"STEREO_A", "STEREO_B"}
 
 
 def determine_input_kind(input_data: NDCollection) -> System:
@@ -251,6 +277,8 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
     if len(img_shape) == 2:  # it's an image and not just an array
         try:
             alpha = radial_from_wcs(wcs, img_shape)
+            if _uses_stereo_alpha_orientation(input_data):
+                alpha = np.flipud(alpha)
         except Exception as err:  # pragma: no cover - best-effort fallback
             alpha = radial_north(img_shape)
             try:

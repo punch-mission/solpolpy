@@ -1,5 +1,6 @@
 import os
 
+import astropy.units as u
 import pytest
 from ndcube import NDCollection
 
@@ -18,6 +19,7 @@ def test_load_data():
     expected_keys = ["0.0 deg", "120.0 deg", "240.0 deg"]
     assert actual_keys == expected_keys
     assert isinstance(out, NDCollection)
+    assert out["0.0 deg"].meta["POLAR"] == 0 * u.degree
 
 
 def test_load_data_fails_with_one_file():

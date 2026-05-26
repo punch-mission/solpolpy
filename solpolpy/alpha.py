@@ -23,7 +23,7 @@ def radial_north(shape):
     -----
     - assumes solar north is up in the image
     - assumes polarizer 0 is aligned with the solar north axis
-    - uses NumPy image indexing: row 0 is the top of the image, column 0 is the left
+    - uses NumPy image indexing: row 0 is solar north/up, column 0 is left
     - returns the per-pixel alpha angle with north = 0 and counterclockwise-positive rotation
     - represents the simple image-centered form of the alpha field
 
@@ -37,7 +37,7 @@ def radial_north(shape):
     dy_up = center_row - row_indices
 
     # Angle from north with counterclockwise-positive rotation.
-    return np.flipud(np.arctan2(-dx, dy_up) * u.radian)
+    return np.arctan2(-dx, dy_up) * u.radian
 
 
 def radial_from_wcs(wcs, shape):
@@ -45,7 +45,7 @@ def radial_from_wcs(wcs, shape):
 
     This computes the per-pixel alpha angle from helioprojective coordinates,
     with solar north = 0 and counterclockwise-positive rotation. For
-    partial-frame images, it samples the appropriate subset of the larger
+    partial-frame images, this samples the appropriate subset of the larger
     solar-centered alpha field instead of assuming the Sun is centered in the
     image array.
     """

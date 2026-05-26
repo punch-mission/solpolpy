@@ -15,7 +15,7 @@ def test_radial_north(shape):
     assert np.isclose(alpha.max(), np.pi*u.radian, atol=0.01)
 
 
-def test_radial_north_matches_python_image_indexing_and_ccw_sign():
+def test_radial_north_matches_image_north_up_and_ccw_sign():
     alpha = radial_north((5, 5)).to_value(u.radian)
 
     np.testing.assert_allclose(alpha[0, 2], 0.0, atol=1e-12)
@@ -24,7 +24,7 @@ def test_radial_north_matches_python_image_indexing_and_ccw_sign():
     np.testing.assert_allclose(np.abs(alpha[4, 2]), np.pi, atol=1e-12)
 
 
-def test_radial_from_wcs_matches_centered_north_up_geometry():
+def test_radial_from_wcs_matches_wcs_radial_geometry():
     wcs = astropy.wcs.WCS(naxis=2)
     wcs.wcs.ctype = "HPLN-TAN", "HPLT-TAN"
     wcs.wcs.cunit = "deg", "deg"
@@ -37,6 +37,7 @@ def test_radial_from_wcs_matches_centered_north_up_geometry():
     np.testing.assert_allclose(alpha[0, 2], 0.0, atol=5e-3)
     np.testing.assert_allclose(alpha[2, 0], np.pi / 2, atol=5e-3)
     np.testing.assert_allclose(alpha[2, 4], -np.pi / 2, atol=5e-3)
+    np.testing.assert_allclose(np.abs(alpha[4, 2]), np.pi, atol=5e-3)
 
 
 def test_radial_from_wcs_handles_off_center_partial_frame():

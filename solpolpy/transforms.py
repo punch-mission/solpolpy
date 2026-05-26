@@ -108,12 +108,19 @@ def _shared_polaroff(input_collection: NDCollection, keys):
 
 
 def _meta_with_shared_polaroff(cube, shared_polaroff, **updates):
+    if shared_polaroff is not None:
+        updates["POLAROFF"] = shared_polaroff.to(u.degree)
     meta = clone_meta(cube, **updates)
     if shared_polaroff is None:
         meta.pop("POLAROFF", None)
-    else:
-        meta["POLAROFF"] = shared_polaroff
     return meta
+
+
+def _angle_for_scalar_meta(angle):
+    angle = as_angle(angle, u.degree).to(u.degree)
+    if angle.isscalar:
+        return angle
+    return np.nanmean(angle.to_value(u.degree)) * u.degree
 
 
 def _warn_if_information_is_lost(pBp, B, context):
@@ -485,7 +492,15 @@ def btbr_to_npol(input_collection, out_angles: u.degree, **kwargs):
     template = template_cube(input_collection, preferred_key="Bt")
     for angle in out_angles:
         value = Bt * np.sin(angle_difference_radians(angle, alpha)) ** 2 + Br * np.cos(angle_difference_radians(angle, alpha)) ** 2
-        cubes.append((str(angle), NDCube(value, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR=angle))))
+        cubes.append((
+            str(angle),
+            NDCube(
+                value,
+                wcs=template.wcs,
+                mask=mask,
+                meta=clone_meta(template, POLAR=_angle_for_scalar_meta(angle)),
+            ),
+        ))
     _append_alpha(cubes, input_collection, mask=mask)
     return _collection_from_cubes(cubes)
 
@@ -558,7 +573,11 @@ def mzpsolar_to_npol(input_collection, out_angles: u.degree, reference_angle=0 *
                     value,
                     wcs=template.wcs,
                     mask=mask,
-                    meta=_meta_with_shared_polaroff(template, shared_polaroff, POLAR=angle),
+                    meta=_meta_with_shared_polaroff(
+                        template,
+                        shared_polaroff,
+                        POLAR=_angle_for_scalar_meta(angle),
+                    ),
                 ),
             )
         )

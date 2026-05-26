@@ -119,12 +119,20 @@ def _shared_polaroff(input_collection: NDCollection, keys: list[str]) -> u.Quant
 
 def _meta_with_shared_polaroff(cube: NDCube, shared_polaroff: u.Quantity | None, **updates):
     """Clone cube metadata and preserve POLAROFF only when it is unambiguous."""
+    if shared_polaroff is not None:
+        updates["POLAROFF"] = shared_polaroff.to(u.degree)
     meta = clone_meta(cube, **updates)
     if shared_polaroff is None:
         meta.pop("POLAROFF", None)
-    else:
-        meta["POLAROFF"] = shared_polaroff
     return meta
+
+
+def _angle_for_scalar_meta(angle: u.Quantity) -> u.Quantity:
+    """Return a scalar degree angle suitable for FITS header metadata."""
+    angle = as_angle(angle, u.degree).to(u.degree)
+    if angle.isscalar:
+        return angle
+    return np.nanmean(angle.to_value(u.degree)) * u.degree
 
 
 def _warn_if_information_is_lost(pBp: np.ndarray, B: np.ndarray, context: str) -> None:
@@ -504,7 +512,15 @@ def btbr_to_npol(input_collection, out_angles: u.degree, **kwargs):
     template = get_template_cube(input_collection, preferred_key="Bt")
     for angle in out_angles:
         value = Bt * np.sin(_angle_difference_radians(angle, alpha)) ** 2 + Br * np.cos(_angle_difference_radians(angle, alpha)) ** 2
-        cubes.append((str(angle), NDCube(value, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR=angle))))
+        cubes.append((
+            str(angle),
+            NDCube(
+                value,
+                wcs=template.wcs,
+                mask=mask,
+                meta=clone_meta(template, POLAR=_angle_for_scalar_meta(angle)),
+            ),
+        ))
     _append_alpha(cubes, input_collection, mask=mask)
     return _collection_from_cubes(cubes)
 
@@ -577,7 +593,11 @@ def mzpsolar_to_npol(input_collection, out_angles: u.degree, reference_angle=0 *
                     value,
                     wcs=template.wcs,
                     mask=mask,
-                    meta=_meta_with_shared_polaroff(template, shared_polaroff, POLAR=angle),
+                    meta=_meta_with_shared_polaroff(
+                        template,
+                        shared_polaroff,
+                        POLAR=_angle_for_scalar_meta(angle),
+                    ),
                 ),
             )
         )

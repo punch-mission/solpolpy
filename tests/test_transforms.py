@@ -20,6 +20,15 @@ wcs.crval = 10, 0.5, 1
 wcs.cname = "wavelength", "HPC lat", "HPC lon"
 
 
+def fits_meta(polar, polaroff=7, polarref="Solar"):
+    header = fits.Header()
+    header.update(wcs.to_header())
+    header["POLAR"] = polar
+    header["POLAROFF"] = polaroff
+    header["POLARREF"] = polarref
+    return header
+
+
 class _MetaValue:
     def __init__(self, value):
         self.value = value
@@ -1131,7 +1140,7 @@ def test_uniform_polaroff_propagates_through_reduced_systems():
         for key in collection.keys():
             if key == "alpha":
                 continue
-            assert u.Quantity(collection[key].meta["POLAROFF"]).to_value(u.degree) == 7.0
+            assert transforms.as_angle(collection[key].meta["POLAROFF"], u.degree).to_value(u.degree) == 7.0
 
 
 def test_mixed_polaroff_warns_and_is_not_silently_collapsed():
@@ -1151,6 +1160,143 @@ def test_mixed_polaroff_warns_and_is_not_silently_collapsed():
 
     for key in ["B", "pB"]:
         assert "POLAROFF" not in bpb[key].meta
+
+
+def test_shared_polaroff_is_fits_safe_for_reduced_transform_metadata():
+    solar = NDCollection(
+        [
+            ("M", NDCube(np.array([[1.1]]), wcs=wcs, meta=fits_meta(-60))),
+            ("Z", NDCube(np.array([[0.9]]), wcs=wcs, meta=fits_meta(0))),
+            ("P", NDCube(np.array([[1.6]]), wcs=wcs, meta=fits_meta(60))),
+            ("alpha", NDCube(np.array([[0.1]]) * u.radian, wcs=wcs)),
+        ],
+        meta={},
+        aligned_axes="all",
+    )
+
+    outputs = [
+        transforms.mzpsolar_to_bpb(solar),
+        transforms.mzpsolar_to_bp3(solar),
+        transforms.mzpsolar_to_stokes(solar),
+        transforms.mzpsolar_to_npol(solar, out_angles=np.array([-60.0, 0.0, 60.0]) * u.degree),
+    ]
+
+    for collection in outputs:
+        for key in collection.keys():
+            if key == "alpha":
+                continue
+            assert isinstance(collection[key].meta, fits.Header)
+            assert transforms.as_angle(collection[key].meta["POLAROFF"], u.degree).to_value(u.degree) == 7.0
+
+
+def test_mzp_output_metadata_keeps_fits_safe_shared_polaroff():
+    alpha = NDCube(np.array([[0.1]]) * u.radian, wcs=wcs)
+    inputs = [
+        (
+            transforms.bpb_to_mzpsolar,
+            NDCollection(
+                [
+                    ("B", NDCube(np.array([[1.1]]), wcs=wcs, meta=fits_meta("B"))),
+                    ("pB", NDCube(np.array([[0.4]]), wcs=wcs, meta=fits_meta("pB"))),
+                    ("alpha", alpha),
+                ],
+                meta={},
+                aligned_axes="all",
+            ),
+            {},
+        ),
+        (
+            transforms.bp3_to_mzpsolar,
+            NDCollection(
+                [
+                    ("B", NDCube(np.array([[1.1]]), wcs=wcs, meta=fits_meta("B"))),
+                    ("pB", NDCube(np.array([[0.4]]), wcs=wcs, meta=fits_meta("pB"))),
+                    ("pBp", NDCube(np.array([[0.2]]), wcs=wcs, meta=fits_meta("pB-prime"))),
+                    ("alpha", alpha),
+                ],
+                meta={},
+                aligned_axes="all",
+            ),
+            {},
+        ),
+        (
+            transforms.stokes_to_mzpsolar,
+            NDCollection(
+                [
+                    ("I", NDCube(np.array([[1.1]]), wcs=wcs, meta=fits_meta("Stokes I"))),
+                    ("Q", NDCube(np.array([[0.4]]), wcs=wcs, meta=fits_meta("Stokes Q"))),
+                    ("U", NDCube(np.array([[0.2]]), wcs=wcs, meta=fits_meta("Stokes U"))),
+                ],
+                meta={},
+                aligned_axes="all",
+            ),
+            {},
+        ),
+        (
+            transforms.btbr_to_mzpsolar,
+            NDCollection(
+                [
+                    ("Bt", NDCube(np.array([[1.1]]), wcs=wcs, meta=fits_meta("Bt"))),
+                    ("Br", NDCube(np.array([[0.4]]), wcs=wcs, meta=fits_meta("Br"))),
+                    ("alpha", alpha),
+                ],
+                meta={},
+                aligned_axes="all",
+            ),
+            {},
+        ),
+        (
+            transforms.npol_to_mzpsolar,
+            NDCollection(
+                [
+                    ("45", NDCube(np.array([[1.1]]), wcs=wcs, meta=fits_meta(45))),
+                    ("20", NDCube(np.array([[0.4]]), wcs=wcs, meta=fits_meta(20))),
+                    ("55", NDCube(np.array([[0.2]]), wcs=wcs, meta=fits_meta(55))),
+                ],
+                meta={},
+                aligned_axes="all",
+            ),
+            {},
+        ),
+    ]
+
+    for transform_fn, input_collection, kwargs in inputs:
+        collection = transform_fn(input_collection, **kwargs)
+        for key in ["M", "Z", "P"]:
+            assert isinstance(collection[key].meta, fits.Header)
+            assert transforms.as_angle(collection[key].meta["POLAROFF"], u.degree).to_value(u.degree) == 7.0
+
+
+def test_array_out_angles_are_fits_safe_in_output_metadata():
+    alpha = NDCube(np.array([[0.1, 0.2], [0.3, 0.4]]) * u.radian, wcs=wcs)
+    out_angles = np.stack([[0.0, 45.0], [-60.0, -15.0], [60.0, 105.0]]) * u.degree
+    solar = NDCollection(
+        [
+            ("M", NDCube(np.ones((2, 2)), wcs=wcs, meta=fits_meta(-60))),
+            ("Z", NDCube(np.ones((2, 2)), wcs=wcs, meta=fits_meta(0))),
+            ("P", NDCube(np.ones((2, 2)), wcs=wcs, meta=fits_meta(60))),
+        ],
+        meta={},
+        aligned_axes="all",
+    )
+    btbr = NDCollection(
+        [
+            ("Bt", NDCube(np.ones((2, 2)), wcs=wcs, meta=fits_meta("Bt"))),
+            ("Br", NDCube(np.ones((2, 2)), wcs=wcs, meta=fits_meta("Br"))),
+            ("alpha", alpha),
+        ],
+        meta={},
+        aligned_axes="all",
+    )
+
+    for collection in [
+        transforms.mzpsolar_to_npol(solar, out_angles=out_angles),
+        transforms.btbr_to_npol(btbr, out_angles=out_angles),
+    ]:
+        for key in collection.keys():
+            if key == "alpha":
+                continue
+            assert isinstance(collection[key].meta["POLAR"], float)
 
 
 @fixture()

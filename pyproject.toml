@@ -75,7 +75,7 @@ length_sort_sections = "stdlib"
 line_length = 120
 multi_line_output = 3
 no_lines_before = "LOCALFOLDER"
-sections = "STDLIB, THIRDPARTY, FIRSTPARTY, LOCALFOLDER"
+sections = "FUTURE, STDLIB, THIRDPARTY, FIRSTPARTY, LOCALFOLDER"
 
 [tool.gilesbot]
 [tool.gilesbot.pull_requests]

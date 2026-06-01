@@ -8,13 +8,18 @@ import pytest
 from astropy.io import fits
 from ndcube import NDCollection, NDCube
 
-from solpolpy.constants import ASPIICS_REFERENCE_ANGLE, LASCO_REFERENCE_ANGLE, STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
 from solpolpy.alpha import radial_north
+from solpolpy.constants import (
+    ASPIICS_REFERENCE_ANGLE,
+    LASCO_REFERENCE_ANGLE,
+    STEREOA_REFERENCE_ANGLE,
+    STEREOB_REFERENCE_ANGLE,
+)
 from solpolpy.core import (
     _determine_image_shape,
     add_alpha,
-    determine_reference_angle,
     determine_input_kind,
+    determine_reference_angle,
     get_transform_equation,
     get_transform_path,
     resolve,

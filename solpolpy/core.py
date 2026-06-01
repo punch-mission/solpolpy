@@ -8,7 +8,12 @@ import numpy as np
 from ndcube import NDCollection, NDCube
 
 from solpolpy.alpha import radial_from_wcs, radial_north
-from solpolpy.constants import ASPIICS_REFERENCE_ANGLE, LASCO_REFERENCE_ANGLE, STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
+from solpolpy.constants import (
+    ASPIICS_REFERENCE_ANGLE,
+    LASCO_REFERENCE_ANGLE,
+    STEREOA_REFERENCE_ANGLE,
+    STEREOB_REFERENCE_ANGLE,
+)
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.instruments import load_data
 from solpolpy.physics import wrap_pm_pi

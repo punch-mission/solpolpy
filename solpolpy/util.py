@@ -251,6 +251,5 @@ def solnorth_from_wcs(input_wcs, shape, precomputed_lats=None):
 
     # Convert to the package convention in a sky-style basis:
     # +x is right, +y is up, north = 0, positive angles are counterclockwise.
-    angle_solar_north = np.degrees(np.arctan2(north_dx, -north_dy))
-
+    angle_solar_north = np.degrees(np.arctan2(-north_dx, -north_dy))
     return angle_solar_north * u.degree

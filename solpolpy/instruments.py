@@ -70,12 +70,14 @@ def load_data(path_list: list[str],
                 mask = np.zeros(hdul[hdu_index].data.shape, dtype=bool)
 
             angle = get_data_angle(hdul[hdu_index].header)
+            meta = dict(hdul[hdu_index].header)
+            meta["POLAR"] = angle
 
             data_out.append((str(angle),
                              NDCube(hdul[hdu_index].data,
                                     mask=mask,
                                     wcs=wcs,
-                                    meta=dict(hdul[hdu_index].header))))
+                                    meta=meta)))
 
     return NDCollection(data_out, meta={}, aligned_axes="all")
 

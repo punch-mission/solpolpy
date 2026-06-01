@@ -8,10 +8,12 @@ import pytest
 from astropy.io import fits
 from ndcube import NDCollection, NDCube
 
+from solpolpy.constants import ASPIICS_REFERENCE_ANGLE, LASCO_REFERENCE_ANGLE, STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
 from solpolpy.alpha import radial_north
 from solpolpy.core import (
     _determine_image_shape,
     add_alpha,
+    determine_reference_angle,
     determine_input_kind,
     get_transform_equation,
     get_transform_path,
@@ -164,6 +166,76 @@ def test_add_alpha_is_north_referenced_for_north_up_wcs():
     np.testing.assert_allclose(alpha[0, 2], 0.0, atol=5e-3)
     np.testing.assert_allclose(alpha[2, 0], np.pi / 2, atol=5e-3)
     np.testing.assert_allclose(alpha[2, 4], -np.pi / 2, atol=5e-3)
+    np.testing.assert_allclose(np.abs(alpha[4, 2]), np.pi, atol=5e-3)
+
+
+def test_add_alpha_flips_wcs_alpha_for_stereo_row_orientation():
+    north_up_wcs = astropy.wcs.WCS(naxis=2)
+    north_up_wcs.wcs.ctype = "HPLN-TAN", "HPLT-TAN"
+    north_up_wcs.wcs.cunit = "deg", "deg"
+    north_up_wcs.wcs.cdelt = 0.2, -0.2
+    north_up_wcs.wcs.crpix = 3, 3
+    north_up_wcs.wcs.crval = 0, 0
+
+    collection = NDCollection(
+        [
+            ("0.0 deg", NDCube(np.zeros((5, 5)), wcs=north_up_wcs, meta={"POLAR": 0 * u.deg, "OBSRVTRY": "STEREO_A"})),
+            ("120.0 deg", NDCube(np.zeros((5, 5)), wcs=north_up_wcs, meta={"POLAR": 120 * u.deg, "OBSRVTRY": "STEREO_A"})),
+            ("240.0 deg", NDCube(np.zeros((5, 5)), wcs=north_up_wcs, meta={"POLAR": 240 * u.deg, "OBSRVTRY": "STEREO_A"})),
+        ],
+        meta={},
+        aligned_axes="all",
+    )
+
+    out = add_alpha(collection)
+    alpha = u.Quantity(out["alpha"].data, unit=u.radian).to_value(u.radian)
+
+    np.testing.assert_allclose(alpha[4, 2], 0.0, atol=5e-3)
+    np.testing.assert_allclose(np.abs(alpha[0, 2]), np.pi, atol=5e-3)
+
+
+@pytest.mark.parametrize(
+    ("meta", "expected"),
+    [
+        ({"OBSRVTRY": "STEREO_A"}, STEREOA_REFERENCE_ANGLE),
+        ({"OBSRVTRY": "STEREO_B"}, STEREOB_REFERENCE_ANGLE),
+        ({"INSTRUME": "LASCO"}, LASCO_REFERENCE_ANGLE),
+        ({"TELESCOP": "SOHO"}, LASCO_REFERENCE_ANGLE),
+        ({}, 0 * u.degree),
+    ],
+)
+def test_determine_reference_angle_uses_instrument_constants(meta, expected):
+    collection = NDCollection(
+        [("0.0 deg", NDCube(np.zeros((2, 2)), wcs=wcs_sol, meta={"POLAR": 0 * u.deg, **meta}))],
+        meta={},
+        aligned_axes="all",
+    )
+
+    assert determine_reference_angle(collection) == expected
+
+
+def test_determine_reference_angle_uses_aspiics_wcs_x_axis_reference():
+    north_up_wcs = astropy.wcs.WCS(naxis=2)
+    north_up_wcs.wcs.ctype = "HPLN-TAN", "HPLT-TAN"
+    north_up_wcs.wcs.cunit = "deg", "deg"
+    north_up_wcs.wcs.cdelt = 0.2, -0.2
+    north_up_wcs.wcs.crpix = 3, 3
+    north_up_wcs.wcs.crval = 0, 0
+
+    collection = NDCollection(
+        [
+            ("0.0 deg", NDCube(np.zeros((5, 5)), wcs=north_up_wcs, meta={"POLAR": 0 * u.deg, "INSTRUME": "ASPIICS"})),
+            ("60.0 deg", NDCube(np.zeros((5, 5)), wcs=north_up_wcs, meta={"POLAR": 60 * u.deg, "INSTRUME": "ASPIICS"})),
+            ("120.0 deg", NDCube(np.zeros((5, 5)), wcs=north_up_wcs, meta={"POLAR": 120 * u.deg, "INSTRUME": "ASPIICS"})),
+        ],
+        meta={},
+        aligned_axes="all",
+    )
+
+    reference_angle = determine_reference_angle(collection)
+
+    assert reference_angle.shape == (5, 5)
+    np.testing.assert_allclose(reference_angle[2, 2].to_value(u.deg), ASPIICS_REFERENCE_ANGLE.to_value(u.deg), atol=5e-3)
 
 
 def test_add_alpha_uses_wcs_for_off_center_partial_frame():
@@ -210,7 +282,7 @@ def test_solnorth_from_wcs_uses_north_zero_ccw_positive():
     rotated_wcs.wcs.pc = np.array([[0, 1], [-1, 0]])
 
     rotated = solnorth_from_wcs(rotated_wcs, (5, 5)).to_value(u.deg)
-    np.testing.assert_allclose(rotated[2, 2], 90.0, atol=5e-3)
+    np.testing.assert_allclose(rotated[2, 2], -90.0, atol=5e-3)
 
 
 def test_solnorth_from_wcs_matches_latitude_gradient_direction():
@@ -231,8 +303,7 @@ def test_solnorth_from_wcs_matches_latitude_gradient_direction():
     norm = np.hypot(dx_lat, dy_lat)
     norm[norm == 0] = np.nan
 
-    vx_from_angle = np.sin(angle)
+    vx_from_angle = -np.sin(angle)
     vy_from_angle = np.cos(angle)
-
     np.testing.assert_allclose(vx_from_angle, dx_lat / norm, atol=1e-12, rtol=1e-12)
     np.testing.assert_allclose(vy_from_angle, -dy_lat / norm, atol=1e-12, rtol=1e-12)

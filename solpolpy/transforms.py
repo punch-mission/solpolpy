@@ -462,33 +462,40 @@ def mzpsolar_to_npol(input_collection, out_angles: u.degree, reference_angle=0 *
     Equation 45 in DeForest et al. 2022.
     angles: list of input angles in degree
     """
-    in_list = list(input_collection)
-    input_dict = {}
+    in_keys = [key for key in input_collection if key != "alpha"]
 
-    for p_angle in in_list:
-        if p_angle == "alpha":
-            break
-        input_dict[input_collection[p_angle].meta["POLAR"]] = input_collection[p_angle].data
+    polarizer_difference = {key: input_collection[key].meta["POLAROFF"] * u.deg
+                        if "POLAROFF" in input_collection[key].meta
+                        else 0 * u.deg
+                        for key in in_keys}
 
     output_cubes = []
     mask = combine_all_collection_masks(input_collection)
-    first_meta = input_collection[in_list[0]].meta
-    first_wcs = input_collection[in_list[0]].wcs
+    first_meta = input_collection[in_keys[0]].meta
+    first_wcs = input_collection[in_keys[0]].wcs
+
     for out_angle in out_angles:
-        value = (1/3) * np.sum([input_cube.data * (4 * np.square(np.cos(out_angle - input_angle - reference_angle)) - 1)
-                                     for input_angle, input_cube in input_dict.items()], axis=0)
+        terms = []
+        for key in in_keys:
+            input_angle = input_collection[key].meta["POLAR"]
+            input_data = input_collection[key].data
+            angle_eff = input_angle + polarizer_difference[key]
+
+            coeff = (4 * np.cos(out_angle - angle_eff - reference_angle) ** 2 - 1) / 3
+            terms.append(input_data * coeff)
+        value = np.sum(terms, axis=0)
+
         out_meta = copy.copy(first_meta)
         out_meta.update(POLAR=out_angle)
         if out_angles.ndim > 1:
-            key = str(np.round(np.mean(out_angle).value))
+            out_key = str(np.round(np.mean(out_angle).value))
         else:
-            key = str(out_angle)
-        output_cubes.append((key,
-                           NDCube(value, wcs=first_wcs, mask=mask, meta=out_meta)))
+            out_key = str(out_angle)
+        output_cubes.append((out_key, NDCube(value, wcs=first_wcs, mask=mask, meta=out_meta)))
 
     if "alpha" in input_collection:
         alpha = input_collection["alpha"].data * u.radian
-        output_cubes.append(("alpha", NDCube(alpha, wcs=input_collection[in_list[0]].wcs, mask=mask)))
+        output_cubes.append(("alpha", NDCube(alpha, wcs=first_wcs, mask=mask)))
 
     return NDCollection(output_cubes, meta={}, aligned_axes="all")
 

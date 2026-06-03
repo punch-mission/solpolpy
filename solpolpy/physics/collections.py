@@ -27,7 +27,8 @@ def stack_data(collection: NDCollection, keys: list[str]) -> list[Any]:
 
 
 def clone_meta(cube: Any, **updates: Any) -> Any:
-    """Deep copy a cube metadata mapping and update it."""
+    """Deep copy a cube metadata mapping and apply keyword overrides."""
+    # Unwrap Quantity values to plain scalars to keep metadata FITS-serialisable.
     normalized_updates = {}
     for key, value in updates.items():
         if isinstance(value, u.Quantity):
@@ -35,16 +36,19 @@ def clone_meta(cube: Any, **updates: Any) -> Any:
         else:
             normalized_updates[key] = value
 
+    # Most common case: plain dict or dict-subclass — deepcopy then patch.
     meta = copy.deepcopy(cube.meta)
     if hasattr(meta, "update"):
         meta.update(normalized_updates)
         return meta
 
+    # Rich metadata that can serialise itself to a FITS header.
     if hasattr(cube.meta, "to_fits_header"):
         meta = cube.meta.to_fits_header(cube.wcs)
         meta.update(normalized_updates)
         return meta
 
+    # Fallback: read-only mapping — build a new plain dict manually.
     meta = {key: copy.deepcopy(cube.meta[key]) for key in cube.meta.keys()}
     meta.update(normalized_updates)
     return meta

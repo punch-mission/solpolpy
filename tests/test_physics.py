@@ -15,8 +15,8 @@ from solpolpy.physics import (
     clone_meta,
     get_data_keys,
     get_template_cube,
-    project_three_polarizer_brightness,
-    solve_three_polarizer_brightness,
+    solve_from_three_polarizer_brightness,
+    solve_to_three_polarizer_brightness,
     stack_data,
     wrap_linear_polarization,
     wrap_pm_pi,
@@ -98,7 +98,7 @@ def test_bp3_polarizer_brightness_roundtrip_recovers_inputs():
     np.testing.assert_allclose(recovered[2], pBp, atol=1e-12)
 
 
-def test_solve_three_polarizer_brightness_supports_pixelwise_reference_angle():
+def test_solve_to_three_polarizer_brightness_supports_pixelwise_reference_angle():
     observed_angles = np.array([-60.0, 0.0, 60.0]) * u.degree
     solved_angles = np.array([0.0, 60.0, 120.0]) * u.degree
     reference_angle = np.array([[0.0, 5.0], [10.0, 15.0]]) * u.degree
@@ -111,15 +111,15 @@ def test_solve_three_polarizer_brightness_supports_pixelwise_reference_angle():
         axis=0,
     )
 
-    projected = project_three_polarizer_brightness(source, solved_angles, observed_angles, reference_angle)
-    recovered = solve_three_polarizer_brightness(projected, observed_angles, solved_angles, reference_angle)
+    projected = solve_from_three_polarizer_brightness(source, solved_angles, observed_angles, reference_angle)
+    recovered = solve_to_three_polarizer_brightness(projected, observed_angles, solved_angles, reference_angle)
 
     np.testing.assert_allclose(recovered, source, atol=1e-12)
 
 
-def test_solve_three_polarizer_brightness_raises_for_degenerate_angles():
+def test_solve_to_three_polarizer_brightness_raises_for_degenerate_angles():
     brightness = np.ones((3, 2, 2))
     duplicate_angles = np.array([0.0, 0.0, 60.0]) * u.degree
 
     with pytest.raises(SolpolpyError, match="degenerate"):
-        solve_three_polarizer_brightness(brightness, duplicate_angles, MZP_ANGLES)
+        solve_to_three_polarizer_brightness(brightness, duplicate_angles, MZP_ANGLES)

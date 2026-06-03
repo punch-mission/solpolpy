@@ -115,13 +115,16 @@ def _three_polarizer_matrix(
     return np.stack(rows, axis=0)
 
 
-def solve_three_polarizer_brightness(
+def solve_to_three_polarizer_brightness(
     observed_brightness: np.ndarray,
     observed_angles: u.Quantity,
     solved_angles: u.Quantity,
     reference_angle: u.Quantity = 0 * u.degree,
 ) -> np.ndarray:
-    """Solve Equation 44-style systems for the requested output basis."""
+    """
+    Solve Equation 44-style systems for the requested output basis using matrix inversion.
+    Estimating B_i on RHS of this equation.
+    """
     matrix = _three_polarizer_matrix(observed_angles, solved_angles, reference_angle=reference_angle)
     rhs = np.moveaxis(np.asarray(observed_brightness), 0, -1)[..., None]
 
@@ -141,13 +144,16 @@ def solve_three_polarizer_brightness(
     return np.moveaxis(solution, -1, 0)
 
 
-def project_three_polarizer_brightness(
+def solve_from_three_polarizer_brightness(
     source_brightness: np.ndarray,
     source_angles: u.Quantity,
     target_angles: u.Quantity,
     reference_angle: u.Quantity = 0 * u.degree,
 ) -> np.ndarray:
-    """Project three-polarizer brightness measurements onto new polarizer angles."""
+    """
+    Solve Equation 45-style systems brightness measurements onto new polarizer angles.
+    Estimating B_phi on LHS of this equation.
+    """
     projected = []
     reference = _as_radians(reference_angle)
 

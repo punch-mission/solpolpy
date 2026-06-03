@@ -20,8 +20,8 @@ from solpolpy.physics import (
     clone_meta,
     get_data_keys,
     get_template_cube,
-    project_three_polarizer_brightness,
-    solve_three_polarizer_brightness,
+    solve_from_three_polarizer_brightness,
+    solve_to_three_polarizer_brightness,
     stack_data,
     wrap_linear_polarization,
 )
@@ -545,7 +545,7 @@ def npol_to_mzpsolar(input_collection, in_angles: u.degree = None, reference_ang
         )
     )
 
-    solved_stack = solve_three_polarizer_brightness(
+    solved_stack = solve_to_three_polarizer_brightness(
         np.stack(stack_data(input_collection, input_keys), axis=0),
         observed_angles=phi,
         solved_angles=MZP_ANGLES,
@@ -573,7 +573,7 @@ def mzpsolar_to_npol(input_collection, out_angles: u.degree, reference_angle=0 *
         ]
     )
     source_stack = np.stack(stack_data(input_collection, in_keys), axis=0)
-    projected = project_three_polarizer_brightness(
+    projected = solve_from_three_polarizer_brightness(
         source_stack,
         source_angles=source_angles,
         target_angles=out_angles,

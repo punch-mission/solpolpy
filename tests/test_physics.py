@@ -1,8 +1,8 @@
+from types import SimpleNamespace
+
 import astropy.units as u
 import numpy as np
 import pytest
-from types import SimpleNamespace
-
 from ndcube import NDCollection, NDCube
 
 from solpolpy.errors import SolpolpyError

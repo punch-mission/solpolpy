@@ -128,7 +128,7 @@ def determine_input_kind(input_data: NDCollection) -> System:
             elif polarref_value == "solar":
               return System.mzpsolar
             else:
-                raise ValueError(f"Unrecognized POALRREF value: {polarref_value}")
+                raise ValueError(f"Unrecognized POLARREF value: {polarref_value}")
         if valid_kind != System.npol and param_set == input_keys:
             return valid_kind
     try:
@@ -240,7 +240,10 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
         dataset with alpha array appended
 
     """
-    # test if alpha exists. if not check if alpha keyword added. if not create default alpha with warning.
+    # Prefer a WCS-derived radial direction so partial frames keep the correct
+    # solar-center geometry. The north-referenced image-center fallback keeps
+    # legacy/non-solar WCS inputs usable, but warns because the result is only
+    # an approximation.
     img_shape = _determine_image_shape(input_data)
     keys = list(input_data.keys())
     wcs = input_data[keys[0]].wcs
@@ -249,11 +252,11 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
     if len(img_shape) == 2:  # it's an image and not just an array
         try:
             alpha = radial_from_wcs(wcs, img_shape)
-        except Exception as err:  # pragma: no cover - best-effort fallback
+        except (AttributeError, KeyError, TypeError, ValueError) as err:  # pragma: no cover - best-effort fallback
             alpha = radial_north(img_shape)
             try:
                 alpha = wrap_pm_pi(alpha + solnorth_from_wcs(wcs, img_shape).to(u.radian))
-            except Exception:
+            except (AttributeError, KeyError, TypeError, ValueError):
                 pass
             warnings.warn(
                 f"Falling back to image-centered alpha approximation because WCS-based solar-center calculation failed: {err}",

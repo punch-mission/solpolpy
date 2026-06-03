@@ -13,20 +13,19 @@ from ndcube import NDCollection, NDCube
 from solpolpy.errors import InvalidDataError, MissingAlphaError
 from solpolpy.physics import (
     MZP_ANGLES,
-    angle_difference_radians,
     as_angle,
     bp3_from_analyzer_brightness,
     bp3_to_analyzer_brightness,
+    calculate_angle_difference,
     clone_meta,
-    combine_mask,
-    data_keys,
+    get_data_keys,
+    get_template_cube,
     project_three_polarizer_brightness,
     solve_three_polarizer_brightness,
     stack_data,
-    template_cube,
     wrap_linear_polarization,
 )
-from solpolpy.util import compute_lats, solnorth_from_wcs
+from solpolpy.util import combine_all_collection_masks, compute_lats, solnorth_from_wcs
 
 System = StrEnum("System", ["bpb", "npol", "stokes", "mzpsolar", "mzpinstru", "btbr", "bthp", "fourpol", "bp3"])
 SYSTEM_REQUIRED_KEYS = {System.bpb: {"B", "pB"},
@@ -41,11 +40,14 @@ SYSTEM_REQUIRED_KEYS = {System.bpb: {"B", "pB"},
                         }
 
 
-def transform(source_system, target_system, use_alpha):
+def transform(source_system: System, target_system: System, use_alpha: bool):
     """Decorator for transforms."""
     def decorator(transform_function):
         transform_signature = signature(transform_function)
         transform_parameters = transform_signature.parameters
+        # ``uses_*`` means the transform accepts optional angle arguments that
+        # may need to be forwarded through a composed path. ``requires_*`` is
+        # stricter: the argument has no default and must be provided by resolve.
         uses_out_angles = "out_angles" in transform_parameters
         uses_in_angles = "in_angles" in transform_parameters
         requires_out_angles = uses_out_angles and transform_parameters["out_angles"].default is transform_signature.empty
@@ -79,15 +81,23 @@ def transform(source_system, target_system, use_alpha):
     return decorator
 
 
-def _alpha_data(collection: NDCollection):
+def _alpha_data(collection: NDCollection) -> u.Quantity:
+    """Return the alpha cube data as radians."""
     return as_angle(collection["alpha"].data, u.radian).to(u.radian)
 
 
-def _collection_from_cubes(cubes):
+def _angle_difference_radians(target_angle: u.Quantity, source_angle: u.Quantity) -> np.ndarray:
+    """Return a wrapped angle difference in radian values for trigonometry."""
+    return calculate_angle_difference(as_angle(target_angle, u.radian), as_angle(source_angle, u.radian)).to_value(u.radian)
+
+
+def _collection_from_cubes(cubes: list[tuple[str, NDCube]]) -> NDCollection:
+    """Build a consistently aligned collection from transform output cubes."""
     return NDCollection(cubes, meta={}, aligned_axes="all")
 
 
-def _shared_polaroff(input_collection: NDCollection, keys):
+def _shared_polaroff(input_collection: NDCollection, keys: list[str]) -> u.Quantity | None:
+    """Return the shared POLAROFF value when output metadata can preserve it."""
     offsets = []
     for key in keys:
         if key in input_collection and "POLAROFF" in input_collection[key].meta:
@@ -107,7 +117,8 @@ def _shared_polaroff(input_collection: NDCollection, keys):
     return None
 
 
-def _meta_with_shared_polaroff(cube, shared_polaroff, **updates):
+def _meta_with_shared_polaroff(cube: NDCube, shared_polaroff: u.Quantity | None, **updates):
+    """Clone cube metadata and preserve POLAROFF only when it is unambiguous."""
     meta = clone_meta(cube, **updates)
     if shared_polaroff is None:
         meta.pop("POLAROFF", None)
@@ -116,7 +127,8 @@ def _meta_with_shared_polaroff(cube, shared_polaroff, **updates):
     return meta
 
 
-def _warn_if_information_is_lost(pBp, B, context):
+def _warn_if_information_is_lost(pBp: np.ndarray, B: np.ndarray, context: str) -> None:
+    """Warn when a lossy BP3 to BPB-style projection drops nonzero pBp."""
     with np.errstate(divide="ignore", invalid="ignore"):
         relative_pbp = np.abs(
             np.divide(
@@ -138,7 +150,8 @@ def _warn_if_information_is_lost(pBp, B, context):
         )
 
 
-def _append_alpha(cubes, input_collection: NDCollection, mask=None):
+def _append_alpha(cubes: list[tuple[str, NDCube]], input_collection: NDCollection, mask: np.ndarray | None = None) -> list[tuple[str, NDCube]]:
+    """Append alpha to an output cube list when the input collection had it."""
     if "alpha" not in input_collection:
         return cubes
     alpha_cube = input_collection["alpha"]
@@ -156,9 +169,15 @@ def _append_alpha(cubes, input_collection: NDCollection, mask=None):
     return cubes
 
 
-def _mzp_cubes_from_stack(data_stack, input_collection: NDCollection, mask=None, preferred_key: str | None = None):
-    cube_template = template_cube(input_collection, preferred_key=preferred_key)
-    shared_polaroff = _shared_polaroff(input_collection, data_keys(input_collection))
+def _mzp_cubes_from_stack(
+    data_stack: np.ndarray,
+    input_collection: NDCollection,
+    mask: np.ndarray | None = None,
+    preferred_key: str | None = None,
+) -> list[tuple[str, NDCube]]:
+    """Convert a three-plane M/Z/P data stack into named NDCubes."""
+    cube_template = get_template_cube(input_collection, preferred_key=preferred_key)
+    shared_polaroff = _shared_polaroff(input_collection, get_data_keys(input_collection))
     cubes = []
     for key, angle, data in zip(["M", "Z", "P"], MZP_ANGLES, data_stack, strict=False):
         cubes.append(
@@ -175,8 +194,9 @@ def _mzp_cubes_from_stack(data_stack, input_collection: NDCollection, mask=None,
     return cubes
 
 
-def _instrument_frame_analyzer_angles(input_collection: NDCollection):
-    data_shape = template_cube(input_collection, preferred_key="Z").data.shape
+def _instrument_frame_analyzer_angles(input_collection: NDCollection) -> u.Quantity:
+    """Return M/Z/P analyzer angles in the instrument frame."""
+    data_shape = get_template_cube(input_collection, preferred_key="Z").data.shape
     lats = compute_lats(input_collection["Z"].wcs, data_shape)
 
     polarizer_difference = {
@@ -196,8 +216,9 @@ def _instrument_frame_analyzer_angles(input_collection: NDCollection):
     )
 
 
-def _solar_north_angles(input_collection: NDCollection):
-    data_shape = template_cube(input_collection, preferred_key="Z").data.shape
+def _solar_north_angles(input_collection: NDCollection) -> dict[str, u.Quantity]:
+    """Return solar-north angles for each M/Z/P input cube."""
+    data_shape = get_template_cube(input_collection, preferred_key="Z").data.shape
     lats = compute_lats(input_collection["Z"].wcs, data_shape)
     return {
         key: solnorth_from_wcs(input_collection[key].wcs, shape=data_shape, precomputed_lats=lats)
@@ -218,8 +239,8 @@ def mzpsolar_to_bpb(input_collection, **kwargs):
     B, pB, pBp = bp3_from_analyzer_brightness(analyzer_stack, MZP_ANGLES, alpha)
     _warn_if_information_is_lost(pBp, B, "mzpsolar_to_bpb")
 
-    mask = combine_mask(input_collection)
-    template = template_cube(input_collection, preferred_key="M")
+    mask = combine_all_collection_masks(input_collection)
+    template = get_template_cube(input_collection, preferred_key="M")
     shared_polaroff = _shared_polaroff(input_collection, ["M", "Z", "P"])
     cubes = [
         ("B", NDCube(B, wcs=template.wcs, mask=mask, meta=_meta_with_shared_polaroff(template, shared_polaroff, POLAR="B"))),
@@ -238,7 +259,7 @@ def bpb_to_mzpsolar(input_collection, **kwargs):
     alpha = _alpha_data(input_collection)
     B, pB = input_collection["B"].data, input_collection["pB"].data
     mzp_stack = bp3_to_analyzer_brightness(B, pB, np.zeros_like(pB), alpha, MZP_ANGLES)
-    mask = combine_mask(input_collection)
+    mask = combine_all_collection_masks(input_collection)
     cubes = _mzp_cubes_from_stack(mzp_stack, input_collection, mask=mask, preferred_key="B")
     _append_alpha(cubes, input_collection, mask=mask)
     return _collection_from_cubes(cubes)
@@ -254,8 +275,8 @@ def bpb_to_btbr(input_collection, **kwargs):
     Br = (B - pB) / 2
     Bt = (B + pB) / 2
 
-    mask = combine_mask(input_collection)
-    template = template_cube(input_collection, preferred_key="B")
+    mask = combine_all_collection_masks(input_collection)
+    template = get_template_cube(input_collection, preferred_key="B")
     cubes = [
         ("Bt", NDCube(Bt, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR="Bt"))),
         ("Br", NDCube(Br, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR="Br"))),
@@ -274,8 +295,8 @@ def btbr_to_bpb(input_collection, **kwargs):
     pB = (Bt - Br)
     B = (Bt + Br)
 
-    mask = combine_mask(input_collection)
-    template = template_cube(input_collection, preferred_key="Bt")
+    mask = combine_all_collection_masks(input_collection)
+    template = get_template_cube(input_collection, preferred_key="Bt")
     cubes = [
         ("B", NDCube(B, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR="B"))),
         ("pB", NDCube(pB, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR="pB"))),
@@ -298,8 +319,8 @@ def mzpsolar_to_stokes(input_collection, **kwargs):
     Bq = mueller_matrix[1, 0] * Bm + mueller_matrix[1, 1] * Bz + mueller_matrix[1, 2] * Bp
     Bu = mueller_matrix[2, 0] * Bm + mueller_matrix[2, 1] * Bz + mueller_matrix[2, 2] * Bp
 
-    mask = combine_mask(input_collection)
-    template = template_cube(input_collection, preferred_key="M")
+    mask = combine_all_collection_masks(input_collection)
+    template = get_template_cube(input_collection, preferred_key="M")
     shared_polaroff = _shared_polaroff(input_collection, ["M", "Z", "P"])
     cubes = [
         ("I", NDCube(Bi, wcs=template.wcs, mask=mask, meta=_meta_with_shared_polaroff(template, shared_polaroff, POLAR="Stokes I"))),
@@ -319,16 +340,16 @@ def stokes_to_mzpsolar(input_collection, **kwargs):
     Bi, Bq, Bu = input_collection["I"].data, input_collection["Q"].data, input_collection["U"].data
 
     inv_mul_mx = (1 / 2) * np.array([
-        [1, -np.cos(2 * angle_difference_radians(-60 * u.degree, alpha)), -np.sin(2 * angle_difference_radians(-60 * u.degree, alpha))],
-        [1, -np.cos(2 * angle_difference_radians(0 * u.degree, alpha)), 0],
-        [1, -np.cos(2 * angle_difference_radians(60 * u.degree, alpha)), -np.sin(2 * angle_difference_radians(60 * u.degree, alpha))],
+        [1, -np.cos(2 * _angle_difference_radians(-60 * u.degree, alpha)), -np.sin(2 * _angle_difference_radians(-60 * u.degree, alpha))],
+        [1, -np.cos(2 * _angle_difference_radians(0 * u.degree, alpha)), 0],
+        [1, -np.cos(2 * _angle_difference_radians(60 * u.degree, alpha)), -np.sin(2 * _angle_difference_radians(60 * u.degree, alpha))],
     ])
 
     Bm = inv_mul_mx[0, 0] * Bi + inv_mul_mx[0, 1] * Bq + inv_mul_mx[0, 2] * Bu
     Bz = inv_mul_mx[1, 0] * Bi + inv_mul_mx[1, 1] * Bq + inv_mul_mx[1, 2] * Bu
     Bp = inv_mul_mx[2, 0] * Bi + inv_mul_mx[2, 1] * Bq + inv_mul_mx[2, 2] * Bu
 
-    mask = combine_mask(input_collection)
+    mask = combine_all_collection_masks(input_collection)
     cubes = _mzp_cubes_from_stack([Bm, Bz, Bp], input_collection, mask=mask, preferred_key="I")
     alpha_plane = np.full(np.shape(Bm), alpha.to_value(u.radian)) * u.radian
     cubes.append(("alpha", NDCube(alpha_plane, wcs=input_collection["I"].wcs, mask=mask)))
@@ -346,8 +367,8 @@ def mzpsolar_to_bp3(input_collection, **kwargs):
     analyzer_stack = np.stack(stack_data(input_collection, ["M", "Z", "P"]), axis=0)
     B, pB, pBp = bp3_from_analyzer_brightness(analyzer_stack, MZP_ANGLES, alpha)
 
-    mask = combine_mask(input_collection)
-    template = template_cube(input_collection, preferred_key="M")
+    mask = combine_all_collection_masks(input_collection)
+    template = get_template_cube(input_collection, preferred_key="M")
     shared_polaroff = _shared_polaroff(input_collection, ["M", "Z", "P"])
     cubes = [
         ("B", NDCube(B, wcs=template.wcs, mask=mask, meta=_meta_with_shared_polaroff(template, shared_polaroff, POLAR="B"))),
@@ -369,7 +390,7 @@ def bp3_to_mzpsolar(input_collection, **kwargs):
     alpha = _alpha_data(input_collection)
     mzp_stack = bp3_to_analyzer_brightness(B, pB, pBp, alpha, MZP_ANGLES)
 
-    mask = combine_mask(input_collection)
+    mask = combine_all_collection_masks(input_collection)
     cubes = _mzp_cubes_from_stack(mzp_stack, input_collection, mask=mask, preferred_key="B")
     _append_alpha(cubes, input_collection, mask=mask)
     return _collection_from_cubes(cubes)
@@ -387,12 +408,12 @@ def btbr_to_mzpsolar(input_collection, **kwargs):
 
     mzp_stack = np.stack(
         [
-            Bt * np.sin(angle_difference_radians(angle, alpha)) ** 2 + Br * np.cos(angle_difference_radians(angle, alpha)) ** 2
+            Bt * np.sin(_angle_difference_radians(angle, alpha)) ** 2 + Br * np.cos(_angle_difference_radians(angle, alpha)) ** 2
             for angle in MZP_ANGLES
         ],
         axis=0,
     )
-    mask = combine_mask(input_collection)
+    mask = combine_all_collection_masks(input_collection)
     cubes = _mzp_cubes_from_stack(mzp_stack, input_collection, mask=mask, preferred_key="Bt")
     _append_alpha(cubes, input_collection, mask=mask)
     return _collection_from_cubes(cubes)
@@ -416,8 +437,8 @@ def bp3_to_bthp(input_collection, **kwargs):
         where=np.not_equal(B, 0),
     )
 
-    mask = combine_mask(input_collection)
-    template = template_cube(input_collection, preferred_key="B")
+    mask = combine_all_collection_masks(input_collection)
+    template = get_template_cube(input_collection, preferred_key="B")
     cubes = [
         ("B", NDCube(B, wcs=template.wcs, mask=mask, meta=template.meta)),
         ("theta", NDCube(theta, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR="Theta"))),
@@ -438,10 +459,10 @@ def btbr_to_npol(input_collection, out_angles: u.degree, **kwargs):
     Bt, Br = input_collection["Bt"].data, input_collection["Br"].data
 
     cubes = []
-    mask = combine_mask(input_collection)
-    template = template_cube(input_collection, preferred_key="Bt")
+    mask = combine_all_collection_masks(input_collection)
+    template = get_template_cube(input_collection, preferred_key="Bt")
     for angle in out_angles:
-        value = Bt * np.sin(angle_difference_radians(angle, alpha)) ** 2 + Br * np.cos(angle_difference_radians(angle, alpha)) ** 2
+        value = Bt * np.sin(_angle_difference_radians(angle, alpha)) ** 2 + Br * np.cos(_angle_difference_radians(angle, alpha)) ** 2
         cubes.append((str(angle), NDCube(value, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR=angle))))
     _append_alpha(cubes, input_collection, mask=mask)
     return _collection_from_cubes(cubes)
@@ -455,7 +476,7 @@ def npol_to_mzpsolar(input_collection, in_angles: u.degree = None, reference_ang
     ------
     Equation 44 in DeForest et al. 2022.
     """
-    input_keys = data_keys(input_collection)
+    input_keys = get_data_keys(input_collection)
     phi = (
         in_angles
         if in_angles is not None
@@ -473,7 +494,7 @@ def npol_to_mzpsolar(input_collection, in_angles: u.degree = None, reference_ang
         solved_angles=MZP_ANGLES,
         reference_angle=reference_angle,
     )
-    mask = combine_mask(input_collection)
+    mask = combine_all_collection_masks(input_collection)
     cube_list = _mzp_cubes_from_stack(solved_stack, input_collection, mask=mask)
     _append_alpha(cube_list, input_collection, mask=mask)
     return _collection_from_cubes(cube_list)
@@ -487,7 +508,7 @@ def mzpsolar_to_npol(input_collection, out_angles: u.degree, reference_angle=0 *
     Equation 45 in DeForest et al. 2022.
     angles: list of input angles in degree
     """
-    in_keys = data_keys(input_collection)
+    in_keys = get_data_keys(input_collection)
     source_angles = u.Quantity(
         [
             as_angle(input_collection[key].meta["POLAR"], u.degree)
@@ -502,8 +523,8 @@ def mzpsolar_to_npol(input_collection, out_angles: u.degree, reference_angle=0 *
         reference_angle=reference_angle,
     )
 
-    mask = combine_mask(input_collection)
-    template = template_cube(input_collection)
+    mask = combine_all_collection_masks(input_collection)
+    template = get_template_cube(input_collection)
     shared_polaroff = _shared_polaroff(input_collection, in_keys)
     output_cubes = []
     for angle, value in zip(out_angles, projected, strict=False):
@@ -536,8 +557,8 @@ def fourpol_to_stokes(input_collection, **kwargs):
     Bq = input_collection[str(90 * u.degree)].data - input_collection[str(0 * u.degree)].data
     Bu = input_collection[str(135 * u.degree)].data - input_collection[str(45 * u.degree)].data
 
-    mask = combine_mask(input_collection)
-    template = template_cube(input_collection, preferred_key=str(0 * u.degree))
+    mask = combine_all_collection_masks(input_collection)
+    template = get_template_cube(input_collection, preferred_key=str(0 * u.degree))
     cubes = [
         ("I", NDCube(Bi, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR="Stokes I"))),
         ("Q", NDCube(Bq, wcs=template.wcs, mask=mask, meta=clone_meta(template, POLAR="Stokes Q"))),
@@ -553,7 +574,7 @@ def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwar
         Equation 45 in DeForest et al. 2022.
         out_angles: list of target angles in degree
         """
-    mask = combine_mask(input_collection)
+    mask = combine_all_collection_masks(input_collection)
     solar_north = _solar_north_angles(input_collection)
     cubes = []
     input_triplet = {
@@ -567,7 +588,7 @@ def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwar
         phi = wrap_linear_polarization(alpha_j - solar_north[key])
         value = (1 / 3) * np.sum(
             [
-                data_i * (4 * np.cos(angle_difference_radians(phi, theta_i + reference_angle)) ** 2 - 1)
+                data_i * (4 * np.cos(_angle_difference_radians(phi, theta_i + reference_angle)) ** 2 - 1)
                 for theta_i, data_i in input_triplet.values()
             ],
             axis=0,
@@ -599,7 +620,7 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
     Equation 45 in DeForest et al. 2022.
     angles: list of input angles in degree
     """
-    mask = combine_mask(input_collection)
+    mask = combine_all_collection_masks(input_collection)
     solar_north = _solar_north_angles(input_collection)
     input_triplet = {
         key: (
@@ -614,7 +635,7 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
         phi = wrap_linear_polarization(solar_north[key] + mzp_angle)
         value = (1 / 3) * np.sum(
             [
-                data_i * (4 * np.cos(angle_difference_radians(phi, theta_i + reference_angle)) ** 2 - 1)
+                data_i * (4 * np.cos(_angle_difference_radians(phi, theta_i + reference_angle)) ** 2 - 1)
                 for theta_i, data_i in input_triplet.values()
             ],
             axis=0,

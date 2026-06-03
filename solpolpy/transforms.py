@@ -14,9 +14,9 @@ from solpolpy.errors import InvalidDataError, MissingAlphaError
 from solpolpy.physics import (
     MZP_ANGLES,
     as_angle,
-    calculate_angle_difference,
     bp3_from_polarizer_brightness,
     bp3_to_polarizer_brightness,
+    calculate_angle_difference,
     clone_meta,
     get_data_keys,
     get_template_cube,

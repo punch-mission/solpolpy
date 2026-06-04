@@ -1,1 +1,1 @@
-TEREO-A instrument reference angle sign correction; adding useful comments
+STEREO-A instrument reference angle sign correction; adding useful comments

@@ -1,0 +1,1 @@
+Robust handling of POLAROFF values when metadata comes from FITS headers or FITS-like objects

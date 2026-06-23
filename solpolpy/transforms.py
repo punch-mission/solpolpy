@@ -230,6 +230,11 @@ def _solar_north_angles(input_collection: NDCollection) -> dict[str, u.Quantity]
     }
 
 
+def _mzp_data_stack(collection: NDCollection) -> np.ndarray:
+    """Return M/Z/P data in canonical order."""
+    return np.stack([collection[key].data for key in ["M", "Z", "P"]], axis=0)
+
+
 @transform(System.mzpsolar, System.bpb, use_alpha=True)
 def mzpsolar_to_bpb(input_collection, **kwargs):
     """
@@ -703,35 +708,30 @@ def mzpsolar_to_mzpinstru(input_collection, reference_angle=0 * u.degree, **kwar
 
     **Projection step**
         For each target polarizer *j* (at instrument angle
-        ``alpha_j = POLAR_j + POLAROFF_j``)::
-
-            phi_j = alpha_j - solar_north        # solar-frame angle of pol. j
-            B_j   = (1/3) * sum_i [B_i * (4*cos²(phi_j − theta_i) − 1)]
-
-        where ``theta_i`` are the *solar-frame* angles of the source (solar)
-        polarizers (−60°, 0°, +60°) and ``solar_north`` is the pixel-by-pixel
-        position angle of solar north in the instrument/image frame (computed
-        from the WCS gradient).
+        ``alpha_j = POLAR_j + POLAROFF_j``), build its solar-frame angle
+        ``phi_j = alpha_j - solar_north`` and delegate the Equation 45
+        projection to :func:`mzpsolar_to_npol`.
     """
     mask = combine_all_collection_masks(input_collection)
     solar_north = _solar_north_angles(input_collection)
-    cubes = []
-    input_triplet = {
-        key: (as_angle(input_collection[key].meta["POLAR"], u.degree), input_collection[key].data)
-        for key in ["M", "Z", "P"]
-    }
+
+    target_angles = []
     for key in ["M", "Z", "P"]:
         nominal_angle = as_angle(input_collection[key].meta["POLAR"], u.degree)
         polaroff = as_angle(input_collection[key].meta.get("POLAROFF", 0), u.degree)
-        alpha_j = nominal_angle + polaroff
-        phi = wrap_linear_polarization(alpha_j - solar_north[key])
-        value = (1 / 3) * np.sum(
-            [
-                data_i * (4 * np.cos(_angle_difference_radians(phi, theta_i + reference_angle)) ** 2 - 1)
-                for theta_i, data_i in input_triplet.values()
-            ],
-            axis=0,
-        )
+        target_angles.append(wrap_linear_polarization(nominal_angle + polaroff - solar_north[key]))
+
+    projected = mzpsolar_to_npol(
+        input_collection,
+        out_angles=u.Quantity(target_angles),
+        reference_angle=reference_angle,
+    )
+    projected_stack = np.stack(stack_data(projected, get_data_keys(projected)), axis=0)
+
+    cubes = []
+    for key, value in zip(["M", "Z", "P"], projected_stack, strict=False):
+        nominal_angle = as_angle(input_collection[key].meta["POLAR"], u.degree)
+        polaroff = as_angle(input_collection[key].meta.get("POLAROFF", 0), u.degree)
         cubes.append(
             (
                 key,
@@ -768,39 +768,38 @@ def mzpinstru_to_mzpsolar(input_collection, reference_angle=0*u.degree, **kwargs
 
             theta_i = POLAR_i + POLAROFF_i
 
-        For each target solar polarizer *k* (at solar angle ``mzp_angle_k``
-        ∈ {−60°, 0°, +60°}) the corresponding *instrument-frame* angle is::
-
-            phi_k = solar_north + mzp_angle_k
-
-        The brightness is then obtained by projecting the instrument-frame
-        measurements onto ``phi_k`` via Eq. 45::
-
-            B_k = (1/3) * sum_i [B_i * (4*cos²(phi_k − theta_i) − 1)]
-
-        ``solar_north`` is the pixel-by-pixel position angle of solar north
-        in the instrument/image frame (from the WCS gradient).
+        Convert those source angles into the solar frame with
+        ``theta_i - solar_north`` and delegate the solve onto the canonical
+        solar M/Z/P basis to :func:`npol_to_mzpsolar`.
     """
     mask = combine_all_collection_masks(input_collection)
     solar_north = _solar_north_angles(input_collection)
-    input_triplet = {
-        key: (
-            as_angle(input_collection[key].meta["POLAR"], u.degree)
-            + as_angle(input_collection[key].meta.get("POLAROFF", 0), u.degree),
-            input_collection[key].data,
-        )
-        for key in ["M", "Z", "P"]
-    }
+
+    input_keys = ["M", "Z", "P"]
+    source_angles = u.Quantity(
+        [
+            wrap_linear_polarization(
+                as_angle(input_collection[key].meta["POLAR"], u.degree)
+                + as_angle(input_collection[key].meta.get("POLAROFF", 0), u.degree)
+                - solar_north[key]
+            )
+            for key in input_keys
+        ]
+    )
+    ordered_input = NDCollection(
+        [(key, input_collection[key]) for key in input_keys],
+        meta={},
+        aligned_axes="all",
+    )
+    solved = npol_to_mzpsolar(
+        ordered_input,
+        in_angles=source_angles,
+        reference_angle=reference_angle,
+    )
+    solved_stack = _mzp_data_stack(solved)
+
     cubes = []
-    for key, mzp_angle in zip(["M", "Z", "P"], MZP_ANGLES, strict=False):
-        phi = wrap_linear_polarization(solar_north[key] + mzp_angle)
-        value = (1 / 3) * np.sum(
-            [
-                data_i * (4 * np.cos(_angle_difference_radians(phi, theta_i + reference_angle)) ** 2 - 1)
-                for theta_i, data_i in input_triplet.values()
-            ],
-            axis=0,
-        )
+    for key, mzp_angle, value in zip(["M", "Z", "P"], MZP_ANGLES, solved_stack, strict=False):
         cubes.append(
             (
                 key,

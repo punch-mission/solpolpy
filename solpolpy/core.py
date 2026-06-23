@@ -259,7 +259,7 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
     if len(img_shape) == 2:  # it's an image and not just an array
         try:
             alpha = radial_from_wcs(wcs, img_shape)
-        except (AttributeError, KeyError, TypeError, ValueError) as err:  # pragma: no cover - best-effort fallback
+        except (AttributeError, KeyError, TypeError, ValueError) as err:
             alpha = radial_north(img_shape)
             try:
                 # ``radial_north`` is already north-referenced; subtract the

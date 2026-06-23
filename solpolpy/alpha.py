@@ -52,7 +52,6 @@ def radial_from_wcs(wcs, shape):
     return np.arctan2(-tx, ty) * u.radian
 
 
-
 ALPHA_FUNCTIONS = {"radial_north": radial_north,
 "radial_from_wcs": radial_from_wcs,
                    "zeros": np.zeros}

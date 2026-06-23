@@ -1,15 +1,17 @@
 """Core transformation functions for solpolpy."""
 import typing as t
+import warnings
 
 import astropy.units as u
 import networkx as nx
 from ndcube import NDCollection, NDCube
 
-from solpolpy.alpha import radial_north
+from solpolpy.alpha import radial_from_wcs, radial_north
 from solpolpy.constants import STEREOA_REFERENCE_ANGLE, STEREOB_REFERENCE_ANGLE
 from solpolpy.errors import UnsupportedTransformationError
 from solpolpy.instruments import load_data
 from solpolpy.transforms import SYSTEM_REQUIRED_KEYS, System, transform_graph
+from solpolpy.util import solnorth_from_wcs, wrap_pm_pi
 
 
 @u.quantity_input
@@ -236,15 +238,40 @@ def add_alpha(input_data: NDCollection) -> NDCollection:
     NDCollection
         dataset with alpha array appended
 
+    Notes
+    -----
+    ``alpha`` is the per-pixel angle field used by the polarization transforms.
+    It is referenced to solar north with north = 0 and counterclockwise-positive
+    rotation. When the WCS contains usable solar coordinates, the alpha field is
+    constructed from that WCS so partial-frame images inherit the correct subset
+    of the larger solar-centered geometry.
+
     """
-    # test if alpha exists. if not check if alpha keyword added. if not create default alpha with warning.
+    # Prefer a WCS-derived radial direction so partial frames keep the correct
+    # solar-center geometry. The north-referenced image-center fallback keeps
+    # legacy/non-solar WCS inputs usable, but warns because the result is only
+    # an approximation.
     img_shape = _determine_image_shape(input_data)
     keys = list(input_data.keys())
     wcs = input_data[keys[0]].wcs
     meta = input_data[keys[0]].meta
 
     if len(img_shape) == 2:  # it's an image and not just an array
-        alpha = radial_north(img_shape)
+        try:
+            alpha = radial_from_wcs(wcs, img_shape)
+        except (AttributeError, KeyError, TypeError, ValueError) as err:
+            alpha = radial_north(img_shape)
+            try:
+                # ``radial_north`` is already north-referenced; subtract the
+                # WCS north rotation to express the same radial field in the
+                # image frame used by the polarizer equations.
+                alpha = wrap_pm_pi(alpha - solnorth_from_wcs(wcs, img_shape).to(u.radian))
+            except (AttributeError, KeyError, TypeError, ValueError):
+                pass
+            warnings.warn(
+                f"Falling back to an image-centered alpha approximation because WCS-based alpha construction failed: {err}",
+                stacklevel=2,
+            )
     else:
         msg = f"Data must be an image with 2 dimensions, found {len(img_shape)}."
         raise ValueError(msg)

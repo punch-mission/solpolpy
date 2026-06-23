@@ -253,3 +253,12 @@ def solnorth_from_wcs(input_wcs, shape, precomputed_lats=None):
     angle_solar_north = np.degrees(np.arctan2(north_dy, north_dx)) - 90
 
     return angle_solar_north * u.degree
+
+
+@u.quantity_input(angle=u.radian)
+def wrap_pm_pi(angle: u.Quantity):
+    """Wrap an angle into [-pi, pi) or the unit-equivalent interval."""
+    input_unit = angle.unit
+    quantity = angle.to(u.radian)
+    wrapped = (quantity + np.pi * u.radian) % (2 * np.pi * u.radian) - np.pi * u.radian
+    return wrapped.to(input_unit)

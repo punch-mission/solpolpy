@@ -1,1 +1,1 @@
-Fixes solar-instrument roundtrip issue for MZP transform
+Fixes solar-instrument roundtrip issue for MZP transform.

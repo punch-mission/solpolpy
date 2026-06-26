@@ -363,9 +363,9 @@ def mzp_ones_solar():
 def test_mzp_mzp_ones_solar(mzp_ones_solar):
     actual = transforms.mzpsolar_to_mzpinstru(mzp_ones_solar)
     expected_data = [
-        ("M", NDCube(np.array([[0.99, 1.99], [1.99, 3.99]]), wcs=wcs_new, meta={"POLAR": 0 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
-        ("Z", NDCube(np.array([[0.95, 1.91], [1.91, 3.83]]), wcs=wcs_new, meta={"POLAR": -60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
-        ("P", NDCube(np.array([[1.04, 2.08], [2.08, 4.16]]), wcs=wcs_new, meta={"POLAR": 60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'}))]
+        ("M", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs_new, meta={"POLAR": -60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
+        ("Z", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs_new, meta={"POLAR": 0 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'})),
+        ("P", NDCube(np.array([[1, 2], [2, 4]]), wcs=wcs_new, meta={"POLAR": 60 * u.degree, "POLAROFF": 1, "POLARREF": 'Instrument'}))]
     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data, atol=1.e-2)

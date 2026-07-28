@@ -1,3 +1,19 @@
+Version 0.7.0: July 28, 2026
+============================
+
+New Features
+------------
+
+- Updated mzpsolar_to_npol to take POLAROFF. (`#209 <https://github.com/punch-mission/solpolpy/pull/209>`__)
+- Adds a new function to generate alpha matrix using wcs (`#217 <https://github.com/punch-mission/solpolpy/pull/217>`__)
+
+
+Bug Fixes
+---------
+
+- Fixes solar-instrument roundtrip issue for MZP transform. (`#218 <https://github.com/punch-mission/solpolpy/pull/218>`__)
+
+
 0.6.1: April 1, 2026
 ====================
 

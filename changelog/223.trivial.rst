@@ -1,0 +1,1 @@
+Minor style fixes to make newer Ruff versions happy.

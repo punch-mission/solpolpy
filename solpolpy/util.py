@@ -231,28 +231,39 @@ def solnorth_from_wcs(input_wcs, shape, precomputed_lats=None):
 
     Returns
     -------
-    angle_solar_north : 2D numpy.ndarray
+    angle_solar_north : astropy.units.Quantity
         Angle in degrees from +Y image axis to solar north at each pixel (measured counterclockwise).
     """
+    nrows, ncols = shape
+    y, x = np.mgrid[0:nrows, 0:ncols]
+    coords = pixel_to_skycoord(x, y, input_wcs, mode="all")
+
+    # Unwrap helioprojective longitude before taking local WCS derivatives.
+    lon = coords.Tx.wrap_at(180 * u.degree).to_value(u.radian)
+    lon = np.unwrap(np.unwrap(lon, axis=1), axis=0)
 
     if precomputed_lats is None:
-        lat = compute_lats(input_wcs, shape)
+        lat = coords.Ty.to_value(u.radian)
     else:
-        lat = precomputed_lats
+        lat = np.deg2rad(precomputed_lats)
 
-    # Compute gradient of solar latitude (points toward solar north)
+    # J maps an image-plane displacement (dx, dy) to (d_lon, d_lat).
+    dy_lon, dx_lon = np.gradient(lon)
     dy_lat, dx_lat = np.gradient(lat)
+    jacobian_determinant = dx_lon * dy_lat - dy_lon * dx_lat
 
-    # Normalize vectors
-    norm = np.hypot(dx_lat, dy_lat)
-    norm[norm == 0] = np.nan
-    north_dx = dx_lat / norm
-    north_dy = dy_lat / norm
+    # Solar north is the image direction that maps to d_lon=0, d_lat>0.
+    # J^-1 @ (0, 1) gives (-d_lon/dy, d_lon/dx) / det(J).
+    jacobian_scale = np.hypot(dx_lon, dy_lon) * np.hypot(dx_lat, dy_lat)
+    singular = (~np.isfinite(jacobian_determinant)
+                | (np.abs(jacobian_determinant) <= np.finfo(float).eps * jacobian_scale))
+    jacobian_determinant = np.where(singular, np.nan, jacobian_determinant)
+    north_dx = -dy_lon / jacobian_determinant
+    north_dy = dx_lon / jacobian_determinant
 
-    # angle from +Y direction
-    angle_solar_north = np.degrees(np.arctan2(north_dy, north_dx)) - 90
-
-    return angle_solar_north * u.degree
+    # Convert the usual +X-referenced atan2 angle to the detector +Y convention.
+    angle_solar_north = np.arctan2(north_dy, north_dx) * u.radian - 90 * u.degree
+    return wrap_pm_pi(angle_solar_north).to(u.degree)
 
 
 @u.quantity_input(angle=u.radian)

@@ -7,4 +7,13 @@ from solpolpy.transforms import System
 from solpolpy.util import collection_to_maps, solnorth_from_wcs
 
 __version__ = importlib.metadata.version("solpolpy")
-__all__ = [resolve, load_data, get_colormap_str, plot_collection, generate_rgb_image, collection_to_maps, solnorth_from_wcs, System]
+__all__ = [
+           "System",
+           "collection_to_maps",
+           "generate_rgb_image",
+           "get_colormap_str",
+           "load_data",
+           "plot_collection",
+           "resolve",
+           "solnorth_from_wcs",
+]

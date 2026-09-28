@@ -4,10 +4,10 @@ DeForest, C. E., Seaton, D. B., & West, M. J. (2022).
 Three-polarizer Treatment of Linear Polarization in Coronagraphs and Heliospheric Imagers.
 The Astrophysical Journal, 927(1), 98.
 """
-import sys
 import copy
+import sys
 from enum import StrEnum
-from inspect import signature, getmembers, isfunction
+from inspect import getmembers, isfunction, signature
 
 import astropy.units as u
 import networkx as nx
@@ -127,7 +127,7 @@ def mzpsolar_to_bpb(input_collection, **kwargs):
     ------
     Equation 7 and 9 in DeForest et al. 2022.
 
-    """""
+    """
     # TODO: need to check if 3 angles are input.
     # TODO: need to check if separated appropriately if not create quality warning.
     input_dict = {}
@@ -306,7 +306,7 @@ def mzpsolar_to_bp3(input_collection, **kwargs):
     Notes
     ------
     Equation 7, 9 and 10 in DeForest et al. 2022.
-    """""
+    """
     input_dict = {}
     in_list = list(input_collection)
 
@@ -350,7 +350,7 @@ def bp3_to_mzpsolar(input_collection, **kwargs):
     Notes
     ------
     Equation 11 in DeForest et al. 2022.
-    """""
+    """
     B, pB, pBp = input_collection["B"].data, input_collection["pB"].data, input_collection["pBp"].data
     alpha = input_collection["alpha"].data * u.radian
 
@@ -411,7 +411,7 @@ def bp3_to_bthp(input_collection, **kwargs):
     Notes
     ------
     Equations 9, 15, 16 in DeForest et al. 2022.
-    """""
+    """
     B, pB, pBp = input_collection["B"].data, input_collection["pB"].data, input_collection["pBp"].data
     alpha = input_collection["alpha"].data * u.radian
 
@@ -507,7 +507,7 @@ def fourpol_to_stokes(input_collection, **kwargs):
     ------
     Table 1 in DeForest et al. 2022.
 
-    """""
+    """
     Bi = input_collection[str(0 * u.degree)].data + input_collection[str(90 * u.degree)].data
     Bq = input_collection[str(90 * u.degree)].data - input_collection[str(0 * u.degree)].data
     Bu = input_collection[str(135 * u.degree)].data - input_collection[str(45 * u.degree)].data

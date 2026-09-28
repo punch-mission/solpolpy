@@ -1,4 +1,4 @@
-import copy as copy
+import copy
 
 import astropy.units as u
 import numpy as np
@@ -62,7 +62,7 @@ def convert_cd_matrix_to_pc_matrix(wcs):
         new_wcs.wcs.cdelt = (-cdelt1, cdelt2)
         new_wcs.wcs.cunit = 'deg', 'deg'
         return new_wcs
-    else:  # noqa RET505
+    else:
         return wcs
 
 
@@ -197,7 +197,7 @@ def collection_to_maps(collection):
     """
     sunpy_maps = []
 
-    for key in collection.keys():
+    for key in collection:
         data = collection[key].data
         wcs = collection[key].wcs
 

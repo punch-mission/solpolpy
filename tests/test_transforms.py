@@ -149,9 +149,9 @@ def bp3_ones():
 def test_bp3_mzp_ones(bp3_ones):
     actual = transforms.bp3_to_mzpsolar(bp3_ones)
     expected_data = []
-    expected_data.append(("M", NDCube(np.array([1]), wcs=wcs)))
-    expected_data.append(("Z", NDCube(np.array([-0.5]), wcs=wcs)))
-    expected_data.append(("P", NDCube(np.array([1]), wcs=wcs)))
+    expected_data.append(("M", NDCube(np.array([(3 + np.sqrt(3)) / 4]), wcs=wcs)))
+    expected_data.append(("Z", NDCube(np.array([0]), wcs=wcs)))
+    expected_data.append(("P", NDCube(np.array([(3 - np.sqrt(3)) / 4]), wcs=wcs)))
     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
     for k in list(expected):
         assert np.allclose(actual[str(k)].data, expected[str(k)].data)

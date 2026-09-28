@@ -6,7 +6,7 @@ from astropy.io import fits
 from ndcube import NDCollection, NDCube
 from pytest import fixture
 
-import solpolpy.transforms as transforms
+from solpolpy import transforms
 from solpolpy.errors import MissingAlphaError, SolpolpyError
 from tests.fixtures import *
 

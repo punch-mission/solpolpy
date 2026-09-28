@@ -1,16 +1,10 @@
 exclude: "\\.asdf$"
 repos:
-  # This should be before any formatting hooks like isort
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.15.20"
     hooks:
       - id: ruff
-        args: ["--fix"]
-  - repo: https://github.com/PyCQA/isort
-    rev: 9.0.0a3
-    hooks:
-      - id: isort
-        exclude: ".*(.fits|.fts|.fit|.header|.txt|tca.*|extern.*|sunpy/extern)$"
+        args: ["--fix", "--extend-select", "I,PLE0604,PLC0414,SIM118,PLR0402,RUF100"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:

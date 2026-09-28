@@ -1,0 +1,1 @@
+Fixed typo in a function and solar north angle determination at wide angles.

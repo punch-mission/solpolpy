@@ -148,7 +148,7 @@ def apply_distortion_shift(input_image, new_x, new_y, valid_mask, i_coords, j_co
 
 
 def make_empty_distortion_model(num_bins: int, image: np.ndarray) -> (DistortionLookupTable, DistortionLookupTable):
-    """ Create an empty distortion table
+    """Create distortion tables with zero pixel offsets in both axes.
 
     Parameters
     ----------
@@ -169,7 +169,7 @@ def make_empty_distortion_model(num_bins: int, image: np.ndarray) -> (Distortion
     c = (c[1:] + c[:-1]) / 2
 
     err_px, err_py = r, c
-    err_x = np.ones((num_bins, num_bins))
+    err_x = np.zeros((num_bins, num_bins))
     err_y = np.zeros((num_bins, num_bins))
 
     cpdis1 = DistortionLookupTable(
@@ -206,18 +206,18 @@ def collection_to_maps(collection):
     return sunpy_maps
 
 
-def compute_lats(wcs, shape):
+def compute_lats(wcs, shape) -> u.Quantity:
     nrows, ncols = shape
     y, x = np.mgrid[0:nrows, 0:ncols]
 
     # Get solar coordinates (Tx, Ty) for each pixel
     coords = pixel_to_skycoord(x, y, wcs)
-    lat = coords.Ty.to_value(u.deg)  # solar Y
+    lat = coords.Ty.to(u.deg)  # solar Y
     return lat
 
 
-
-def solnorth_from_wcs(input_wcs, shape, precomputed_lats=None):
+@u.quantity_input(precomputed_lats=u.radian)
+def solnorth_from_wcs(input_wcs, shape, precomputed_lats: u.Quantity | None = None):
     """
     Compute the angle of solar north direction at each pixel using the solar WCS.
 
@@ -228,6 +228,9 @@ def solnorth_from_wcs(input_wcs, shape, precomputed_lats=None):
 
     shape : tuple
         Shape of the image as (nrows, ncols).
+
+    precomputed_lats : astropy.units.Quantity, optional
+        Precomputed solar latitudes with angular units.
 
     Returns
     -------
@@ -245,15 +248,21 @@ def solnorth_from_wcs(input_wcs, shape, precomputed_lats=None):
     if precomputed_lats is None:
         lat = coords.Ty.to_value(u.radian)
     else:
-        lat = np.deg2rad(precomputed_lats)
+        lat = precomputed_lats.to_value(u.radian)
 
-    # J maps an image-plane displacement (dx, dy) to (d_lon, d_lat).
+    # Over one pixel the WCS is locally linear, so its Jacobian J maps a
+    # detector displacement (dx, dy) to the corresponding sky displacement
+    # (d_lon, d_lat). Solar north is increasing latitude at fixed longitude;
+    # applying J^-1 to the sky direction (0, +1) therefore gives the direction
+    # of solar north in detector pixels. Only this direction, not its length,
+    # is needed for the angle below.
     dy_lon, dx_lon = np.gradient(lon)
     dy_lat, dx_lat = np.gradient(lat)
     jacobian_determinant = dx_lon * dy_lat - dy_lon * dx_lat
 
-    # Solar north is the image direction that maps to d_lon=0, d_lat>0.
     # J^-1 @ (0, 1) gives (-d_lon/dy, d_lon/dx) / det(J).
+    # Flag locally singular WCS transformations instead of assigning an
+    # unstable direction; jacobian_scale makes the threshold scale-relative.
     jacobian_scale = np.hypot(dx_lon, dy_lon) * np.hypot(dx_lat, dy_lat)
     singular = (~np.isfinite(jacobian_determinant)
                 | (np.abs(jacobian_determinant) <= np.finfo(float).eps * jacobian_scale))

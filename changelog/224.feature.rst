@@ -1,1 +1,1 @@
-Fixed typo in a function and solar north angle determination at wide angles.
+Improved solar north angle determination at wide angles using the Jacobian. The previous gradient-based method works well close to the Sun but produces large errors at large angles.

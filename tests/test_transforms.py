@@ -19,8 +19,8 @@ wcs.crval = 10, 0.5, 1
 wcs.cname = "wavelength", "HPC lat", "HPC lon"
 
 
-def test_bpb_mzp_zeros(bpb_zeros):
-    actual = transforms.bpb_to_mzpsolar(bpb_zeros)
+def test_tbpb_mzp_zeros(tbpb_zeros):
+    actual = transforms.tbpb_to_mzpsolar(tbpb_zeros)
     expected_data = []
     expected_data.append(("M", NDCube(np.array([0]), wcs=wcs)))
     expected_data.append(("Z", NDCube(np.array([0]), wcs=wcs)))
@@ -32,16 +32,16 @@ def test_bpb_mzp_zeros(bpb_zeros):
 
 
 @fixture()
-def bpb_ones():
+def tbpb_ones():
     data_out = []
-    data_out.append(("B", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": "B"})))
+    data_out.append(("tB", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": "tB"})))
     data_out.append(("pB", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": "pB"})))
     data_out.append(("alpha", NDCube(np.array([0]) * u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 
-def test_bpb_mzp_ones(bpb_ones):
-    actual = transforms.bpb_to_mzpsolar(bpb_ones)
+def test_tbpb_mzp_ones(tbpb_ones):
+    actual = transforms.tbpb_to_mzpsolar(tbpb_ones)
     expected_data = []
     expected_data.append(("M", NDCube(np.array([3 / 4]), wcs=wcs)))
     expected_data.append(("Z", NDCube(np.array([0]), wcs=wcs)))
@@ -53,16 +53,16 @@ def test_bpb_mzp_ones(bpb_ones):
 
 
 @fixture()
-def btbr_bpb_ones():
+def btbr_tbpb_ones():
     data_out = []
-    data_out.append(("B", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": "B"})))
+    data_out.append(("tB", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": "tB"})))
     data_out.append(("pB", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": "pB"})))
     data_out.append(("alpha", NDCube(np.array([0]) * u.degree, wcs=wcs)))
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 
-def test_bpb_btbr_ones(btbr_bpb_ones):
-    actual = transforms.bpb_to_btbr(btbr_bpb_ones)
+def test_tbpb_btbr_ones(btbr_tbpb_ones):
+    actual = transforms.tbpb_to_btbr(btbr_tbpb_ones)
     expected_data = []
     expected_data.append(("Bt", NDCube(np.array([1]), wcs=wcs)))
     expected_data.append(("Br", NDCube(np.array([0]), wcs=wcs)))
@@ -81,10 +81,10 @@ def btbr_ones():
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 
-def test_btbr_bpb_ones(btbr_ones):
-    actual = transforms.btbr_to_bpb(btbr_ones)
+def test_btbr_tbpb_ones(btbr_ones):
+    actual = transforms.btbr_to_tbpb(btbr_ones)
     expected_data = []
-    expected_data.append(("B", NDCube(np.array([2]), wcs=wcs)))
+    expected_data.append(("tB", NDCube(np.array([2]), wcs=wcs)))
     expected_data.append(("pB", NDCube(np.array([0]), wcs=wcs)))
     expected_data.append(("alpha", NDCube(np.array([0]) * u.radian, wcs=wcs)))
     expected = NDCollection(expected_data, meta={}, aligned_axes="all")
@@ -94,8 +94,8 @@ def test_btbr_bpb_ones(btbr_ones):
 
 def test_btbr_mzp_ways(btbr_ones):
     actual_mzp_direct = transforms.btbr_to_mzpsolar(btbr_ones)
-    actual_bpb = transforms.btbr_to_bpb(btbr_ones)
-    actual_mzp_indirect = transforms.bpb_to_mzpsolar(actual_bpb)
+    actual_tbpb = transforms.btbr_to_tbpb(btbr_ones)
+    actual_mzp_indirect = transforms.tbpb_to_mzpsolar(actual_tbpb)
     for k in list(actual_mzp_direct):
         assert np.allclose(actual_mzp_direct[str(k)].data, actual_mzp_indirect[str(k)].data)
 
@@ -139,7 +139,7 @@ def test_mzp_bp3_missing_alpha_errors(mzpsolar_ones):
 @fixture()
 def bp3_ones():
     data_out = []
-    data_out.append(("B", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": "B"})))
+    data_out.append(("tB", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": "tB"})))
     data_out.append(("pB", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": "pB"})))
     data_out.append(("pBp", NDCube(np.array([1]), wcs=wcs, meta={"POLAR": "pBp"})))
     data_out.append(("alpha", NDCube(np.array([0]) * u.degree, wcs=wcs)))
@@ -180,7 +180,7 @@ def test_btbr_mzp_ones(btbr_ones_mzp):
 def test_bp3_bthp_ones(bp3_ones):
     actual = transforms.bp3_to_bthp(bp3_ones)
     expected_data = []
-    expected_data.append(("B", NDCube(np.array([1]), wcs=wcs)))
+    expected_data.append(("tB", NDCube(np.array([1]), wcs=wcs)))
     expected_data.append(("theta", NDCube(np.array([5 * np.pi / 8]), wcs=wcs)))
     expected_data.append(("p", NDCube(np.array([np.sqrt(2)]), wcs=wcs)))
     expected = NDCollection(expected_data, meta={}, aligned_axes="all")

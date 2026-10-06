@@ -39,13 +39,13 @@ wcs = astropy.wcs.WCS(hdr)
 
 
 def test_determine_image_shape():
-    data_out = [("B", NDCube(np.zeros((20, 20)), wcs=wcs, meta={"POLAR": "B"}))]
+    data_out = [("tB", NDCube(np.zeros((20, 20)), wcs=wcs, meta={"POLAR": "tB"}))]
     collection = NDCollection(data_out, meta={}, aligned_axes="all")
     assert _determine_image_shape(collection) == (20, 20)
 
 
-def test_add_alpha(bpb_ones_no_alpha):
-    data_out = [("B", NDCube(np.zeros((10, 10)), wcs=wcs, meta={"POLAR": "B"})),
+def test_add_alpha(tbpb_ones_no_alpha):
+    data_out = [("tB", NDCube(np.zeros((10, 10)), wcs=wcs, meta={"POLAR": "tB"})),
                 ("pB", NDCube(np.zeros((10, 10)), wcs=wcs, meta={"POLAR": "pB"}))]
     collection = NDCollection(data_out, meta={}, aligned_axes="all")
     assert "alpha" not in collection
@@ -59,8 +59,8 @@ def test_add_alpha(bpb_ones_no_alpha):
      ("fourpol_ones", System.fourpol),
      ("mzpsolar_ones", System.mzpsolar),
      ("mzpsolar_ones_alpha", System.mzpsolar),
-     ("bpb_ones", System.bpb),
-     ("bpb_ones_no_alpha", System.bpb),
+     ("tbpb_ones", System.tbpb),
+     ("tbpb_ones_no_alpha", System.tbpb),
      ("btbr_ones", System.btbr),
      ("btbr_ones_no_alpha", System.btbr),
      ("stokes_ones", System.stokes),

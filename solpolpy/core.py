@@ -36,7 +36,7 @@ def resolve(input_data: list[str] | NDCollection,
         - "mzpinstru": Triplet of images taken at -60°, 0°, and +60° polarizing angles with a reference angle set to instrument frame.
         - "btbr": A Pair of images with polarization along the tangential and radial direction with respect to the Sun respectively.
         - "stokes": Total brightness ("I"), polarized brightness along vertical and horizontal axes (Q) and polarized brightness along ±45° (U) .
-        - "bpb": Total brightness and ‘excess polarized’ brightness images pair respectively.
+        - "tbpb": Total brightness and ‘excess polarized’ brightness images pair respectively.
         - "bp3": Analogous to Stokes I, Q and U, but rotates around the Sun instead of a fixed frame of reference of the instrument.
         - "bthp": Total brightness, angle and degree of polarization.
         - "fourpol": For observations taken at sequence of four polarizer angles, i.e. 0°, 45°, 90° and 135°.

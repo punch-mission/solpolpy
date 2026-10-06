@@ -90,8 +90,8 @@ def mzp_ones_other_order():
 
 
 @fixture()
-def bpb_data():
-    data_out = [("B", NDCube(np.random.random([50, 50]), wcs=wcs, meta={"POLAR": "B"})),
+def tbpb_data():
+    data_out = [("tB", NDCube(np.random.random([50, 50]), wcs=wcs, meta={"POLAR": "tB"})),
                 ("pB", NDCube(np.random.random([50, 50]), wcs=wcs, meta={"POLAR": "pB"}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
@@ -107,26 +107,26 @@ def mzpsolar_ones_alpha():
 
 
 @fixture()
-def bpb_zeros():
-    data_out = [("B", NDCube(np.full((5,5), 0), wcs=wcs, meta={"POLAR": "B"})),
+def tbpb_zeros():
+    data_out = [("tB", NDCube(np.full((5,5), 0), wcs=wcs, meta={"POLAR": "tB"})),
                 ("pB", NDCube(np.full((5,5), 0), wcs=wcs, meta={"POLAR": "pB"})),
                 ("alpha", NDCube(np.full((5,5), 0) , wcs=wcs))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 
 @fixture()
-def bpb_ones():
+def tbpb_ones():
     data, _ = np.mgrid[0:5, 0:5]
-    data_out = [("B", NDCube(data, wcs=wcs, meta={"POLAR": "B"})),
+    data_out = [("tB", NDCube(data, wcs=wcs, meta={"POLAR": "tB"})),
                 ("pB", NDCube(data, wcs=wcs, meta={"POLAR": "pB"})),
                 ("alpha", NDCube(np.full((5,5), 0), wcs=wcs))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
 
 @fixture()
-def bpb_ones_no_alpha():
+def tbpb_ones_no_alpha():
     data, _ = np.mgrid[0:5, 0:5]
-    data_out = [("B", NDCube(data, wcs=wcs, meta={"POLAR": "B"})),
+    data_out = [("tB", NDCube(data, wcs=wcs, meta={"POLAR": "tB"})),
                 ("pB", NDCube(data, wcs=wcs, meta={"POLAR": "pB"}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
 
@@ -160,7 +160,7 @@ def stokes_ones():
 @fixture()
 def bp3_ones():
     data, _ = np.mgrid[0:5, 0:5]
-    data_out = [("B", NDCube(data, wcs=wcs, meta={"POLAR": "B"})),
+    data_out = [("tB", NDCube(data, wcs=wcs, meta={"POLAR": "tB"})),
                 ("pB", NDCube(data, wcs=wcs, meta={"POLAR": "pB"})),
                 ("pBp", NDCube(data, wcs=wcs, meta={"POLAR": "pBp"})),
                 ("alpha", NDCube(np.full((5,5), 0) , wcs=wcs))]
@@ -170,7 +170,7 @@ def bp3_ones():
 @fixture()
 def bp3_ones_no_alpha():
     data, _ = np.mgrid[0:5, 0:5]
-    data_out = [("B", NDCube(data, wcs=wcs, meta={"POLAR": "B"})),
+    data_out = [("tB", NDCube(data, wcs=wcs, meta={"POLAR": "tB"})),
                 ("pB", NDCube(data, wcs=wcs, meta={"POLAR": "pB"})),
                 ("pBp", NDCube(data, wcs=wcs, meta={"POLAR": "pBp"}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
@@ -179,7 +179,7 @@ def bp3_ones_no_alpha():
 @fixture()
 def bthp_ones():
     data, _ = np.mgrid[0:5, 0:5]
-    data_out = [("B", NDCube(data, wcs=wcs, meta={"POLAR": "B"})),
+    data_out = [("tB", NDCube(data, wcs=wcs, meta={"POLAR": "tB"})),
                 ("theta", NDCube(data * u.degree, wcs=wcs, meta={"POLAR": "Theta"})),
                 ("p", NDCube(data, wcs=wcs, meta={"POLAR": "Degree of Polarization"}))]
     return NDCollection(data_out, meta={}, aligned_axes="all")
@@ -220,7 +220,7 @@ def mzpinstru_distortion():
 @fixture()
 def example_fail():
     data, _ = np.mgrid[0:5, 0:5]
-    data_out = [("B", NDCube(data, wcs=wcs, meta={"POLAR": "B"})),
+    data_out = [("tB", NDCube(data, wcs=wcs, meta={"POLAR": "tB"})),
                 ("Bm", NDCube(data, wcs=wcs, meta={"POLAR": "Bm"})),
                 ("alpha", NDCube(np.full((5,5), 0) , wcs=wcs))]
     return NDCollection(data_out, meta={}, aligned_axes="all")

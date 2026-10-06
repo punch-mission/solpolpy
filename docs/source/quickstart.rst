@@ -20,12 +20,12 @@ The easiest way to interact with solpolpy is through the ``resolve`` method:
 
     from solpolpy import resolve, load_data
     paths = ['path_to_image0.fits', 'path_to_image1.fits', 'path_to_image2.fits']
-    out_system = "BpB"
+    out_system = "tBpB"
     input_collection = load_data(paths)
     output_collection = resolve(input_collection, out_system)
 
     # to access the data, just access the appropriate cube
-    print(output_collection['B'].data)
+    print(output_collection['tB'].data)
 
 ``resolve`` takes two (or more depending on the polarization systems) parameters:
 1. the input data and 2. the desired output polarization system.

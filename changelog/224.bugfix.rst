@@ -1,0 +1,1 @@
+Fixed a cosine/sine typo in ``solpolpy.transforms.bp3_to_mzpsolar``.

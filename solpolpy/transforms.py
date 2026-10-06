@@ -358,7 +358,7 @@ def bp3_to_mzpsolar(input_collection, **kwargs):
     Bmzp = {}
     for angle in mzp_angles:
         Bmzp[angle] = (1 / 2) * (tB - np.cos(2 * (angle - alpha)) * pB -
-                               np.cos(2 * (angle - alpha)) * pBp)
+                               np.sin(2 * (angle - alpha)) * pBp)
 
     metaM, metaZ, metaP = copy.copy(input_collection["tB"].meta), copy.copy(input_collection["pB"].meta), copy.copy(
         input_collection["pBp"].meta)

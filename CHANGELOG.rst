@@ -1,3 +1,26 @@
+Version 0.7.1: October 16, 2026
+===============================
+
+New Features
+------------
+
+- Improved solar north angle determination at wide angles using the Jacobian. The previous gradient-based method works well close to the Sun but produces large errors at large angles. (`#224 <https://github.com/punch-mission/solpolpy/pull/224>`__)
+- Update B -> tB and BpB -> tBpB to match updates to PUNCH FITS metadata. (`#1214 <https://github.com/punch-mission/solpolpy/pull/1214>`__)
+
+
+Bug Fixes
+---------
+
+- Fixed a cosine/sine typo in ``solpolpy.transforms.bp3_to_mzpsolar``. (`#224 <https://github.com/punch-mission/solpolpy/pull/224>`__)
+
+
+Internal Changes
+----------------
+
+- Minor style fixes to make newer Ruff versions happy. (`#223 <https://github.com/punch-mission/solpolpy/pull/223>`__)
+- Updated pre-commit (`#228 <https://github.com/punch-mission/solpolpy/pull/228>`__)
+
+
 Version 0.7.0: July 28, 2026
 ============================
 

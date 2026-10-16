@@ -1,4 +1,4 @@
-Version 0.7.1: October 16, 2026
+Version 0.8.0: October 16, 2026
 ===============================
 
 New Features

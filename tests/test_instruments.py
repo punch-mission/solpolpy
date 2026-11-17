@@ -197,6 +197,18 @@ def test_load_punch_individual_triplet(tmp_path, punch_mosaic, as_fits):
         np.testing.assert_allclose(out["M"].uncertainty.array, 0.5)
 
 
+@pytest.mark.parametrize("input_data", [np.ones((3, 2, 2)), np.array(1), 3, None, {"M": "frame.fits"}])
+def test_load_punch_invalid_input_type(input_data):
+    with pytest.raises(TypeError, match="PUNCH input must be"):
+        load_punch(input_data)
+
+
+def test_load_punch_tuple_input(punch_mosaic):
+    out = load_punch((punch_mosaic,))
+
+    assert list(out) == ["M", "Z", "P"]
+
+
 def test_load_punch_mixed_polarref_rejected(punch_mosaic):
     frames = [
         NDCube(punch_mosaic.data[i], wcs=punch_mosaic.wcs.dropaxis(2), meta={"POLAR": angle, "POLARREF": ref})

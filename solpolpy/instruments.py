@@ -12,12 +12,12 @@ from ndcube import NDCollection, NDCube
 from solpolpy.errors import TooFewFilesError, UnsupportedInstrumentError
 
 
-def load_punch(input_data: str | PathLike | NDCube | list, mask: np.ndarray | None = None) -> NDCollection:
+def load_punch(input_data: str | PathLike | NDCube | list | tuple, mask: np.ndarray | None = None) -> NDCollection:
     """Load one PUNCH mosaic or a supplied M/Z/P triplet into solpolpy.
 
     Parameters
     ----------
-    input_data : path-like, ndcube.NDCube, or sequence
+    input_data : path-like, ndcube.NDCube, list, or tuple
         A PTM, PIM, or PAM FITS path or already-loaded cube, or three
         individual M/Z/P paths or cubes in any order. Punchbowl
         ``PUNCHCube`` objects and their metadata fields are also accepted.
@@ -27,7 +27,7 @@ def load_punch(input_data: str | PathLike | NDCube | list, mask: np.ndarray | No
         3. Level 3 PIM with M/Z/P layers, and
         4. Level 3 PTM/PAM with tB/pB/pBp layers (pBp denotes pB-prime).
     mask : numpy.ndarray, optional
-        Additional 2D boolean mask shared by all channels;
+        Additional 2D boolean mask shared by all channels/layers (M/Z/P or tB/pB/pBp);
         True marks invalid pixels. Combined with existing and invalid-data masks.
 
     Returns
@@ -37,8 +37,10 @@ def load_punch(input_data: str | PathLike | NDCube | list, mask: np.ndarray | No
     """
     if isinstance(input_data, (str, PathLike, NDCube)):
         input_data = [input_data]
-    else:
+    elif isinstance(input_data, (list, tuple)):
         input_data = list(input_data)
+    else:
+        raise TypeError("PUNCH input must be a FITS path, NDCube, or a list or tuple of paths or cubes")
     if len(input_data) not in (1, 3):
         raise ValueError("Supply one PUNCH mosaic or three individual M/Z/P frames")
 
@@ -61,7 +63,7 @@ def load_punch(input_data: str | PathLike | NDCube | list, mask: np.ndarray | No
                         np.divide(data, ratio, out=sigma, where=ratio != 0)
                 source_mask = None
         elif isinstance(source, NDCube):
-            # NormalizedMetadata exposes MetaField objects rather than raw values.
+            # Extract FITS keyword values from Punchbowl's MetaField containers.
             header = {}
             for key in source.meta:
                 value = source.meta[key]
@@ -149,7 +151,10 @@ def get_data_angle(header):
 def load_data(
     path_list: list[str], mask: np.ndarray | None = None, use_instrument_mask: bool = False, hdu_index: int = 0
 ) -> NDCollection:
-    """Basic loading function. See `load_with_occulter_mask`.
+    """Load separate angle-tagged FITS images for generic instruments.
+
+    For PUNCH data, prefer `load_punch`, which also splits mosaic layers
+    and decodes the PUNCH uncertainty extension.
 
     Parameters
     ----------
@@ -164,7 +169,8 @@ def load_data(
 
     hdu_index: int
         The index of the HDU (zero-based) to load data from.
-        For many spacecraft this should be 0. For PUNCH it should be set to 1.
+        For many spacecraft this should be 0. Separate PUNCH frames can be
+        read with 1, but `load_punch` is the recommended PUNCH loader.
 
     Returns
     -------
@@ -255,7 +261,8 @@ def get_instrument_mask(header: fits.Header) -> np.ndarray:
     center_x = header["CRPIX1"]
     center_y = header["CRPIX2"]
 
-    R_sun = 960.0 / header["CDELT1"]  # TODO: clarify where 960. comes from
+    # Approximate solar angular radius of 960 arcsec at 1 AU, converted to pixels.
+    R_sun = 960.0 / header["CDELT1"]
 
     radius = 0
     if header["INSTRUME"] == "LASCO":

@@ -81,10 +81,15 @@ grid; the loader does not match times or reproject them.
 The loader preserves metadata, spatial WCS (including distortion tables),
 and masks. It decodes the FITS signal-to-noise extension into standard
 deviations on the input collection; errors on loaded cubes are used directly.
-Missing errors remain absent. Nonfinite signals and invalid errors
-are masked, while finite negative signals remain valid. A boolean spatial
-``mask=`` can add a shared mask. Observation-level quality flags such as
-``OUTLIER`` and ``BADPKTS`` remain available in metadata for your own selection.
+The loader preserves supplied uncertainty information but does not generate
+an uncertainty estimate when none is provided; those cubes have
+``uncertainty=None``. Nonfinite signals and invalid errors are masked, while
+finite negative signals remain valid. The optional two-dimensional boolean
+``mask`` is applied at the same pixel positions in all three polarization
+images: M/Z/P or tB/pB/pBp. ``True`` excludes a pixel. This additional mask is
+combined with each image's existing mask and invalid-data mask.
+Observation-level quality flags such as ``OUTLIER`` and ``BADPKTS`` remain
+available in metadata for your own selection.
 No Punchbowl installation is required when loading FITS paths.
 
 .. autofunction:: solpolpy.load_punch
